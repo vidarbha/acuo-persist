@@ -78,6 +78,8 @@ public class Neo4jPersistService extends AbstractIdleService implements Provider
 
     @Override
     public void begin() {
+        if(sessionFactory == null)
+            start();
         if (sessions.get() != null) {
             throw new IllegalStateException(
                     "Work already begun on this thread. Looks like you have called UnitOfWork.begin() twice"
