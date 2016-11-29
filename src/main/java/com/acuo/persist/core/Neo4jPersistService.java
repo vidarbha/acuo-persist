@@ -1,4 +1,4 @@
-package com.acuo.persistence;
+package com.acuo.persist.core;
 
 import com.google.common.util.concurrent.AbstractIdleService;
 import com.google.inject.Singleton;

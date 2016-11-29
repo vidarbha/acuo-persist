@@ -1,4 +1,4 @@
-package com.acuo.persistence;
+package com.acuo.persist.core;
 
 import com.acuo.common.app.AppId;
 import com.acuo.common.app.Configuration;

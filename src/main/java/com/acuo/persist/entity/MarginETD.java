@@ -1,4 +1,4 @@
-package com.acuo.entity;
+package com.acuo.persist.entity;
 
 import java.math.BigDecimal;
 import java.util.Formatter;

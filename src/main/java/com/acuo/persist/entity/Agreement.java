@@ -1,4 +1,4 @@
-package com.acuo.entity;
+package com.acuo.persist.entity;
 
 import org.neo4j.ogm.annotation.NodeEntity;
 

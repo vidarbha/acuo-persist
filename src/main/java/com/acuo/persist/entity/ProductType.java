@@ -1,4 +1,4 @@
-package com.acuo.entity;
+package com.acuo.persist.entity;
 
 public enum ProductType {
     CDX, CDS, IRS, NDF, FUTURES, BILTERAL;
