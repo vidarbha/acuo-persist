@@ -11,46 +11,47 @@ apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/ja
 
 group = 'com.acuo.collateral'
 
-ext.versions += [    
-    common       : '0.2.1',
-    guice        : '4.0',
-    okhttp       : '3.3.1',
-    neo4j        : '3.0.6',
-    neo4jOgm     : '2.0.5',
+ext.versions += [
+        common  : '0.2.1',
+        guice   : '4.0',
+        okhttp  : '3.3.1',
+        neo4j   : '3.0.6',
+        neo4jOgm: '2.0.5',
 ]
 
 configurations {
-    all*.exclude group: 'org.neo4j.3rdparty.javax.ws.rs' , module: 'jsr311-api'
-    all*.exclude group: 'javax.ws.rs' , module: 'jsr311-api'
+    all*.exclude group: 'org.neo4j.3rdparty.javax.ws.rs', module: 'jsr311-api'
+    all*.exclude group: 'javax.ws.rs', module: 'jsr311-api'
 }
 
 dependencies {
     compile(
-        "com.acuo.collateral:common:${versions.common}",
+            "com.acuo.collateral:common:${versions.common}",
 
-        "com.google.inject:guice:${versions.guice}",
-        "com.google.inject.extensions:guice-servlet:${versions.guice}",
+            "com.google.inject:guice:${versions.guice}",
+            "com.google.inject.extensions:guice-servlet:${versions.guice}",
             "com.google.inject.extensions:guice-persist:${versions.guice}",
-        "com.google.inject.extensions:guice-multibindings:${versions.guice}",
-        "com.google.inject.extensions:guice-assistedinject:${versions.guice}",
-        
-        "org.neo4j:neo4j:${versions.neo4j}",
-        "org.neo4j.driver:neo4j-java-driver:${versions.neo4jBolt}",
+            "com.google.inject.extensions:guice-multibindings:${versions.guice}",
+            "com.google.inject.extensions:guice-assistedinject:${versions.guice}",
 
-        "org.neo4j:neo4j-ogm-core:${versions.neo4jOgm}",
-        "org.neo4j:neo4j-ogm-http-driver:${versions.neo4jOgm}",
-        "org.neo4j:neo4j-ogm-bolt-driver:${versions.neo4jOgm}",
-        "org.neo4j:neo4j-ogm-embedded-driver:${versions.neo4jOgm}",
+            "org.neo4j:neo4j:${versions.neo4j}",
+            "org.neo4j.driver:neo4j-java-driver:${versions.neo4jBolt}",
 
-        "ch.qos.logback:logback-access:${versions.logback}",
-        "com.squareup.okhttp3:okhttp:${versions.okhttp}"
+            "org.neo4j:neo4j-ogm-core:${versions.neo4jOgm}",
+            "org.neo4j:neo4j-ogm-http-driver:${versions.neo4jOgm}",
+            "org.neo4j:neo4j-ogm-bolt-driver:${versions.neo4jOgm}",
+            "org.neo4j:neo4j-ogm-embedded-driver:${versions.neo4jOgm}",
+
+            "ch.qos.logback:logback-access:${versions.logback}",
+            "com.squareup.okhttp3:okhttp:${versions.okhttp}",
+            "com.smokejumperit.guice:core:1.1"
     )
 
     testCompile(
-        "com.acuo.collateral:common:${versions.common}:tests",
-        "org.neo4j.test:neo4j-harness:${versions.neo4j}",
-        "org.neo4j:neo4j-ogm-test:${versions.neo4jOgm}",
-        "com.tngtech.java:junit-dataprovider:1.10.4",
-        "org.easymock:easymock:3.3"
+            "com.acuo.collateral:common:${versions.common}:tests",
+            "org.neo4j.test:neo4j-harness:${versions.neo4j}",
+            "org.neo4j:neo4j-ogm-test:${versions.neo4jOgm}",
+            "com.tngtech.java:junit-dataprovider:1.10.4",
+            "org.easymock:easymock:3.3"
     )
 }

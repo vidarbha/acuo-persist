@@ -33,7 +33,7 @@ public class Neo4jPersistService extends AbstractIdleService implements Provider
                         @Named(PropertiesHelper.NEO4J_OGM_USERNAME) String userName,
                         @Named(PropertiesHelper.NEO4J_OGM_PASSWORD) String password,
                         Neo4jPersistModule.Packages packages) {
-        LOG.info("Creating a Neo4j persistence service using driver [{}] and url[{}]", driver, url);
+        LOG.info("Creating a Neo4j persist service using driver [{}] and url[{}]", driver, url);
         this.persistencePackages = packages.value();
         this.configuration = new Configuration();
         this.configuration.driverConfiguration().setDriverClassName(driver).setURI(url)

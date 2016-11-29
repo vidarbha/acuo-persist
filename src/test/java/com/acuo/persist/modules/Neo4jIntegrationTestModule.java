@@ -1,4 +1,4 @@
-package com.acuo.persistence;
+package com.acuo.persist.modules;
 
 import com.google.common.util.concurrent.AbstractService;
 import com.google.common.util.concurrent.Service;
