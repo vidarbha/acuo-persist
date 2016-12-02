@@ -1,6 +1,7 @@
 package com.acuo.persist.entity;
 
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.typeconversion.DateString;
 
 import java.util.Date;
@@ -19,7 +20,7 @@ public class Leg extends Entity{
     @DateString(value = "dd/MM/yy")
     private Date payStart;
 
-
+    @Property(name="id")
     private String legId;
 
     private String paymentFrequency;
