@@ -1,5 +1,7 @@
 package com.acuo.persist.core;
 
+import com.acuo.persist.configuration.PropertiesHelper;
+import com.acuo.persist.modules.Neo4jPersistModule;
 import com.google.common.util.concurrent.AbstractIdleService;
 import com.google.inject.Singleton;
 import com.google.inject.persist.PersistService;

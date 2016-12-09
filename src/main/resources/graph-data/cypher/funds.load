@@ -1,0 +1,6 @@
+LOAD CSV WITH HEADERS FROM '%dataImportLink%/csv/funds.csv' AS fundLine
+
+MATCH (client:Client { clientId:fundLine.ClientId })
+MERGE (fund:Fund { fundId:fundLine.Id, name:fundLine.Name })
+MERGE (client)-[:MANAGE]->(fund)
+;

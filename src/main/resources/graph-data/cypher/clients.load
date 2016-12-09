@@ -1,0 +1,4 @@
+LOAD CSV WITH HEADERS FROM '%dataImportLink%/csv/clients.csv' AS clientLine
+
+CREATE (client:Client { clientId:clientLine.Id, name:clientLine.Name})
+;

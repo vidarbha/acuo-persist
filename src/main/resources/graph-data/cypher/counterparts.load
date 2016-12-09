@@ -1,0 +1,4 @@
+LOAD CSV WITH HEADERS FROM '%dataImportLink%/csv/counterparts.csv' AS counterpartLine
+
+CREATE (counterpart:Counterpart { counterpartId:counterpartLine.Id, name:counterpartLine.Name})
+;

@@ -19,6 +19,10 @@ public class PropertiesHelper {
     public static final String ACUO_CONFIG_APPID = "acuo.config.appid";
     public static final String ACUO_CONFIG_ENV = "acuo.config.env";
 
+    public static final String ACUO_DATA_DIR = "acuo.data.dir";
+    public static final String ACUO_DATA_IMPORT_LINK = "acuo.data.import.link";
+    public static final String ACUO_CYPHER_DIR_TEMPLATE = "acuo.cypher.dir.template";
+
     public static final String NEO4J_OGM_URL = "neo4j.ogm.url";
     public static final String NEO4J_OGM_USERNAME = "neo4j.ogm.username";
     public static final String NEO4J_OGM_PASSWORD = "neo4j.ogm.password";

@@ -1,6 +1,6 @@
 package com.acuo.persist;
 
-import com.acuo.persist.core.Neo4jPersistModule;
+import com.acuo.persist.modules.Neo4jPersistModule;
 import com.acuo.persist.core.Neo4jPersistService;
 import com.acuo.persist.modules.ConfigurationTestModule;
 import com.google.common.base.Throwables;

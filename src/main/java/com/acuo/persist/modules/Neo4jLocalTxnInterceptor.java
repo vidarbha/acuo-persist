@@ -1,5 +1,6 @@
-package com.acuo.persist.core;
+package com.acuo.persist.modules;
 
+import com.acuo.persist.core.Neo4jPersistService;
 import com.google.inject.persist.Transactional;
 import com.google.inject.persist.UnitOfWork;
 import lombok.extern.slf4j.Slf4j;
