@@ -5,11 +5,12 @@ import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.DateString;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 @NodeEntity
 public class MarginCall extends Entity{
+
+    private String direction;
 
     @DateString(value = "dd/MM/yy")
     private Date callDate;
@@ -23,59 +24,43 @@ public class MarginCall extends Entity{
     @DateString(value = "dd/MM/yy")
     private Date valuationDate;
 
-    private BigDecimal exposure;
+    private Double exposure;
 
     private Double pendingCollateral;
 
-    @DateString(value = "dd/MM/yy hh:mm:ss")
-    private Date notificationTime;
+//    @DateString(value = "dd/MM/yy HH:mm:ss")
+//    private Date notificationTime;
 
     private String agreementId;
 
-    private BigDecimal collateralValue;
+    private Double collateralValue;
 
-    private BigDecimal deliverAmount;
+    private Double deliverAmount;
 
     private String currency;
 
     @Property(name="id")
     private String marginCallId;
 
-    private BigDecimal returnAmount;
+    private Double returnAmount;
 
     private String status;
 
     private Integer parentRank;
 
-    private BigDecimal roundedDeliverAmount;
+    private Double roundedDeliverAmount;
 
-    private BigDecimal roundedReturnAmount;
+    private Double roundedReturnAmount;
 
     private Integer belowMTA;
 
-    @Relationship(type = "PART_OF")
-    private MarginStatement marginStatement;
 
-    @Relationship(type = "STEMS_FROM")
-    private Agreement agreement;
-
-    @Relationship(type = "DIRECTED_TO")
-    private Client client;
-
-    public Agreement getAgreement() {
-        return agreement;
+    public String getDirection() {
+        return direction;
     }
 
-    public void setAgreement(Agreement agreement) {
-        this.agreement = agreement;
-    }
-
-    public Client getClient() {
-        return client;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
+    public void setDirection(String direction) {
+        this.direction = direction;
     }
 
     public Date getCallDate() {
@@ -118,11 +103,11 @@ public class MarginCall extends Entity{
         this.valuationDate = valuationDate;
     }
 
-    public BigDecimal getExposure() {
+    public Double getExposure() {
         return exposure;
     }
 
-    public void setExposure(BigDecimal exposure) {
+    public void setExposure(Double exposure) {
         this.exposure = exposure;
     }
 
@@ -134,13 +119,13 @@ public class MarginCall extends Entity{
         this.pendingCollateral = pendingCollateral;
     }
 
-    public Date getNotificationTime() {
-        return notificationTime;
-    }
-
-    public void setNotificationTime(Date notificationTime) {
-        this.notificationTime = notificationTime;
-    }
+//    public Date getNotificationTime() {
+//        return notificationTime;
+//    }
+//
+//    public void setNotificationTime(Date notificationTime) {
+//        this.notificationTime = notificationTime;
+//    }
 
     public String getAgreementId() {
         return agreementId;
@@ -150,19 +135,19 @@ public class MarginCall extends Entity{
         this.agreementId = agreementId;
     }
 
-    public BigDecimal getCollateralValue() {
+    public Double getCollateralValue() {
         return collateralValue;
     }
 
-    public void setCollateralValue(BigDecimal collateralValue) {
+    public void setCollateralValue(Double collateralValue) {
         this.collateralValue = collateralValue;
     }
 
-    public BigDecimal getDeliverAmount() {
+    public Double getDeliverAmount() {
         return deliverAmount;
     }
 
-    public void setDeliverAmount(BigDecimal deliverAmount) {
+    public void setDeliverAmount(Double deliverAmount) {
         this.deliverAmount = deliverAmount;
     }
 
@@ -182,11 +167,11 @@ public class MarginCall extends Entity{
         this.marginCallId = marginCallId;
     }
 
-    public BigDecimal getReturnAmount() {
+    public Double getReturnAmount() {
         return returnAmount;
     }
 
-    public void setReturnAmount(BigDecimal returnAmount) {
+    public void setReturnAmount(Double returnAmount) {
         this.returnAmount = returnAmount;
     }
 
@@ -206,19 +191,19 @@ public class MarginCall extends Entity{
         this.parentRank = parentRank;
     }
 
-    public BigDecimal getRoundedDeliverAmount() {
+    public Double getRoundedDeliverAmount() {
         return roundedDeliverAmount;
     }
 
-    public void setRoundedDeliverAmount(BigDecimal roundedDeliverAmount) {
+    public void setRoundedDeliverAmount(Double roundedDeliverAmount) {
         this.roundedDeliverAmount = roundedDeliverAmount;
     }
 
-    public BigDecimal getRoundedReturnAmount() {
+    public Double getRoundedReturnAmount() {
         return roundedReturnAmount;
     }
 
-    public void setRoundedReturnAmount(BigDecimal roundedReturnAmount) {
+    public void setRoundedReturnAmount(Double roundedReturnAmount) {
         this.roundedReturnAmount = roundedReturnAmount;
     }
 
@@ -230,25 +215,18 @@ public class MarginCall extends Entity{
         this.belowMTA = belowMTA;
     }
 
-    public MarginStatement getMarginStatement() {
-        return marginStatement;
-    }
-
-    public void setMarginStatement(MarginStatement marginStatement) {
-        this.marginStatement = marginStatement;
-    }
-
     @Override
     public String toString() {
         return "MarginCall{" +
-                "callDate=" + callDate +
+                "direction='" + direction + '\'' +
+                ", callDate=" + callDate +
                 ", callAmount=" + callAmount +
                 ", callType='" + callType + '\'' +
                 ", IMRole='" + IMRole + '\'' +
                 ", valuationDate=" + valuationDate +
                 ", exposure=" + exposure +
                 ", pendingCollateral=" + pendingCollateral +
-                ", notificationTime=" + notificationTime +
+//                ", notificationTime=" + notificationTime +
                 ", agreementId='" + agreementId + '\'' +
                 ", collateralValue=" + collateralValue +
                 ", deliverAmount=" + deliverAmount +
@@ -260,7 +238,6 @@ public class MarginCall extends Entity{
                 ", roundedDeliverAmount=" + roundedDeliverAmount +
                 ", roundedReturnAmount=" + roundedReturnAmount +
                 ", belowMTA=" + belowMTA +
-                ", marginStatement=" + marginStatement +
                 '}';
     }
 }
