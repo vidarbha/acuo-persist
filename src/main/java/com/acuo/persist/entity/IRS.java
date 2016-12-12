@@ -26,8 +26,17 @@ public class IRS extends Entity{
     @Relationship(type = "RECEIVE")
     private Set<Leg> receiveLegs;
 
+    private String tradeType;
+
     private Account account;
 
+    public String getTradeType() {
+        return tradeType;
+    }
+
+    public void setTradeType(String tradeType) {
+        this.tradeType = tradeType;
+    }
 
     public Date getMaturity() {
         return maturity;
@@ -87,6 +96,7 @@ public class IRS extends Entity{
                 ", irsId='" + irsId + '\'' +
                 ", payLegs=" + payLegs +
                 ", receiveLegs=" + receiveLegs +
+                ", tradeType='" + tradeType + '\'' +
                 ", account=" + account +
                 '}';
     }

@@ -38,6 +38,8 @@ public class FRA extends Entity{
     @Relationship(type = "RECEIVE")
     private Set<Leg> receiveLegs;
 
+    private String tradeType;
+
     private Account account;
 
     public String getLegPay() {
@@ -136,6 +138,14 @@ public class FRA extends Entity{
         this.account = account;
     }
 
+    public String getTradeType() {
+        return tradeType;
+    }
+
+    public void setTradeType(String tradeType) {
+        this.tradeType = tradeType;
+    }
+
     @Override
     public String toString() {
         return "FRA{" +
@@ -150,6 +160,7 @@ public class FRA extends Entity{
                 ", fraId='" + fraId + '\'' +
                 ", payLegs=" + payLegs +
                 ", receiveLegs=" + receiveLegs +
+                ", tradeType='" + tradeType + '\'' +
                 ", account=" + account +
                 '}';
     }
