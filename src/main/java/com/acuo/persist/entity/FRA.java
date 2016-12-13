@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.Set;
 
 @NodeEntity
-public class FRA extends Entity{
+public class FRA extends Trade{
 
     private String legPay;
 

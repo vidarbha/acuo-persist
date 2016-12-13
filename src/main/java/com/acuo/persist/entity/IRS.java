@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.Set;
 
 @NodeEntity
-public class IRS extends Entity{
+public class IRS extends Trade{
 
     @DateString(value = "dd/MM/yy")
     private Date maturity;
