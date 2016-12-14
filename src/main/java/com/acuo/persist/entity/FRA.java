@@ -1,6 +1,7 @@
 package com.acuo.persist.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
@@ -11,21 +12,16 @@ import java.util.Set;
 
 @NodeEntity
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class FRA extends Trade {
 
     private String legPay;
 
     private Double notional;
 
-    @DateString(value = "dd/MM/yy")
-    private Date maturity;
-
     private Double fixedRate;
 
     private String indexTenor;
-
-    @DateString(value = "dd/MM/yy")
-    private Date clearingDate;
 
     private String index;
 
