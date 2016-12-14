@@ -1,21 +1,20 @@
 package com.acuo.persist.neo4j.converters;
 
+import com.opengamma.strata.basics.date.Tenor;
 import org.neo4j.ogm.typeconversion.AttributeConverter;
 
-import java.time.LocalDate;
 import java.util.Objects;
 
-public class LocalDateConverter implements AttributeConverter<LocalDate, String> {
-
+public class TenorConverter implements AttributeConverter<Tenor, String> {
     @Override
-    public String toGraphProperty(LocalDate value) {
+    public String toGraphProperty(Tenor value) {
         if (Objects.isNull(value)) return null;
         return value.toString();
     }
 
     @Override
-    public LocalDate toEntityAttribute(String value) {
+    public Tenor toEntityAttribute(String value) {
         if (Objects.isNull(value)) return null;
-        return LocalDate.parse(value);
+        return Tenor.parse(value);
     }
 }
