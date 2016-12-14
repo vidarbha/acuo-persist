@@ -2,6 +2,8 @@ package com.acuo.persist.modules;
 
 import com.acuo.persist.configuration.PropertiesHelper;
 import com.acuo.persist.core.Neo4jPersistService;
+import com.acuo.persist.services.IRSService;
+import com.acuo.persist.services.IRSServiceImpl;
 import com.google.common.util.concurrent.Service;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
@@ -54,6 +56,8 @@ public class Neo4jPersistModule extends PersistModule {
 
         Multibinder<Service> services = Multibinder.newSetBinder(binder(), Service.class);
         services.addBinding().to(Neo4jPersistService.class);
+
+        bind(IRSService.class).to(IRSServiceImpl.class);
     }
 
     @Override

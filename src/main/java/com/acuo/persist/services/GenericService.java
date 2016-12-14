@@ -2,6 +2,7 @@ package com.acuo.persist.services;
 
 import com.acuo.common.util.ArgChecker;
 import com.acuo.persist.entity.Entity;
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 import org.neo4j.ogm.session.Session;
 
@@ -42,4 +43,13 @@ public abstract class GenericService<T> implements Service<T> {
     }
 
     public abstract Class<T> getEntityType();
+
+    @Transactional
+    @Override
+    public T findById(String id) {
+        String query = "match (i:" + getEntityType().getSimpleName() + " {id: {id} }) return i";
+        return session.queryForObject(getEntityType(), query, ImmutableMap.of("id",id));
+    }
+
+
 }

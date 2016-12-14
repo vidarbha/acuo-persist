@@ -14,9 +14,4 @@ public class IRSServiceImpl extends GenericService<IRS> implements IRSService {
         return IRS.class;
     }
 
-    @Override
-    public IRS findById(String id) {
-        String query = "match (i:IRS {id: {id} }) return i";
-        return session.queryForObject(IRS.class, query, ImmutableMap.of("id",id));
-    }
 }

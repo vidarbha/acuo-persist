@@ -14,9 +14,4 @@ public class TradeServiceImpl extends GenericService<Trade> implements TradeServ
         return Trade.class;
     }
 
-    @Override
-    public Trade findById(String id) {
-        String query = "match (i:Trade {id: {id} }) return i";
-        return session.queryForObject(IRS.class, query, ImmutableMap.of("id",id));
-    }
 }
