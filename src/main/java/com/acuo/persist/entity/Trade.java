@@ -6,7 +6,9 @@ import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.DateString;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 @NodeEntity
 public class Trade extends Entity{
@@ -37,7 +39,7 @@ public class Trade extends Entity{
     private String seniority;
 
     @Relationship(type = "VALUATED")
-    private Set<Valuation> valuations;
+    private Set<Valuation> valuations = new HashSet<>();
 
     @Override
     public String toString() {
