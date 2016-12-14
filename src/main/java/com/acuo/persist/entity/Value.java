@@ -1,46 +1,19 @@
 package com.acuo.persist.entity;
 
+import com.acuo.persist.neo4j.converters.CurrencyConverter;
+import com.opengamma.strata.basics.currency.Currency;
+import lombok.Data;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 @NodeEntity
+@Data
 public class Value extends Entity{
 
     private Double pv;
 
-    private String currency;
+    @Convert(CurrencyConverter.class)
+    private Currency currency;
 
     private String source;
-
-    @Override
-    public String toString() {
-        return "Value{" +
-                "pv=" + pv +
-                ", currency='" + currency + '\'' +
-                ", source='" + source + '\'' +
-                '}';
-    }
-
-    public Double getPv() {
-        return pv;
-    }
-
-    public void setPv(Double pv) {
-        this.pv = pv;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
 }
