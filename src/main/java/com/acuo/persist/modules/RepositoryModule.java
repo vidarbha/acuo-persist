@@ -1,15 +1,13 @@
 package com.acuo.persist.modules;
 
-import com.acuo.persist.services.IRSService;
-import com.acuo.persist.services.IRSServiceImpl;
-import com.acuo.persist.services.TradeService;
-import com.acuo.persist.services.TradeServiceImpl;
+import com.acuo.persist.services.*;
 import com.google.inject.AbstractModule;
 
 public class RepositoryModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        bind(FRAService.class).to(FRAServiceImpl.class);
         bind(IRSService.class).to(IRSServiceImpl.class);
         bind(TradeService.class).to(TradeServiceImpl.class);
     }
