@@ -42,6 +42,8 @@ dependencies {
             "org.neo4j:neo4j-ogm-bolt-driver:${versions.neo4jOgm}",
             "org.neo4j:neo4j-ogm-embedded-driver:${versions.neo4jOgm}",
 
+            "commons-beanutils:commons-beanutils:1.9.3",
+
             "ch.qos.logback:logback-access:${versions.logback}",
             "com.squareup.okhttp3:okhttp:${versions.okhttp}",
             "com.smokejumperit.guice:core:1.1"
