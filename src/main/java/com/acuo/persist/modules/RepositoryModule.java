@@ -9,6 +9,7 @@ public class RepositoryModule extends AbstractModule {
     protected void configure() {
         bind(FRAService.class).to(FRAServiceImpl.class);
         bind(IRSService.class).to(IRSServiceImpl.class);
+        bind(AccountService.class).to(AccountServiceImpl.class);
         bind(TradeService.class).to(TradeServiceImpl.class);
     }
 
