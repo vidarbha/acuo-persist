@@ -56,8 +56,6 @@ public class Neo4jPersistModule extends PersistModule {
 
         Multibinder<Service> services = Multibinder.newSetBinder(binder(), Service.class);
         services.addBinding().to(Neo4jPersistService.class);
-
-        bind(IRSService.class).to(IRSServiceImpl.class);
     }
 
     @Override
