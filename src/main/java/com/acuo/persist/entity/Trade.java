@@ -31,6 +31,9 @@ public class Trade extends Entity{
     private Double couponRate;
 
     @Convert(LocalDateConverter.class)
+    private LocalDate tradeDate;
+
+    @Convert(LocalDateConverter.class)
     private LocalDate maturity;
 
     @Convert(LocalDateConverter.class)
