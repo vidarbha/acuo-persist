@@ -11,7 +11,8 @@ public class LocalDateConverter implements AttributeConverter<LocalDate, String>
     @Override
     public String toGraphProperty(LocalDate value) {
         if (Objects.isNull(value)) return null;
-        return value.toString();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
+        return value.format(formatter);
     }
 
     @Override
