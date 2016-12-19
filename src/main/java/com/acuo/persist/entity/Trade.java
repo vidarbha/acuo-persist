@@ -54,7 +54,5 @@ public class Trade extends Entity{
     @Relationship(type = "VALUATED", direction = Relationship.OUTGOING)
     private Set<Valuation> valuations = new HashSet<>();
 
-    @Relationship(type = "POSITIONS_ON", direction = Relationship.INCOMING)
-    private Account account;
 
 }
