@@ -11,6 +11,9 @@ public class RepositoryModule extends AbstractModule {
         bind(IRSService.class).to(IRSServiceImpl.class);
         bind(AccountService.class).to(AccountServiceImpl.class);
         bind(TradeService.class).to(TradeServiceImpl.class);
+        bind(PortfolioService.class).to(PortfolioServiceImpl.class);
+        bind(ValuationService.class).to(ValuationServiceImpl.class);
+        bind(ValueService.class).to(ValueServiceImpl.class);
     }
 
 }

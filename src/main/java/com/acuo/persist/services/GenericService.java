@@ -8,6 +8,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.neo4j.ogm.session.Session;
 
 import javax.inject.Inject;
+import java.util.Collections;
 
 public abstract class GenericService<T> implements Service<T> {
 
@@ -48,8 +49,12 @@ public abstract class GenericService<T> implements Service<T> {
     @Transactional
     @Override
     public T findById(String id) {
-        String query = "match (i:" + getEntityType().getSimpleName() + " {id: {id} }) return i";
-        return session.queryForObject(getEntityType(), query, ImmutableMap.of("id",id));
+        String query = "match (i:" + getEntityType().getSimpleName() + " {id: '" + id + "' }) return i";
+        T entity = session.queryForObject(getEntityType(), query, Collections.emptyMap());
+        if(entity != null)
+            return find(((Entity) entity).getId());
+        else
+            return null;
     }
 
     @Transactional
