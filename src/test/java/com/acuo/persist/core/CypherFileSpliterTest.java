@@ -47,7 +47,7 @@ public class CypherFileSpliterTest {
 	
 	@Test
 	public void testSplitByDefaultDelimiter() {
-		CypherFileSpliter spliter = CypherFileSpliter.newBuilder("./src/test/resources").build();
+		CypherFileSpliter spliter = CypherFileSpliter.newBuilder(".").build();
 		
 		List<String> lines = spliter.splitByDefaultDelimiter("spliter-test-with-default-delim.txt");
 		
@@ -62,7 +62,7 @@ public class CypherFileSpliterTest {
 	
 	@Test
 	public void testSplitByColonDelimiterPassedAsDefault() {
-		CypherFileSpliter spliter = CypherFileSpliter.newBuilder("./src/test/resources")
+		CypherFileSpliter spliter = CypherFileSpliter.newBuilder(".")
 													 .withDelimiter(":")
 													 .build();
 		
@@ -79,7 +79,7 @@ public class CypherFileSpliterTest {
 	
 	@Test
 	public void testSplitByColonDelimiterPassedAsArgument() {
-		CypherFileSpliter spliter = CypherFileSpliter.newBuilder("./src/test/resources").build();
+		CypherFileSpliter spliter = CypherFileSpliter.newBuilder(".").build();
 		
 		List<String> lines = spliter.splitByDelimiter("spliter-test-with-colon-delim.txt", ":");
 		

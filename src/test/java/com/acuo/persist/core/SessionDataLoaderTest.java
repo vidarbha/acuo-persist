@@ -33,7 +33,7 @@ public class SessionDataLoaderTest {
 
 		when(sessionProvider.get()).thenReturn(session);
 
-		loader = new SessionDataLoader(sessionProvider, "src/test/resources");
+		loader = new SessionDataLoader(sessionProvider, "graph-data");
 	}
 
 	@SuppressWarnings("unchecked")

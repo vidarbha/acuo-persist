@@ -17,10 +17,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-@NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Trade extends Entity{
+public abstract class Trade extends Entity {
 
     private String underlyingAssetId;
 

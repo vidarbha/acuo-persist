@@ -12,10 +12,8 @@ import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
-import org.neo4j.ogm.annotation.typeconversion.DateString;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @NodeEntity
 @Data
@@ -37,6 +35,8 @@ public class Leg extends Entity {
 
     @Property(name="id")
     private String legId;
+
+    private String legNumber;
 
     @Convert(FrequencyConverter.class)
     private Frequency paymentFrequency;
