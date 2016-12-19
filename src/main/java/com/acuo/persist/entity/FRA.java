@@ -36,5 +36,4 @@ public class FRA extends Trade {
 
     private String tradeType;
 
-    private Account account;
 }

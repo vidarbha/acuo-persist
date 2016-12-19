@@ -22,7 +22,12 @@ public class TradeServiceImpl extends GenericService<Trade> implements TradeServ
         /*String query =  "MATCH (c:Client {id:{id}})-[:MANAGES]->(le:LegalEntity)-[:HAS]->(:Account)-[:POSITIONS_ON]->(t:Trade) " +
                         "MATCH (t)-[:FOLLOWS]->(a:Agreement) " +
                         "WHERE a.type='bilateralOTC' RETURN t";*/
-        String query =  "MATCH (c:Client {id:{id}}) -[:MANAGES]-> (le:LegalEntity) -[:HAS]-> (:Account) -[:POSITIONS_ON]-> (t:Trade) return t";
+        String query =  "MATCH (:Client {id:{id}}) " +
+                        "-[:MANAGES]-> (:LegalEntity) " +
+                        "-[:HAS]-> (:Account) " +
+                        "-[:POSITIONS_ON]-> (trade:Trade) " +
+                        "WITH trade " +
+                        "MATCH p=(trade)-[r*0..1]-() RETURN trade, nodes(p), rels(p)";
         return session.query(getEntityType(), query, ImmutableMap.of("id",clientId));
     }
 

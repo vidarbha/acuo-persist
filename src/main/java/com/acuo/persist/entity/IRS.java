@@ -26,5 +26,4 @@ public class IRS extends Trade{
 
     private String tradeType;
 
-    private Account account;
 }
