@@ -21,4 +21,10 @@ public class Neo4jImportService implements ImportService {
         loader.purgeDatabase();
         importer.importFiles(DataImporter.ALL_FILES);
     }
+
+    @Override
+    public void reload(String... fileNames) {
+        loader.purgeDatabase();
+        importer.importFiles(fileNames);
+    }
 }
