@@ -61,5 +61,11 @@ public class MarginCall extends Entity{
 
     private Integer belowMTA;
 
+    @Relationship(type = "FIRST", direction = Relationship.OUTGOING)
+    private Step firstStep;
+
+    @Relationship(type = "LAST", direction = Relationship.OUTGOING)
+    private Step lastStep;
+
 
 }

@@ -1,16 +1,24 @@
 package com.acuo.persist.entity;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 
 import java.util.Set;
 
 @NodeEntity
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class Agreement extends Entity {
 
     private String key;
 
     private String type;
+
+    @Property(name="id")
+    private String agreementId;
 
     public String getKey() {
         return key;
@@ -23,40 +31,9 @@ public class Agreement extends Entity {
     @Relationship(type = "COUNTERPARTY_SIGNS", direction = Relationship.INCOMING)
     private Set<LegalEntity> cptyEntitys;
 
-    @Relationship(type = "CLIENT_SIGNS", direction = Relationship.INCOMING)
-    private Set<LegalEntity> legalEntitys;
+    //private Set<CLIENT_SIGNS> clientSignses;
 
-    public void setKey(String key) {
-        this.key = key;
-    }
+//    @Relationship(type = "CLIENT_SIGNS", direction = Relationship.INCOMING)
+//    private LegalEntity legalEntity;
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Set<LegalEntity> getCptyEntitys() {
-        return cptyEntitys;
-    }
-
-    public void setCptyEntitys(Set<LegalEntity> cptyEntitys) {
-        this.cptyEntitys = cptyEntitys;
-    }
-
-    public Set<LegalEntity> getLegalEntitys() {
-        return legalEntitys;
-    }
-
-    public void setLegalEntitys(Set<LegalEntity> legalEntitys) {
-        this.legalEntitys = legalEntitys;
-    }
-
-    @Override
-    public String toString() {
-        return "Agreement{" +
-                "key='" + key + '\'' +
-                ", type='" + type + '\'' +
-                ", cptyEntitys=" + cptyEntitys +
-                ", legalEntitys=" + legalEntitys +
-                '}';
-    }
 }
