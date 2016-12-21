@@ -12,8 +12,8 @@ import java.util.Collections;
 
 public abstract class GenericService<T> implements Service<T> {
 
-    public static final int DEPTH_LIST = 1;
-    public static final int DEPTH_ENTITY = 1;
+    public static final int DEPTH_LIST = 0;
+    public static final int DEPTH_ENTITY = -1;
 
     @Inject
     protected Session session;
@@ -49,37 +49,11 @@ public abstract class GenericService<T> implements Service<T> {
     @Transactional
     @Override
     public T findById(String id) {
-        String query = "match (i:" + getEntityType().getSimpleName() + " {id: '" + id + "' }) return i";
-        T entity = session.queryForObject(getEntityType(), query, Collections.emptyMap());
+        String query = "MATCH (i:" + getEntityType().getSimpleName() + " {id: {id} }) return i";
+        T entity = session.queryForObject(getEntityType(), query, ImmutableMap.of("id",id));
         if(entity != null)
             return find(((Entity) entity).getId());
         else
             return null;
     }
-
-    @Transactional
-    @Override
-    public T createOrUpdateById(T entity, String id) {
-        ArgChecker.notNull(entity, "entity");
-        T existing = findById(id);
-        if(existing != null)
-        {
-            try
-            {
-                BeanUtils.copyProperties(existing, entity);
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-            session.save(existing, DEPTH_ENTITY);
-            return find(((Entity) existing).getId());
-        }
-        else {
-            session.save(entity, DEPTH_ENTITY);
-            return find(((Entity) entity).getId());
-        }
-    }
-
-
 }

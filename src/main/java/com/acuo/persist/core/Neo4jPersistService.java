@@ -38,6 +38,7 @@ public class Neo4jPersistService extends AbstractIdleService implements Provider
         LOG.info("Creating a Neo4j persist service using driver [{}] and url[{}]", driver, url);
         this.persistencePackages = packages.value();
         this.configuration = new Configuration();
+        this.configuration.autoIndexConfiguration().setAutoIndex("assert");
         this.configuration.driverConfiguration().setDriverClassName(driver).setURI(url)
                 .setCredentials(new UsernamePasswordCredentials(userName, password));
     }

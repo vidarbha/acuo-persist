@@ -12,6 +12,4 @@ public interface Service<T> {
 
     T findById(String id);
 
-    T createOrUpdateById(T entity, String id);
-
 }

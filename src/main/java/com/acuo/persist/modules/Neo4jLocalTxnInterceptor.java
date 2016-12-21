@@ -56,6 +56,7 @@ class Neo4jLocalTxnInterceptor implements MethodInterceptor {
             result = invocation.proceed();
 
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             // commit transaction only if rollback didnt occur
             if (rollbackIfNecessary(transactional, e, txn)) {
                 txn.commit();
