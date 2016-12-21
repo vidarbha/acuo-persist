@@ -19,6 +19,5 @@ public class LegalEntity extends Entity {
     @Property(name="id")
     private String legalEntityId;
 
-
-    private Set<CLIENT_SIGNS> clientSignses;
+    private Set<ClientSignsRelation> clientSignses;
 }

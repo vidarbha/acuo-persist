@@ -13,6 +13,6 @@ public class LegalEntityServiceImpl extends GenericService<LegalEntity> implemen
 
     public LegalEntity getLegalEntity(Agreement agreement)
     {
-        return  session.queryForObject(LegalEntity.class, "match (l:LegalEntity)-[r:CLIENT_SIGNS]->(a:Agreement {id:{id}}) return l", ImmutableMap.of("id",agreement.getAgreementId()) );
+        return  session.queryForObject(LegalEntity.class, "match (l:LegalEntity)-[r:ClientSignsRelation]->(a:Agreement {id:{id}}) return l", ImmutableMap.of("id",agreement.getAgreementId()) );
     }
 }

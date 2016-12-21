@@ -17,21 +17,18 @@ public class Portfolio extends Entity {
 
     @Property(name="id")
     private String portfolioId;
-    private String name;
-    private String currency;
 
+    private String name;
+
+    private String currency;
 
     @Relationship(type = "IS_COMPOSED_OF")
     private Set<Exposure> exposures;
 
-
-
     @Relationship(type = "IS_COMPOSED_OF")
     private Set<Asset> assets;
 
-
     @Relationship(type="VALUATED")
     private Set<Valuation> valuations;
-
 
 }

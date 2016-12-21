@@ -18,8 +18,6 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = false)
 public class MarginStatement extends Entity{
 
-
-
     private Double totalAmount;
 
     private String legalEntityId;
@@ -54,16 +52,5 @@ public class MarginStatement extends Entity{
 
     @Relationship(type = "IS_EXPECTED_IN", direction = Relationship.INCOMING)
     private Set<MarginCall> expectedMarginCalls;
-
-    public Set<MarginCall> getExpectedMarginCalls() {
-        return expectedMarginCalls;
-    }
-
-    public void setExpectedMarginCalls(Set<MarginCall> expectedMarginCalls) {
-        this.expectedMarginCalls = expectedMarginCalls;
-    }
-
-
-
 
 }

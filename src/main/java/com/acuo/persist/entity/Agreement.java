@@ -31,9 +31,9 @@ public class Agreement extends Entity {
     @Relationship(type = "COUNTERPARTY_SIGNS", direction = Relationship.INCOMING)
     private Set<LegalEntity> cptyEntitys;
 
-    //private Set<CLIENT_SIGNS> clientSignses;
+    //private Set<ClientSignsRelation> clientSignses;
 
-//    @Relationship(type = "CLIENT_SIGNS", direction = Relationship.INCOMING)
+//    @Relationship(type = "ClientSignsRelation", direction = Relationship.INCOMING)
 //    private LegalEntity legalEntity;
 
 }
