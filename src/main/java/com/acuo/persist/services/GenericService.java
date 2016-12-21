@@ -14,6 +14,7 @@ public abstract class GenericService<T> implements Service<T> {
 
     public static final int DEPTH_LIST = 0;
     public static final int DEPTH_ENTITY = -1;
+    public static final int DEPTH_CHILD = 1;
 
     @Inject
     protected Session session;
@@ -28,6 +29,12 @@ public abstract class GenericService<T> implements Service<T> {
     @Override
     public T find(Long id) {
         return session.load(getEntityType(), id, DEPTH_ENTITY);
+    }
+
+    @Transactional
+    @Override
+    public T find(Long id, int depth) {
+        return session.load(getEntityType(), id, depth);
     }
 
     @Transactional
@@ -52,7 +59,18 @@ public abstract class GenericService<T> implements Service<T> {
         String query = "MATCH (i:" + getEntityType().getSimpleName() + " {id: {id} }) return i";
         T entity = session.queryForObject(getEntityType(), query, ImmutableMap.of("id",id));
         if(entity != null)
-            return find(((Entity) entity).getId());
+            return find(((Entity) entity).getId(), DEPTH_ENTITY);
+        else
+            return null;
+    }
+
+    @Transactional
+    @Override
+    public T findById(String id, int depth) {
+        String query = "MATCH (i:" + getEntityType().getSimpleName() + " {id: {id} }) return i";
+        T entity = session.queryForObject(getEntityType(), query, ImmutableMap.of("id",id));
+        if(entity != null)
+            return find(((Entity) entity).getId(), depth);
         else
             return null;
     }
