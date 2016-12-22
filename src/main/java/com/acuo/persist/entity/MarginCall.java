@@ -3,6 +3,8 @@ package com.acuo.persist.entity;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
@@ -14,8 +16,8 @@ import java.util.Date;
 import java.util.Set;
 
 @NodeEntity
-@Data
-@EqualsAndHashCode(callSuper = false)
+@Getter
+@Setter
 public class MarginCall extends Entity{
 
     private String direction;
@@ -72,4 +74,30 @@ public class MarginCall extends Entity{
     private Set<MarginCall> marginCalls;
 
 
+    @Override
+    public String toString() {
+        return "MarginCall{" +
+                "direction='" + direction + '\'' +
+                ", callDate=" + callDate +
+                ", callAmount=" + callAmount +
+                ", callType='" + callType + '\'' +
+                ", IMRole='" + IMRole + '\'' +
+                ", valuationDate=" + valuationDate +
+                ", exposure=" + exposure +
+                ", pendingCollateral=" + pendingCollateral +
+                ", agreementId='" + agreementId + '\'' +
+                ", collateralValue=" + collateralValue +
+                ", deliverAmount=" + deliverAmount +
+                ", currency='" + currency + '\'' +
+                ", marginCallId='" + marginCallId + '\'' +
+                ", returnAmount=" + returnAmount +
+                ", status='" + status + '\'' +
+                ", parentRank=" + parentRank +
+                ", roundedDeliverAmount=" + roundedDeliverAmount +
+                ", roundedReturnAmount=" + roundedReturnAmount +
+                ", belowMTA=" + belowMTA +
+                ", firstStep=" + firstStep +
+                ", lastStep=" + lastStep +
+                '}';
+    }
 }
