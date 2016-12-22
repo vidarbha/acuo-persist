@@ -20,6 +20,8 @@ public class LegalEntity extends Entity {
 
     private String  holidayZone;
 
+    private String shortName;
+
     @Relationship(type = "PREFERENCES")
     private Set<Preferences> preferences;
 

@@ -47,4 +47,7 @@ public class Agreement extends Entity {
 
     //@Relationship(type = "COUNTERPARTY_SIGNS")
     //private Set<LegalEntity> counterparts;
+
+    @Relationship(type = "STEMS_FROM", direction = Relationship.INCOMING)
+    private  Set<MarginStatement> marginStatements;
 }
