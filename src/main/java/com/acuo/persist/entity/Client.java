@@ -18,16 +18,10 @@ public class Client extends Entity {
 
     private String name;
 
+    private String shortName;
+
     @Relationship(type = "DIRECTED_TO", direction = Relationship.INCOMING)
     private Set<MarginStatement> marginStatements;
-
-    public String getClientId() {
-        return clientId;
-    }
-
-    public String getName() {
-        return name;
-    }
 
     @Relationship(type = "MANAGE")
     private Set<Fund> funds;

@@ -1,14 +1,14 @@
 package com.acuo.persist.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.neo4j.ogm.annotation.EndNode;
 import org.neo4j.ogm.annotation.RelationshipEntity;
 import org.neo4j.ogm.annotation.StartNode;
 
 @RelationshipEntity(type="CLIENT_SIGNS")
-@Data
-@EqualsAndHashCode(callSuper = false)
+@Getter
+@Setter
 public class ClientSignsRelation extends Entity{
 
     @StartNode
