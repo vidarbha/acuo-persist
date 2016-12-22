@@ -1,11 +1,18 @@
 package com.acuo.persist.entity;
 
+import com.acuo.persist.neo4j.converters.CurrencyConverter;
+import com.acuo.persist.neo4j.converters.LocalDateConverter;
+import com.acuo.persist.neo4j.converters.LocalTimeConverter;
+import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
+import org.neo4j.ogm.annotation.typeconversion.Convert;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Set;
 
 @NodeEntity
@@ -13,27 +20,31 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = false)
 public class Agreement extends Entity {
 
-    private String key;
-
-    private String type;
-
     @Property(name="id")
     private String agreementId;
 
-    public String getKey() {
-        return key;
-    }
+    private String name;
 
-    public String getType() {
-        return type;
-    }
+    @Convert(LocalDateConverter.class)
+    private LocalDate date;
 
-    @Relationship(type = "COUNTERPARTY_SIGNS", direction = Relationship.INCOMING)
-    private Set<LegalEntity> cptyEntitys;
+    private String type;
 
-    //private Set<ClientSignsRelation> clientSignses;
+    @Convert(LocalTimeConverter.class)
+    private LocalTime notificationTime;
 
-//    @Relationship(type = "ClientSignsRelation", direction = Relationship.INCOMING)
-//    private LegalEntity legalEntity;
+    @Convert(CurrencyConverter.class)
+    private Currency currency;
 
+    //@Relationship(type = "CLIENT_SIGNS")
+    //private Set<ClientSignsRelation> clientSignsRelations;
+
+    //@Relationship(type = "COUNTERPARTY_SIGNS", direction = Relationship.INCOMING)
+    //private Set<LegalEntity> cptyEntitys;
+
+    //@Relationship(type = "CLIENT_SIGNS")
+    //private Set<LegalEntity> clients;
+
+    //@Relationship(type = "COUNTERPARTY_SIGNS")
+    //private Set<LegalEntity> counterparts;
 }

@@ -13,13 +13,22 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = false)
 public class LegalEntity extends Entity {
 
-    private String  holidayZone;
-
-    private String name;
-
     @Property(name="id")
     private String legalEntityId;
 
+    private String name;
+
+    private String  holidayZone;
+
+    @Relationship(type = "PREFERENCES")
+    private Set<Preferences> preferences;
+
     @Relationship(type = "CLIENT_SIGNS")
-    private Set<ClientSignsRelation> clientSignses;
+    private Set<ClientSignsRelation> clientSignsRelations;
+
+    @Relationship(type = "COUNTERPARTY_SIGNS")
+    private Set<CounterpartSignsRelation> counterpartSignsRelations;
+
+    @Relationship(type = "DIRECTED_TO", direction = Relationship.INCOMING)
+    private Set<MarginStatement> marginStatements;
 }

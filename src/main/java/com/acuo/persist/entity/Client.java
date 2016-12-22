@@ -11,7 +11,7 @@ import java.util.Set;
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Client extends Entity {
+public class Client extends Entity<Client> {
 
     @Property(name="id")
     private String clientId;
@@ -20,10 +20,7 @@ public class Client extends Entity {
 
     private String shortName;
 
-    @Relationship(type = "DIRECTED_TO", direction = Relationship.INCOMING)
-    private Set<MarginStatement> marginStatements;
-
-    @Relationship(type = "MANAGE")
-    private Set<Fund> funds;
+    @Relationship(type = "MANAGES")
+    private Set<LegalEntity> legalEntities;
 
 }

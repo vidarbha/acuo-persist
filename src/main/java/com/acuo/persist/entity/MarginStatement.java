@@ -11,6 +11,7 @@ import org.neo4j.ogm.annotation.typeconversion.DateString;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @NodeEntity
@@ -48,9 +49,9 @@ public class MarginStatement extends Entity{
     private Agreement agreement;
 
     @Relationship(type = "IS_RECEIVED_IN", direction = Relationship.INCOMING)
-    private Set<MarginCall> receviedMarginCalls;
+    private Set<MarginCall> receviedMarginCalls = new HashSet<>();
 
     @Relationship(type = "IS_EXPECTED_IN", direction = Relationship.INCOMING)
-    private Set<MarginCall> expectedMarginCalls;
+    private Set<MarginCall> expectedMarginCalls = new HashSet<>();
 
 }
