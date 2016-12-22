@@ -1,6 +1,8 @@
 package com.acuo.persist.entity;
 
+import com.acuo.persist.neo4j.converters.CurrencyConverter;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
+import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -44,6 +46,9 @@ public class MarginStatement extends Entity{
     private String marginStatementId;
 
     private String status;
+
+    @Convert(CurrencyConverter.class)
+    private Currency currency;
 
     @Relationship(type = "STEMS_FROM")
     private Agreement agreement;

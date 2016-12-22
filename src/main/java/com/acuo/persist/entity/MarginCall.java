@@ -11,6 +11,7 @@ import org.neo4j.ogm.annotation.typeconversion.DateString;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.Set;
 
 @NodeEntity
 @Data
@@ -66,6 +67,9 @@ public class MarginCall extends Entity{
 
     @Relationship(type = "LAST", direction = Relationship.OUTGOING)
     private Step lastStep;
+
+    @Relationship(type = "CHILD_OF", direction = Relationship.INCOMING)
+    private Set<MarginCall> marginCalls;
 
 
 }

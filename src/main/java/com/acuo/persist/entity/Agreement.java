@@ -6,6 +6,8 @@ import com.acuo.persist.neo4j.converters.LocalTimeConverter;
 import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
@@ -16,8 +18,8 @@ import java.time.LocalTime;
 import java.util.Set;
 
 @NodeEntity
-@Data
-@EqualsAndHashCode(callSuper = false)
+@Getter
+@Setter
 public class Agreement extends Entity {
 
     @Property(name="id")
@@ -50,4 +52,16 @@ public class Agreement extends Entity {
 
     @Relationship(type = "STEMS_FROM", direction = Relationship.INCOMING)
     private  Set<MarginStatement> marginStatements;
+
+    @Override
+    public String toString() {
+        return "Agreement{" +
+                "agreementId='" + agreementId + '\'' +
+                ", name='" + name + '\'' +
+                ", date=" + date +
+                ", type='" + type + '\'' +
+                ", notificationTime=" + notificationTime +
+                ", currency=" + currency +
+                '}';
+    }
 }

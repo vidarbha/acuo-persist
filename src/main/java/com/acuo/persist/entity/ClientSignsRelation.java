@@ -25,4 +25,14 @@ public class ClientSignsRelation extends Entity{
 
     private Double variationMarginBalance;
 
+    @Override
+    public String toString() {
+        return "ClientSignsRelation{" +
+                "agreement=" + agreement +
+                ", initialMarginBalance=" + initialMarginBalance +
+                ", rounding=" + rounding +
+                ", MTA=" + MTA +
+                ", variationMarginBalance=" + variationMarginBalance +
+                '}';
+    }
 }
