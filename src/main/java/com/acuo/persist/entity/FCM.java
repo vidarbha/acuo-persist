@@ -8,12 +8,15 @@ import org.neo4j.ogm.annotation.Property;
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class ClearingHouse extends Entity<ClearingHouse> {
+public class FCM extends Entity<FCM> {
 
     @Property(name = "id")
-    private String clearingHouseId;
+    private String fcmId;
+
     private String name;
+
     private String shortName;
+
     private String jurisdiction;
 
 }
