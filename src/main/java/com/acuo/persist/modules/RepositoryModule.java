@@ -22,6 +22,7 @@ public class RepositoryModule extends AbstractModule {
         bind(LegalEntityService.class).to(LegalEntityServiceImpl.class);
         bind(AgreementService.class).to(AgreementServiceImpl.class);
         bind(MarginStatementService.class).to(MarginStatementServiceImpl.class);
+        bind(CounterpartService.class).to(CounterpartServiceImpl.class);
     }
 
 }

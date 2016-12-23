@@ -9,7 +9,7 @@ import org.neo4j.ogm.annotation.NodeEntity;
 @EqualsAndHashCode(callSuper = false)
 public class Step extends Entity{
 
-    private String step;
+    private String status;
 
 
 }

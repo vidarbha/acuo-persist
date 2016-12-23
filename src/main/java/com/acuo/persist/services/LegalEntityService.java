@@ -5,5 +5,7 @@ import com.acuo.persist.entity.LegalEntity;
 
 public interface LegalEntityService  extends Service<LegalEntity> {
 
-    LegalEntity getLegalEntity(Agreement agreement);
+    LegalEntity getClientLegalEntity(Agreement agreement);
+
+    LegalEntity getCtpyLegalEntity(Agreement agreement);
 }

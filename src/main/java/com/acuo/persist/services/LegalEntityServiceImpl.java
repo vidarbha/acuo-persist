@@ -11,8 +11,14 @@ public class LegalEntityServiceImpl extends GenericService<LegalEntity> implemen
         return LegalEntity.class;
     }
 
-    public LegalEntity getLegalEntity(Agreement agreement)
+    public LegalEntity getClientLegalEntity(Agreement agreement)
     {
         return  session.queryForObject(LegalEntity.class, "match (l:LegalEntity)-[r:ClientSignsRelation]->(a:Agreement {id:{id}}) return l", ImmutableMap.of("id",agreement.getAgreementId()) );
     }
+
+    public LegalEntity getCtpyLegalEntity(Agreement agreement)
+    {
+        return  session.queryForObject(LegalEntity.class, "match (l:LegalEntity)-[r:COUNTERPARTY_SIGNS]->(a:Agreement {id:{id}}) return l", ImmutableMap.of("id",agreement.getAgreementId()) );
+    }
+
 }
