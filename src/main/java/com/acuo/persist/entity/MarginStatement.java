@@ -19,13 +19,10 @@ import java.util.Set;
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class MarginStatement extends Entity{
+public class MarginStatement extends Entity<MarginStatement> {
 
-    private Double totalAmount;
-
-    private String legalEntityId;
-
-    private String direction;
+    @Property(name="id")
+    private String statementId;
 
     @Convert(LocalDateConverter.class)
     private LocalDate date;
@@ -34,21 +31,34 @@ public class MarginStatement extends Entity{
 
     private Double productCashFlows;
 
+    private Double PAI;
+
     private Double feesCommissions;
 
     private Double pendingCash;
 
-    private Double PAI;
-
     private Double pendingNonCash;
 
-    @Property(name="id")
-    private String marginStatementId;
+    private String direction;
 
-    private String status;
+    private String legalEntityId;
 
     @Convert(CurrencyConverter.class)
     private Currency currency;
+
+    private Integer reconcileCount;
+
+    private Integer pledgeCount;
+
+    private Integer disputeCount;
+
+    private Double totalAmount;
+
+    private Integer expectedCount;
+
+    private Integer unreconCount;
+
+    private String status;
 
     @Relationship(type = "STEMS_FROM")
     private Agreement agreement;
