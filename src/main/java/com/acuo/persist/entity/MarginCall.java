@@ -1,18 +1,16 @@
 package com.acuo.persist.entity;
 
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import com.acuo.persist.neo4j.converters.LocalDateTimeConverter;
 import lombok.Getter;
 import lombok.Setter;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
-import org.neo4j.ogm.annotation.typeconversion.DateString;
 
 import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @NodeEntity
@@ -38,8 +36,8 @@ public class MarginCall extends Entity{
 
     private Double pendingCollateral;
 
-//    @DateString(value = "dd/MM/yy HH:mm:ss")
-//    private Date notificationTime;
+    @Convert(LocalDateTimeConverter.class)
+    private LocalDateTime notificationTime;
 
     private String agreementId;
 
