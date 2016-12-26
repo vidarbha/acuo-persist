@@ -37,6 +37,12 @@ public class Agreement extends Entity<Agreement> {
     @Convert(CurrencyConverter.class)
     private Currency currency;
 
+    @Relationship(type = "CLIENT_SIGNS", direction = Relationship.INCOMING)
+    private ClientSignsRelation clientSignsRelation;
+
+    @Relationship(type = "COUNTERPARTY_SIGNS", direction = Relationship.INCOMING)
+    private CounterpartSignsRelation counterpartSignsRelation;
+
     @Relationship(type = "STEMS_FROM", direction = Relationship.INCOMING)
     private  Set<MarginStatement> marginStatements;
 

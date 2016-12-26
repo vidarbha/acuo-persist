@@ -9,7 +9,7 @@ import org.neo4j.ogm.annotation.StartNode;
 @RelationshipEntity(type="CLIENT_SIGNS")
 @Getter
 @Setter
-public class ClientSignsRelation extends Entity{
+public class ClientSignsRelation extends Entity<ClientSignsRelation> {
 
     @StartNode
     private LegalEntity legalEntity;
