@@ -18,7 +18,7 @@ import java.util.Set;
 @NodeEntity
 @Getter
 @Setter
-public class Agreement extends Entity {
+public class Agreement extends Entity<Agreement> {
 
     @Property(name="id")
     private String agreementId;

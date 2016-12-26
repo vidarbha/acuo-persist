@@ -12,9 +12,9 @@ import java.util.Collections;
 
 public abstract class GenericService<T> implements Service<T> {
 
-    public static final int DEPTH_LIST = 0;
-    public static final int DEPTH_ENTITY = -1;
-    public static final int DEPTH_CHILD = 1;
+    private static final int DEPTH_LIST = 0;
+    private static final int DEPTH_ENTITY = 1;
+    private static final int DEPTH_CHILD = 1;
 
     @Inject
     protected Session session;
@@ -47,7 +47,7 @@ public abstract class GenericService<T> implements Service<T> {
     @Override
     public T createOrUpdate(T entity) {
         ArgChecker.notNull(entity, "entity");
-        session.save(entity, DEPTH_ENTITY);
+        session.save(entity, -1);
         return find(((Entity) entity).getId());
     }
 

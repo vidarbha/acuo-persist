@@ -7,6 +7,4 @@ public interface ImportService {
 
     void reload();
 
-    void reload(String... fileNames);
-
 }
