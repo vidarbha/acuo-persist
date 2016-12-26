@@ -1,14 +1,17 @@
 package com.acuo.persist.core;
 
+import com.acuo.persist.utils.GraphData;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Resources;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -16,6 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Slf4j
 public class CypherFileSpliter {
 
     private static final String ENCODING = "UTF-8";
@@ -53,10 +57,11 @@ public class CypherFileSpliter {
     public List<String> splitByDelimiter(String fileName, String delim) {
         try {
             String filePath = String.format(directoryTemplate, workingDirectory, fileName);
-            String content = Resources.toString(Resources.getResource(filePath), Charsets.UTF_8);
+            String content = GraphData.readFile(filePath);
             return Stream.of(content).map(w -> w.split(delim)).flatMap(Arrays::stream).filter(x -> !x.trim().isEmpty())
                     .map(x -> chomp(x)).collect(Collectors.toList());
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
+            log.warn(e.getMessage());
             return ImmutableList.of();
         }
     }
