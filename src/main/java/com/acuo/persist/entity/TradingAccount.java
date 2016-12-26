@@ -13,12 +13,14 @@ import java.util.Set;
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Account extends Entity{
+public class TradingAccount extends Entity<TradingAccount> {
 
     @Index(unique = true)
     private String accountId;
 
     private String name;
+
+    private String shortName;
 
     @Relationship(type = "POSITIONS_ON", direction = Relationship.OUTGOING)
     private Set<Trade> trades = new HashSet<>();

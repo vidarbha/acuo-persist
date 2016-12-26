@@ -52,7 +52,7 @@ public abstract class Trade<T extends Trade> extends Entity {
     private Set<Valuation> valuations = new HashSet<>();
 
     @Relationship(type = "POSITIONS_ON", direction = Relationship.INCOMING)
-    private Account account;
+    private TradingAccount account;
 
 
 }

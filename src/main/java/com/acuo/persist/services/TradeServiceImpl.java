@@ -14,12 +14,12 @@ public class TradeServiceImpl<T extends Trade> extends GenericService<T> impleme
 
     @Override
     public Iterable<T> findBilateralTradesByClientId(String clientId) {
-        /*String query =  "MATCH (c:Client {id:{id}})-[:MANAGES]->(le:LegalEntity)-[:HAS]->(:Account)-[:POSITIONS_ON]->(t:Trade) " +
+        /*String query =  "MATCH (c:Client {id:{id}})-[:MANAGES]->(le:LegalEntity)-[:HAS]->(:TradingAccount)-[:POSITIONS_ON]->(t:Trade) " +
                         "MATCH (t)-[:FOLLOWS]->(a:Agreement) " +
                         "WHERE a.type='bilateralOTC' RETURN t";*/
         String query =  "MATCH (:Client {id:{id}}) " +
                         "-[:MANAGES]-> (:LegalEntity) " +
-                        "-[:HAS]-> (:Account) " +
+                        "-[:HAS]-> (:TradingAccount) " +
                         "-[:POSITIONS_ON]-> (trade:Trade) " +
                         "WITH trade " +
                         "MATCH p=(trade)-[r*0..1]-() RETURN trade, nodes(p), rels(p)";

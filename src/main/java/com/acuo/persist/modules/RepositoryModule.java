@@ -11,7 +11,7 @@ public class RepositoryModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(AccountService.class).to(AccountServiceImpl.class);
+        bind(TradingAccountService.class).to(TradingAccountServiceImpl.class);
         bind(new TypeLiteral<TradeService<Trade>>(){}).to(new TypeLiteral<TradeServiceImpl<Trade>>(){});
         bind(new TypeLiteral<TradeService<IRS>>(){}).to(new TypeLiteral<TradeServiceImpl<IRS>>(){});
         bind(new TypeLiteral<TradeService<FRA>>(){}).to(new TypeLiteral<TradeServiceImpl<FRA>>(){});
