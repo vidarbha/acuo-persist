@@ -15,7 +15,8 @@ public interface DataImporter {
             "bilateralAgreements",
             "mstatements",
             "initmcexp",
-            "initmc"
+            "initmc",
+            "settings"
     };
 
     void importFiles(String... fileNames);
