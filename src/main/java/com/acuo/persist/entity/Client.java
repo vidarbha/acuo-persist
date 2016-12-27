@@ -19,4 +19,7 @@ public class Client extends Firm {
     @Labels
     private final List<String> labels = ImmutableList.of("Client");
 
+    @Relationship(type = "HAS")
+    private Set<Settings> settings;
+
 }
