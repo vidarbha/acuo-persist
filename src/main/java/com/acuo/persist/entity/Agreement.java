@@ -43,6 +43,9 @@ public class Agreement extends Entity<Agreement> {
     @Relationship(type = "COUNTERPARTY_SIGNS", direction = Relationship.INCOMING)
     private CounterpartSignsRelation counterpartSignsRelation;
 
+    @Relationship(type = "COUNTERPARTY_SIGNS", direction = Relationship.INCOMING)
+    private FCM fcm;
+
     @Relationship(type = "STEMS_FROM", direction = Relationship.INCOMING)
     private  Set<MarginStatement> marginStatements;
 

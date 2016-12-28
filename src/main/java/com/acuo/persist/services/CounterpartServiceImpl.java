@@ -12,6 +12,6 @@ public class CounterpartServiceImpl extends GenericService<Counterpart> implemen
 
     public Counterpart getCounterpart(LegalEntity legalEntity)
     {
-        return  session.queryForObject(Counterpart.class, "match (cp:Counterpart)-[r:manages]->(l:LegalEntity {id:{id}}) return cp", ImmutableMap.of("id",legalEntity.getLegalEntityId()) );
+        return  session.queryForObject(Counterpart.class, "match (cp:Counterpart)-[r:MANAGES]->(l:LegalEntity {id:{id}}) return cp", ImmutableMap.of("id",legalEntity.getLegalEntityId()) );
     }
 }
