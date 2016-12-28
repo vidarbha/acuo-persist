@@ -16,49 +16,47 @@ import java.util.Set;
 @NodeEntity
 @Getter
 @Setter
-public class MarginCall extends Entity{
-
-    private String direction;
-
-    @Convert(LocalDateConverter.class)
-    private LocalDate callDate;
-
-    private Double callAmount;
-
-    private String callType;
-
-    private String IMRole;
-
-    @Convert(LocalDateConverter.class)
-    private LocalDate valuationDate;
-
-    private Double exposure;
-
-    private Double pendingCollateral;
-
-    @Convert(LocalDateTimeConverter.class)
-    private LocalDateTime notificationTime;
-
-    private String agreementId;
-
-    private Double collateralValue;
-
-    private Double deliverAmount;
-
-    private String currency;
+public class MarginCall extends Entity<MarginCall> {
 
     @Property(name="id")
     private String marginCallId;
 
+    @Convert(LocalDateConverter.class)
+    private LocalDate callDate;
+
+    private String callType;
+
+    private String direction;
+
+    @Convert(LocalDateConverter.class)
+    private LocalDate valuationDate;
+
+    private String currency;
+
+    private Double excessAmount;
+
+    private Double balanceAmount;
+
+    private Double deliverAmount;
+
     private Double returnAmount;
 
-    private String status;
+    private Double pendingCollateral;
+
+    private Double exposure;
+
+    private String IMRole;
 
     private Integer parentRank;
 
-    private Double roundedDeliverAmount;
+    private String status;
+
+    @Convert(LocalDateTimeConverter.class)
+    private LocalDateTime notificationTime;
 
     private Double roundedReturnAmount;
+
+    private Double roundedDeliverAmount;
 
     private Integer belowMTA;
 
@@ -77,14 +75,13 @@ public class MarginCall extends Entity{
         return "MarginCall{" +
                 "direction='" + direction + '\'' +
                 ", callDate=" + callDate +
-                ", callAmount=" + callAmount +
+                ", excessAmount=" + excessAmount +
+                ", balanceAmount=" + balanceAmount +
                 ", callType='" + callType + '\'' +
                 ", IMRole='" + IMRole + '\'' +
                 ", valuationDate=" + valuationDate +
                 ", exposure=" + exposure +
                 ", pendingCollateral=" + pendingCollateral +
-                ", agreementId='" + agreementId + '\'' +
-                ", collateralValue=" + collateralValue +
                 ", deliverAmount=" + deliverAmount +
                 ", currency='" + currency + '\'' +
                 ", marginCallId='" + marginCallId + '\'' +
