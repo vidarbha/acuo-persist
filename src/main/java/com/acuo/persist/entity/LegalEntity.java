@@ -1,7 +1,6 @@
 package com.acuo.persist.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
@@ -9,9 +8,11 @@ import org.neo4j.ogm.annotation.Relationship;
 import java.util.Set;
 
 @NodeEntity
-@Data
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = false)
-public class LegalEntity extends Entity {
+@ToString(exclude="firm")
+public class LegalEntity extends Entity<LegalEntity> {
 
     @Property(name="id")
     private String legalEntityId;
@@ -33,4 +34,7 @@ public class LegalEntity extends Entity {
 
     @Relationship(type = "DIRECTED_TO", direction = Relationship.INCOMING)
     private Set<MarginStatement> marginStatements;
+
+    @Relationship(type = "MANAGES", direction = Relationship.INCOMING)
+    private Firm firm;
 }
