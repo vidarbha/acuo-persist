@@ -22,8 +22,11 @@ public class TradingAccount extends Entity<TradingAccount> {
 
     private String shortName;
 
-    @Relationship(type = "POSITIONS_ON", direction = Relationship.OUTGOING)
+    @Relationship(type = "POSITIONS_ON")
     private Set<Trade> trades = new HashSet<>();
+
+    @Relationship(type = "ACCESSES")
+    private Set<CustodianAccount> custodianAccounts;
 
     public boolean add(Trade trade) {
         return trades.add(trade);

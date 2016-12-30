@@ -7,8 +7,8 @@ import org.neo4j.ogm.session.SessionFactory;
 import javax.inject.Provider;
 
 /*@Configuration
-@ComponentScan(basePackages = "com.acuo.persist.spring")
-@EnableNeo4jRepositories(basePackages = "com.acuo.persist.spring")
+@ComponentScan(basePackages = "com.acuo.core.spring")
+@EnableNeo4jRepositories(basePackages = "com.acuo.core.spring")
 @EnableTransactionManagement
 @EnableGuiceModules*/
 public class MyConfiguration {

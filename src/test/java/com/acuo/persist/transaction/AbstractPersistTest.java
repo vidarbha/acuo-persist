@@ -1,5 +1,6 @@
-package com.acuo.persist;
+package com.acuo.persist.transaction;
 
+import com.acuo.persist.entity.Foo;
 import com.acuo.persist.modules.Neo4jPersistModule;
 import com.acuo.persist.core.Neo4jPersistService;
 import com.acuo.persist.modules.ConfigurationTestModule;

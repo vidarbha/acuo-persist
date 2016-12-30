@@ -3,6 +3,7 @@ package com.acuo.persist.modules;
 import com.acuo.persist.configuration.PropertiesHelper;
 import com.acuo.persist.core.Neo4jPersistService;
 import com.acuo.persist.core.Neo4jSessionFactory;
+import com.acuo.persist.transaction.Neo4jLocalTxnInterceptor;
 import com.google.common.util.concurrent.Service;
 import com.google.inject.matcher.AbstractMatcher;
 import com.google.inject.multibindings.Multibinder;

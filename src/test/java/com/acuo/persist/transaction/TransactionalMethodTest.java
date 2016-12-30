@@ -1,5 +1,6 @@
-package com.acuo.persist;
+package com.acuo.persist.transaction;
 
+import com.acuo.persist.entity.Foo;
 import com.google.inject.persist.Transactional;
 import org.junit.Test;
 import org.neo4j.ogm.session.Session;

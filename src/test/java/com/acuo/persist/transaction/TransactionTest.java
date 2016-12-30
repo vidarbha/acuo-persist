@@ -1,4 +1,4 @@
-package com.acuo.persist;
+package com.acuo.persist.transaction;
 
 import com.google.inject.persist.Transactional;
 import org.junit.Ignore;

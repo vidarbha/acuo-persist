@@ -1,4 +1,4 @@
-package com.acuo.persist;
+package com.acuo.persist.transaction;
 
 import com.google.inject.ProvisionException;
 import org.junit.Ignore;

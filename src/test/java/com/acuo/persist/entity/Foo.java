@@ -1,4 +1,4 @@
-package com.acuo.persist;
+package com.acuo.persist.entity;
 
 import com.acuo.persist.entity.Entity;
 import com.google.common.base.Objects;

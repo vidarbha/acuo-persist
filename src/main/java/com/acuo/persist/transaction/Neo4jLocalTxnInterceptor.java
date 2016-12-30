@@ -1,4 +1,4 @@
-package com.acuo.persist.modules;
+package com.acuo.persist.transaction;
 
 import com.acuo.persist.core.Neo4jPersistService;
 import com.google.inject.persist.Transactional;
@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import java.lang.reflect.Method;
 
 @Slf4j
-class Neo4jLocalTxnInterceptor implements MethodInterceptor {
+public class Neo4jLocalTxnInterceptor implements MethodInterceptor {
 
     @Inject
     Neo4jPersistService sessionProvider;

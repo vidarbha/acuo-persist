@@ -5,7 +5,7 @@ import org.neo4j.ogm.annotation.Transient;
 @Transient
 public interface DataImporter {
 
-    static final String[] ALL_FILES = {
+    String[] ALL_FILES = {
             "clients",
             "legalentities",
             "tradingAccounts",
@@ -13,6 +13,13 @@ public interface DataImporter {
             "fcms",
             "clearedAgreements",
             "bilateralAgreements",
+            "assetCategories",
+            "assetInventory",
+            "custodians",
+            "custodianAccounts",
+            "counterpartCustodians",
+            "counterpartCustodianAccounts",
+            "custodianAssets",
             "mstatements",
             "initmcexp",
             "initmc",
