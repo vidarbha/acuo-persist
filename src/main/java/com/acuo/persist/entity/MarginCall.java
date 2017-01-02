@@ -2,8 +2,7 @@ package com.acuo.persist.entity;
 
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import com.acuo.persist.neo4j.converters.LocalDateTimeConverter;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
@@ -14,8 +13,9 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @NodeEntity
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper = false, exclude = {"marginCalls"})
+@ToString(exclude = {"marginCalls"})
 public class MarginCall extends Entity<MarginCall> {
 
     @Property(name="id")
@@ -49,8 +49,6 @@ public class MarginCall extends Entity<MarginCall> {
 
     private Integer parentRank;
 
-    private String status;
-
     @Convert(LocalDateTimeConverter.class)
     private LocalDateTime notificationTime;
 
@@ -60,39 +58,12 @@ public class MarginCall extends Entity<MarginCall> {
 
     private Integer belowMTA;
 
-    @Relationship(type = "FIRST", direction = Relationship.OUTGOING)
+    @Relationship(type = "FIRST")
     private Step firstStep;
 
-    @Relationship(type = "LAST", direction = Relationship.OUTGOING)
+    @Relationship(type = "LAST")
     private Step lastStep;
 
     @Relationship(type = "CHILD_OF", direction = Relationship.INCOMING)
     private Set<MarginCall> marginCalls;
-
-
-    @Override
-    public String toString() {
-        return "MarginCall{" +
-                "direction='" + direction + '\'' +
-                ", callDate=" + callDate +
-                ", excessAmount=" + excessAmount +
-                ", balanceAmount=" + balanceAmount +
-                ", callType='" + callType + '\'' +
-                ", IMRole='" + IMRole + '\'' +
-                ", valuationDate=" + valuationDate +
-                ", exposure=" + exposure +
-                ", pendingCollateral=" + pendingCollateral +
-                ", deliverAmount=" + deliverAmount +
-                ", currency='" + currency + '\'' +
-                ", marginCallId='" + marginCallId + '\'' +
-                ", returnAmount=" + returnAmount +
-                ", status='" + status + '\'' +
-                ", parentRank=" + parentRank +
-                ", roundedDeliverAmount=" + roundedDeliverAmount +
-                ", roundedReturnAmount=" + roundedReturnAmount +
-                ", belowMTA=" + belowMTA +
-                ", firstStep=" + firstStep +
-                ", lastStep=" + lastStep +
-                '}';
-    }
 }

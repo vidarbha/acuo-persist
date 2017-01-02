@@ -1,5 +1,6 @@
 package com.acuo.persist.services;
 
+import com.acuo.persist.entity.CallStatus;
 import com.acuo.persist.spring.Call;
 import com.acuo.persist.entity.MarginStatement;
 import com.google.common.collect.ImmutableMap;
@@ -9,6 +10,16 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
     @Override
     public Class<MarginStatement> getEntityType() {
         return MarginStatement.class;
+    }
+
+    @Override
+    public Iterable<MarginStatement> allStatementsFor(String clientId, CallStatus... statuses) {
+        String query =
+                "MATCH p=(:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[r:CLIENT_SIGNS]->(a:Agreement)<-[:STEMS_FROM]-" +
+                "(m:MarginStatement)<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
+                "WHERE step.status IN {statuses} " +
+                "RETURN m, nodes(p), rels(p)";
+        return session.query(MarginStatement.class, query, ImmutableMap.of("clientId", clientId, "statuses", statuses));
     }
 
     @Override
