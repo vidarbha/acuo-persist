@@ -8,6 +8,8 @@ public interface MarginStatementService extends Service<MarginStatement> {
 
     Iterable<MarginStatement> allStatementsFor(String clientId, CallStatus... statuses);
 
+    MarginStatement statementFor(String marginStatementId, CallStatus... statuses);
+
     Iterable<Call> allCallsFor(String clientId, String dateTime);
 
 }
