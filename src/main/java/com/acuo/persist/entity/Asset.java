@@ -51,7 +51,7 @@ public class Asset extends Entity<Asset> {
     @Relationship(type = "HOLDS", direction = Relationship.INCOMING)
     private Holds holds;
 
-    @Relationship(type = "EARMARKED")
+    @Relationship(type = "DESELECT")
     private MarginCall earmarkedMarginCall;
 
 }
