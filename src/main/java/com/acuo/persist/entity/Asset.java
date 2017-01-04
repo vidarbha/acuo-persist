@@ -15,8 +15,8 @@ import java.time.LocalDate;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"possesses","holds"})
-@ToString(exclude = {"possesses","holds"})
+@EqualsAndHashCode(callSuper = false, exclude = {"possesses","holds", "earmarkedMarginCall"})
+@ToString(exclude = {"possesses","holds", "earmarkedMarginCall"})
 public class Asset extends Entity<Asset> {
 
     @Property(name = "id")
@@ -50,5 +50,8 @@ public class Asset extends Entity<Asset> {
 
     @Relationship(type = "HOLDS", direction = Relationship.INCOMING)
     private Holds holds;
+
+    @Relationship(type = "DESELECT")
+    private MarginCall earmarkedMarginCall;
 
 }
