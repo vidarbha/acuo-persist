@@ -6,7 +6,7 @@ import org.neo4j.ogm.annotation.Transient;
 public interface DataImporter {
 
     String[] ALL_FILES = {
-            "clients",
+            "firms",
             "legalentities",
             "tradingAccounts",
             "clearingHouses",
