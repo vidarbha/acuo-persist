@@ -22,4 +22,9 @@ public class Neo4jImportService implements ImportService {
         importer.importFiles(DataImporter.ALL_FILES);
     }
 
+    @Override
+    public void load(String fileName) {
+        importer.importFiles(fileName);
+    }
+
 }
