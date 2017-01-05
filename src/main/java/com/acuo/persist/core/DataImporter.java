@@ -24,7 +24,7 @@ public interface DataImporter {
             "initmcexp",
             "initmc",
             "settings",
-            "assetSegmentStatuses"
+            "assetTransfer"
     };
 
     void importFiles(String... fileNames);
