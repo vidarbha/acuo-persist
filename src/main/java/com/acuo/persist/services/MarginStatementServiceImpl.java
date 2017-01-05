@@ -23,6 +23,15 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
     }
 
     @Override
+    public Iterable<MarginStatement> allStatementsForClient(String clientId)
+    {
+        String query =
+                "MATCH p=(:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[r:CLIENT_SIGNS]->(a:Agreement)<-[:STEMS_FROM]-" +
+                        "(m:MarginStatement) <-[]-(mc:MarginCall)-[:LAST]->(step:Step) RETURN m, nodes(p), rels(p)";
+        return session.query(MarginStatement.class, query, ImmutableMap.of("clientId", clientId));
+    }
+
+    @Override
     public MarginStatement statementFor(String marginStatementId, CallStatus... statuses) {
         String query =
                 "MATCH p=(:Client)-[:MANAGES]->(l:LegalEntity)-[r:CLIENT_SIGNS]->(a:Agreement)<-[:STEMS_FROM]-" +
