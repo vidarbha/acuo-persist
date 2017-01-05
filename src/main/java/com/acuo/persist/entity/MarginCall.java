@@ -14,8 +14,8 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"marginCalls"})
-@ToString(exclude = {"marginCalls"})
+@EqualsAndHashCode(callSuper = false, exclude = {"marginCalls", "agreement"})
+@ToString(exclude = {"marginCalls", "agreement"})
 public class MarginCall extends Entity<MarginCall> {
 
     @Property(name="id")
@@ -66,4 +66,8 @@ public class MarginCall extends Entity<MarginCall> {
 
     @Relationship(type = "CHILD_OF", direction = Relationship.INCOMING)
     private Set<MarginCall> marginCalls;
+
+    @Relationship(type = "STEMS_FROM", direction = Relationship.OUTGOING)
+    private Agreement agreement;
+
 }
