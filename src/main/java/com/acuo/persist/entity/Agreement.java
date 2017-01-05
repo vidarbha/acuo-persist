@@ -49,6 +49,8 @@ public class Agreement extends Entity<Agreement> {
     @Relationship(type = "STEMS_FROM", direction = Relationship.INCOMING)
     private  Set<MarginStatement> marginStatements;
 
+    private String counterpartCustodian;
+
     @Override
     public String toString() {
         return "Agreement{" +
@@ -58,6 +60,7 @@ public class Agreement extends Entity<Agreement> {
                 ", type='" + type + '\'' +
                 ", notificationTime=" + notificationTime +
                 ", currency=" + currency +
+                ", counterpartCustodian=" + counterpartCustodian +
                 '}';
     }
 }

@@ -25,6 +25,8 @@ public class RepositoryModule extends AbstractModule {
         bind(CounterpartService.class).to(CounterpartServiceImpl.class);
         bind(AssetService.class).to(AssetServiceImpl.class);
         bind(MarginCallService.class).to(MarginCallServiceImpl.class);
+        bind(AssetTransferService.class).to(AssetTransferServiceImpl.class);
+        bind(CustodianAccountService.class).to(CustodianAccountServiceImpl.class);
     }
 
 }
