@@ -26,6 +26,7 @@ public class Neo4jSessionFactory implements Provider<SessionFactory> {
                         @Named(PropertiesHelper.NEO4J_OGM_PASSWORD) String password,
                         Neo4jPersistModule.Packages packages) {
         log.info("Creating a Neo4j Session Factory using driver [{}] and url[{}]", driver, url);
+        if ("".equals(url)) url = null;
         this.persistencePackages = packages.value();
         this.configuration = new Configuration();
         this.configuration.autoIndexConfiguration().setAutoIndex("assert");
