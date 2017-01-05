@@ -10,8 +10,8 @@ import java.util.Set;
 @NodeEntity
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false)
-@ToString(exclude="firm")
+@EqualsAndHashCode(callSuper = false, exclude={"firm"})
+@ToString(exclude={"firm"})
 public class LegalEntity extends Entity<LegalEntity> {
 
     @Property(name="id")
