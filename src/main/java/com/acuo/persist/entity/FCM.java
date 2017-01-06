@@ -9,7 +9,7 @@ import org.neo4j.ogm.annotation.Property;
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class FCM extends Entity<FCM> {
+public class FCM extends LegalEntity {
 
     @Index(unique = true, primary = true)
     @Property(name = "id")

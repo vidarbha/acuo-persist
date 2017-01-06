@@ -61,10 +61,6 @@ public class MarginStatement extends Entity<MarginStatement> {
     @Relationship(type = "STEMS_FROM")
     private Agreement agreement;
 
-    @Relationship(type = "IS_RECEIVED_IN", direction = Relationship.INCOMING)
-    private Set<MarginCall> receviedMarginCalls = new HashSet<>();
-
-    @Relationship(type = "IS_EXPECTED_IN", direction = Relationship.INCOMING)
-    private Set<MarginCall> expectedMarginCalls = new HashSet<>();
-
+    @Relationship(type = "PART_OF", direction = Relationship.INCOMING)
+    private Set<MarginCall> marginCalls = new HashSet<>();
 }
