@@ -17,7 +17,6 @@ public interface DataImporter {
             "assetInventory",
             "custodians",
             "custodianAccounts",
-            "counterpartCustodians",
             "counterpartCustodianAccounts",
             "custodianAssets",
             "mstatements",

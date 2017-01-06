@@ -14,7 +14,7 @@ import org.neo4j.ogm.annotation.StartNode;
 public class Possesses extends Entity<Possesses>{
 
     @StartNode
-    Client client;
+    ClientAsset clientAsset;
 
     @EndNode
     Asset asset;

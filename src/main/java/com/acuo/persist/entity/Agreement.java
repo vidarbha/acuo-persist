@@ -49,7 +49,7 @@ public class Agreement extends Entity<Agreement> {
     @Relationship(type = "STEMS_FROM", direction = Relationship.INCOMING)
     private  Set<MarginStatement> marginStatements;
 
-    private String counterpartCustodian;
+    private String FCMCustodian;
 
     @Override
     public String toString() {
@@ -60,7 +60,7 @@ public class Agreement extends Entity<Agreement> {
                 ", type='" + type + '\'' +
                 ", notificationTime=" + notificationTime +
                 ", currency=" + currency +
-                ", counterpartCustodian=" + counterpartCustodian +
+                ", FCMCustodian=" + FCMCustodian +
                 '}';
     }
 }
