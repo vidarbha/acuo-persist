@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public class LocalDateTimeConverter implements AttributeConverter<LocalDateTime, String> {
 
-    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss");
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd'T'HH:mm:ss.SSS");
 
     @Override
     public String toGraphProperty(LocalDateTime value) {

@@ -11,7 +11,7 @@ public class LocalDateTimeConverterTest {
     private LocalDateTimeConverter converter  = new LocalDateTimeConverter();
 
     private LocalDateTime dateTime = LocalDateTime.of(2016, 12, 23, 19, 0, 0);
-    private String dateString = "23/12/16 19:00:00";
+    private String dateString = "2016/12/23T19:00:00.000";
 
     @Test
     public void toGraphProperty() throws Exception {
