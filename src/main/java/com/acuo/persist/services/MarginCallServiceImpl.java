@@ -37,7 +37,9 @@ public class MarginCallServiceImpl extends GenericService<MarginCall> implements
 
     @Override
     public MarginStatement statementOf(String callId) {
-        String query = "MATCH p=(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement)<-[]-(mc:MarginCall {id:{callId}}) RETURN m, nodes(p), rels(p)";
+        String query = "MATCH (m:MarginStatement)<-[]-(mc:MarginCall {id:{callId}}) " +
+                        "WITH m " +
+                        "MATCH p=(f:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m)<-[]-(mc:MarginCall) RETURN m, nodes(p), rels(p)";
         return session.queryForObject(MarginStatement.class, query, ImmutableMap.of("callId", callId));
     }
 }
