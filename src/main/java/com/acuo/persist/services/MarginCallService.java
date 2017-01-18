@@ -10,5 +10,7 @@ public interface MarginCallService extends Service<MarginCall>  {
 
     Iterable<MarginCall> allCallsFor(String clientId, CallStatus... statuses);
 
-    MarginStatement statementOf(String callId);
+    Iterable<MarginCall> statementForExpected(String marginStatementId);
+
+    Iterable<MarginCall> allCallForReconciled(String clientId);
 }

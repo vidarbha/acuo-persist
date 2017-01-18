@@ -35,11 +35,21 @@ public class MarginCallServiceImpl extends GenericService<MarginCall> implements
         return session.query(MarginCall.class, query, ImmutableMap.of("clientId", clientId, "statuses", statuses));
     }
 
+
+
     @Override
-    public MarginStatement statementOf(String callId) {
-        String query = "MATCH (m:MarginStatement)<-[*1..2]-(mc:MarginCall {id:{callId}}) " +
-                        "WITH m " +
-                        "MATCH p=(f:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m)<-[*1..2]-(mc:MarginCall) RETURN m, nodes(p), rels(p)";
-        return session.queryForObject(MarginStatement.class, query, ImmutableMap.of("callId", callId));
+    public Iterable<MarginCall> statementForExpected(String marginStatementId)
+    {
+        String query = "MATCH (:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement {id:{msId}})<-[]-(mc1:MarginCall)-[:LAST]->(step:Step {status:'Unrecon'})" +
+                "MATCH (mc2:MarginCall)<-[MATCHED_TO_EXPECTED]-(mc1) " +
+                "return mc2";
+        return session.query(MarginCall.class, query, ImmutableMap.of("msId", marginStatementId));
+    }
+
+    @Override
+    public Iterable<MarginCall> allCallForReconciled(String marginStatementId)
+    {
+        String query = "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement {id:{msId}})<-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step) WHERE step.status IN ['Reconciled'] RETURN mc";
+        return session.query(MarginCall.class, query, ImmutableMap.of("msId", marginStatementId));
     }
 }
