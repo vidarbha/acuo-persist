@@ -54,5 +54,8 @@ public abstract class Trade<T extends Trade> extends Entity {
     @Relationship(type = "POSITIONS_ON", direction = Relationship.INCOMING)
     private TradingAccount account;
 
+    @Relationship(type = "BELONGS_TO")
+    private Portfolio portfolio;
+
 
 }
