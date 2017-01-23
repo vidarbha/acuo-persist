@@ -25,6 +25,12 @@ public class ClientSignsRelation extends Entity<ClientSignsRelation> {
 
     private Double variationMarginBalance;
 
+    private Double variationPending;
+
+    private Double initialPending;
+
+    private Double threshold;
+
     @Override
     public String toString() {
         return "ClientSignsRelation{" +
@@ -33,6 +39,9 @@ public class ClientSignsRelation extends Entity<ClientSignsRelation> {
                 ", rounding=" + rounding +
                 ", MTA=" + MTA +
                 ", variationMarginBalance=" + variationMarginBalance +
+                ", variationPending=" + variationPending +
+                ", initialPending=" + initialPending +
+                ", threshold=" + threshold +
                 '}';
     }
 }
