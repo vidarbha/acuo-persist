@@ -1,11 +1,12 @@
 package com.acuo.persist.services;
 
 import com.acuo.persist.entity.CallStatus;
-import com.acuo.persist.entity.MarginCall;
-import com.acuo.persist.spring.Call;
 import com.acuo.persist.entity.MarginStatement;
+import com.acuo.persist.spring.Call;
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.persist.Transactional;
 
+@Transactional
 public class MarginStatementServiceImpl extends GenericService<MarginStatement> implements MarginStatementService {
 
     @Override
@@ -45,20 +46,20 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
     public Iterable<Call> allCallsFor(String clientId, String dateTime) {
         String query =
                 "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[r:CLIENT_SIGNS]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement {date:{dateTime}}) " +
-                        "WITH a, m " +
-                        "MATCH (m)<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
-                        "WITH {category:a.type, type:mc.callType, status:step.status, balance: mc.balanceAmount, excess: mc.excessAmount} AS Call " +
-                        "RETURN Call";
+                "WITH a, m " +
+                "MATCH (m)<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
+                "WITH {category:a.type, type:mc.callType, status:step.status, balance: mc.balanceAmount, excess: mc.excessAmount} AS Call " +
+                "RETURN Call";
         return session.query(Call.class, query, ImmutableMap.of("clientId", clientId, "dateTime", dateTime));
     }
 
     @Override
-    public Iterable<MarginStatement> allStatementsForRecon(String clientId)
-    {
-        String query = "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement) " +
+    public Iterable<MarginStatement> allStatementsForRecon(String clientId) {
+        String query =
+                "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement)<-[]-(mc:MarginCall)-[:LAST]->(step:Step {status:'Unrecon'}) " +
                 "WITH m " +
-                "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m)<-[]-(mc:MarginCall)-[:LAST]->(step:Step {status:'Unrecon'}) " +
-                "RETURN m, nodes(p), rels(p)";
+                "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m)<-[]-(mc:MarginCall {status:'Expected'}) " +
+                "RETURN m, mc, nodes(p), rels(p)";
         return session.query(MarginStatement.class, query, ImmutableMap.of("clientId", clientId));
     }
 

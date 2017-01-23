@@ -2,7 +2,9 @@ package com.acuo.persist.services;
 
 import com.acuo.persist.entity.Asset;
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.persist.Transactional;
 
+@Transactional
 public class AssetServiceImpl extends GenericService<Asset> implements AssetService{
 
     @Override

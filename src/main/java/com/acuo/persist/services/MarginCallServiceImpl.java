@@ -2,7 +2,9 @@ package com.acuo.persist.services;
 
 import com.acuo.persist.entity.*;
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.persist.Transactional;
 
+@Transactional
 public class MarginCallServiceImpl extends GenericService<MarginCall> implements MarginCallService {
 
     @Override
@@ -11,8 +13,7 @@ public class MarginCallServiceImpl extends GenericService<MarginCall> implements
     }
 
     @Override
-    public void setStatus(String marginCallId, CallStatus status)
-    {
+    public void setStatus(String marginCallId, CallStatus status) {
         MarginCall marginCall = this.findById(marginCallId, 1);
         Step previousStep = marginCall.getLastStep();
         Step lastStep = new Step();
@@ -35,12 +36,10 @@ public class MarginCallServiceImpl extends GenericService<MarginCall> implements
         return session.query(MarginCall.class, query, ImmutableMap.of("clientId", clientId, "statuses", statuses));
     }
 
-
-
     @Override
     public Iterable<MarginCall> callsForExpected(String marginStatementId)
     {
-        String query = "MATCH (:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement {id:{msId}})<-[]-(mc1:MarginCall)-[:LAST]->(step:Step {status:'Unrecon'})" +
+        String query = "MATCH (:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement {id:{msId}})<-[]-(mc1:MarginCall)-[:LAST]->(step:Step {status:'Unrecon'}) " +
                 "MATCH (mc2:MarginCall)<-[MATCHED_TO_EXPECTED]-(mc1) " +
                 "return mc2";
         return session.query(MarginCall.class, query, ImmutableMap.of("msId", marginStatementId));

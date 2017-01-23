@@ -1,5 +1,6 @@
 package com.acuo.persist.entity;
 
+import com.acuo.common.model.margin.Types;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import com.acuo.persist.neo4j.converters.LocalDateTimeConverter;
 import lombok.*;
@@ -24,7 +25,7 @@ public class MarginCall extends Entity<MarginCall> {
     @Convert(LocalDateConverter.class)
     private LocalDate callDate;
 
-    private String callType;
+    private Types.MarginType marginType;
 
     private String direction;
 

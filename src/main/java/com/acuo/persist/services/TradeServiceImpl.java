@@ -1,7 +1,6 @@
 package com.acuo.persist.services;
 
 import com.acuo.common.typeref.TypeReference;
-import com.acuo.persist.entity.Entity;
 import com.acuo.persist.entity.Trade;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
@@ -14,9 +13,6 @@ public class TradeServiceImpl<T extends Trade> extends GenericService<T> impleme
 
     @Override
     public Iterable<T> findBilateralTradesByClientId(String clientId) {
-        /*String query =  "MATCH (c:Client {id:{id}})-[:MANAGES]->(le:LegalEntity)-[:HAS]->(:TradingAccount)-[:POSITIONS_ON]->(t:Trade) " +
-                        "MATCH (t)-[:FOLLOWS]->(a:Agreement) " +
-                        "WHERE a.type='bilateralOTC' RETURN t";*/
         String query =  "MATCH (:Client {id:{id}}) " +
                         "-[:MANAGES]-> (:LegalEntity) " +
                         "-[:HAS]-> (:TradingAccount) " +
@@ -26,6 +22,7 @@ public class TradeServiceImpl<T extends Trade> extends GenericService<T> impleme
         return session.query(getEntityType(), query, ImmutableMap.of("id",clientId));
     }
 
+    @Override
     public T findById(Long id) {
         String query =  "MATCH (trade:Trade {tradeId: {id} }) " +
                         "WITH trade " +
