@@ -65,8 +65,11 @@ public class MarginCall extends Entity<MarginCall> {
     @Relationship(type = "LAST")
     private Step lastStep;
 
+    @Relationship(type = "MATCHED_TO_EXPECTED", direction = Relationship.OUTGOING)
+    private MarginCall matchedToExpected;
+
     @Relationship(type = "CHILD_OF", direction = Relationship.INCOMING)
-    private Set<MarginCall> marginCalls;
+    private Set<ChildOf> children;
 
     @Relationship(type = "STEMS_FROM", direction = Relationship.OUTGOING)
     private Agreement agreement;

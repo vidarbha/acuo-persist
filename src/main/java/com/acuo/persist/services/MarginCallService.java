@@ -2,7 +2,7 @@ package com.acuo.persist.services;
 
 import com.acuo.persist.entity.CallStatus;
 import com.acuo.persist.entity.MarginCall;
-import com.acuo.persist.entity.MarginStatement;
+import com.acuo.persist.spring.Call;
 
 public interface MarginCallService extends Service<MarginCall>  {
 
@@ -10,7 +10,10 @@ public interface MarginCallService extends Service<MarginCall>  {
 
     Iterable<MarginCall> allCallsFor(String clientId, CallStatus... statuses);
 
+    Iterable<MarginCall> callFor(String marginStatementId, CallStatus... statuses);
+
+    @Deprecated
     Iterable<MarginCall> callsForExpected(String marginStatementId);
 
-    Iterable<MarginCall> callFor(String marginStatementId, CallStatus statuses);
+    Iterable<Call> notToUseYetallCallsFor(String clientId, String dateTime);
 }
