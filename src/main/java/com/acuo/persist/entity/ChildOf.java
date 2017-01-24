@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @RelationshipEntity(type="CHILD_OF")
 @Getter
 @Setter
-public class ChildOf {
+public class ChildOf extends Entity<ChildOf> {
 
     @StartNode
     private MarginCall child;
