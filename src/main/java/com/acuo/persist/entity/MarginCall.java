@@ -74,4 +74,8 @@ public class MarginCall extends Entity<MarginCall> {
     @Relationship(type = "STEMS_FROM", direction = Relationship.OUTGOING)
     private Agreement agreement;
 
+    private Double marginAmount;
+
+    private String status;
+
 }
