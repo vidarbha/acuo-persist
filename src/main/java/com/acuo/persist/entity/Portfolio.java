@@ -31,4 +31,7 @@ public class Portfolio extends Entity {
     @Relationship(type="VALUATED")
     private Set<Valuation> valuations;
 
+    @Relationship(type="FOLLOWS")
+    private Agreement agreement;
+
 }
