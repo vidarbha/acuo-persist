@@ -21,11 +21,12 @@ public class Possesses extends Entity<Possesses>{
 
     private Double quantities;
     private Double availableQuantities;
-    private Double earmarkedQuantities;
-    private Double deployedQuantities;
-    private Double departedQuantities;
-    private Double arrivingQuantities;
+    private Double reservedQuantities;
     private Double internalCost;
     private Double opptCost;
+    /*not implemented on acuo-data yet
+    private Double deployedQuantities;
+    private Double departedQuantities;
+    private Double arrivingQuantities;*/
 
 }

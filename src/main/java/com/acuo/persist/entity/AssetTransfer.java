@@ -13,19 +13,20 @@ public class AssetTransfer extends Entity<AssetTransfer>{
 
     @Property(name = "id")
     private String assertTransferId;
-    private String assetId;
-    private Double totalQuantities;
+
+    private Double quantities;
+    private Double earmarkedQuuantities;
     private AssetTransferStatus status;
     private AssetTransferStatus subStatus;
-    private Double earmarkedQuuantities;
+    private String deliveryTime;
 
-    @Relationship(type = "SENDS", direction = Relationship.INCOMING)
-    private CustodianAccount clientCustodian;
+    @Relationship(type = "FROM", direction = Relationship.OUTGOING)
+    private CustodianAccount from;
 
     @Relationship(type = "TO", direction = Relationship.OUTGOING)
-    private CustodianAccount counterpartCustodian;
+    private CustodianAccount to;
 
-    @Relationship(type = "TO_FULFILL", direction = Relationship.OUTGOING)
-    private MarginCall marginCall;
+    @Relationship(type = "GENERATED_BY", direction = Relationship.INCOMING)
+    private MarginCall generatedBy;
 
 }

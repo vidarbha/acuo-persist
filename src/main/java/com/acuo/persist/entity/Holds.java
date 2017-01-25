@@ -29,8 +29,9 @@ public class Holds extends Entity<Holds>{
     private LocalTime businessTimeTo;
     private Double quantities;
     private Double availableQuantities;
+    private Double reservedQuantities;
+    /* not implemented on acuo-data yet
     private Double deployedQuantities;
     private Double departingQuantities;
-    private Double arrivingQuantities;
-    private Double earmarkedQuantities;
+    private Double arrivingQuantities;*/
 }

@@ -54,4 +54,6 @@ public class Asset extends Entity<Asset> {
     @Relationship(type = "EXCLUDED")
     private MarginCall earmarkedMarginCall;
 
+    @Relationship(type = "OF", direction = Relationship.INCOMING)
+    private AssetTransfer assetTransfer;
 }
