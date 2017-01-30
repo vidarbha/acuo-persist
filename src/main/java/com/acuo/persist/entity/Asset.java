@@ -56,4 +56,7 @@ public class Asset extends Entity<Asset> {
 
     @Relationship(type = "OF", direction = Relationship.INCOMING)
     private AssetTransfer assetTransfer;
+
+    @Relationship(type = "IS_AVAILABLE_FOR")
+    private AvailableFor availableFor;
 }

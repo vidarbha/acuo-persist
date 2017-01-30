@@ -13,8 +13,8 @@ import java.time.LocalTime;
 
 @RelationshipEntity(type = "HOLDS")
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"custodian","asset"})
-@ToString(exclude = {"custodian","asset"})
+@EqualsAndHashCode(callSuper = false, exclude = {"custodianAccount","asset"})
+@ToString(exclude = {"custodianAccount","asset"})
 public class Holds extends Entity<Holds>{
 
     @StartNode
@@ -27,11 +27,12 @@ public class Holds extends Entity<Holds>{
     private LocalTime businessTimeFrom;
     @Convert(LocalTimeConverter.class)
     private LocalTime businessTimeTo;
-    private Double quantities;
-    private Double availableQuantities;
-    private Double reservedQuantities;
+    private Double availableQuantity;
+    private Double reservedQuantity;
+    private Double internalCost;
+    private Double opptCost;
     /* not implemented on acuo-data yet
-    private Double deployedQuantities;
-    private Double departingQuantities;
-    private Double arrivingQuantities;*/
+    private Double deployedQuantity;
+    private Double departingQuantity;
+    private Double arrivingQuantity;*/
 }
