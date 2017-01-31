@@ -9,5 +9,5 @@ public interface AssetService extends Service<Asset> {
 
     Iterable<Asset> findReservedAssetByClientId(ClientId clientId);
 
-    Iterable<Asset> findAvailableAssetByClientIdAndCallIds(ClientId clientId, String... callIds);
+    Iterable<Asset> findAvailableAssetByClientIdAndCallIds(ClientId clientId, String callId);
 }

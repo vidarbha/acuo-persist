@@ -42,9 +42,6 @@ public class Asset extends Entity<Asset> {
     private Double timeToMaturityYears;
     private String rating;
 
-    @Relationship(type = "POSSESSES", direction = Relationship.INCOMING)
-    private Possesses possesses;
-
     @Relationship(type = "IS_IN")
     private AssetCategory assetCategory;
 
