@@ -14,7 +14,6 @@ public interface DataImporter {
             "clearedAgreements",
             "bilateralAgreements",
             "assetCategories",
-            "assetInventory",
             "custodians",
             "custodianAccounts",
             "counterpartCustodianAccounts",

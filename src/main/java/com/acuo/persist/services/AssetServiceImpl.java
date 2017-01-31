@@ -19,12 +19,12 @@ public class AssetServiceImpl extends GenericService<Asset> implements AssetServ
     private static String ELIGIBLE_ASSET_BY_CLIENT_AND_CALLID =
             "MATCH path=(client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:HAS]->(:TradingAccount)" +
             "-[:ACCESSES]->(ca:CustodianAccount)-[holds:HOLDS]-(asset:Asset)-[is:IS_AVAILABLE_FOR]->(agreement:Agreement)<-" +
-            "[:STEMS_FROM]-(marginCall:MarginCall {id:{callId}})-[*1..2]->(ms:MarginStatement)" +
+            "[:STEMS_FROM]-(marginCall:MarginCall {id:{callId}})-[*1..2]->(ms:MarginStatement) " +
             "WHERE marginCall.marginType IN is.marginType " +
-            "(ms)-[:DIRECTED_TO]->(entity)" +
+            "AND (ms)-[:DIRECTED_TO]->(entity) " +
             "AND (entity)-[:CLIENT_SIGNS]-(agreement) " +
             "AND NOT (asset)-[:EXCLUDED]->(marginCall) " +
-            "RETURN a, nodes(path), rels(path)";
+            "RETURN asset, nodes(path), rels(path)";
 
     private static String RESERVED_ASSET_BY_CLIENT_ID =
             "MATCH path=(client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:HAS]->(:TradingAccount)" +
@@ -46,7 +46,7 @@ public class AssetServiceImpl extends GenericService<Asset> implements AssetServ
     }
 
     @Override
-    public Iterable<Asset> findAvailableAssetByClientIdAndCallIds(ClientId clientId, String callId) {
+    public Iterable<Asset> findAvailableAssetByClientIdAndCallId(ClientId clientId, String callId) {
         String query = ELIGIBLE_ASSET_BY_CLIENT_AND_CALLID;
         return session.query(getEntityType(), query, ImmutableMap.of("clientId",clientId.toString(), "callId", callId));
     }
