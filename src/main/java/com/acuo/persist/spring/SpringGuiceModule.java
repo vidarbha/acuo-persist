@@ -1,12 +1,12 @@
 package com.acuo.persist.spring;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.guice.module.SpringModule;
+//import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+//import org.springframework.guice.module.SpringModule;
 
-public class SpringGuiceModule extends SpringModule {
+public class SpringGuiceModule /*extends SpringModule*/ {
 
     public SpringGuiceModule() {
-        super(new AnnotationConfigApplicationContext(MyConfiguration.class));
+        /*super(new AnnotationConfigApplicationContext(MyConfiguration.class));*/
     }
 
     /*@Inject
