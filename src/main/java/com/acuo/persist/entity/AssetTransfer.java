@@ -2,13 +2,15 @@ package com.acuo.persist.entity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = false, exclude = {"of"})
+@ToString(exclude = {"of"})
 public class AssetTransfer extends Entity<AssetTransfer>{
 
     @Property(name = "id")
@@ -19,6 +21,9 @@ public class AssetTransfer extends Entity<AssetTransfer>{
     private AssetTransferStatus status;
     private AssetTransferStatus subStatus;
     private String deliveryTime;
+
+    @Relationship(type = "OF", direction = Relationship.OUTGOING)
+    private Asset of;
 
     @Relationship(type = "FROM", direction = Relationship.OUTGOING)
     private CustodianAccount from;
