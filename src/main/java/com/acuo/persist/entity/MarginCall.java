@@ -78,4 +78,31 @@ public class MarginCall extends Entity<MarginCall> {
 
     private String status;
 
+    public MarginCall(String marginCallId ,LocalDate callDate, Types.MarginType marginType,String direction ,LocalDate valuationDate,String currency,
+            Double excessAmount, Double balanceAmount,Double deliverAmount, Double returnAmount,Double pendingCollateral,Double exposure,String IMRole,Integer parentRank,
+                      LocalDateTime notificationTime,Double roundedReturnAmount,Double roundedDeliverAmount,Integer belowMTA,Double marginAmount,String status)
+    {
+        this.marginCallId = marginCallId;
+        this.callDate = callDate;
+        this.marginType = marginType;
+        this.direction = direction;
+        this.valuationDate = valuationDate;
+        this.currency = currency;
+        this.excessAmount = excessAmount;
+        this.balanceAmount = balanceAmount;
+        this.deliverAmount = deliverAmount;
+        this.returnAmount = returnAmount;
+        this.pendingCollateral = pendingCollateral;
+        this.exposure = exposure;
+        this.IMRole = IMRole;
+        this.parentRank = parentRank;
+        this.notificationTime = notificationTime;
+        this.roundedDeliverAmount = roundedDeliverAmount;
+        this.roundedReturnAmount = roundedReturnAmount;
+        this.belowMTA = belowMTA;
+        this.marginAmount = marginAmount;
+        this.status = status;
+    }
+
+    public MarginCall() {}
 }
