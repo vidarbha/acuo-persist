@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 
 import javax.inject.Singleton;
+import java.util.Iterator;
 
 @Singleton
 @Transactional
@@ -34,6 +35,13 @@ public class TradeServiceImpl<T extends Trade> extends GenericService<T> impleme
     public Class<T> getEntityType() {
         TypeReference<T> ref = i->i;
         return ref.type();
+    }
+
+    @Override
+    public Iterable<T> findByPortfolioId(String portfolioId)
+    {
+        String query =  "MATCH (t:IRS)-[r:BELONGS_TO]->(p:Portfolio {id:{id}}) return t";
+        return session.query(getEntityType(), query, ImmutableMap.of("id",portfolioId));
     }
 
 }
