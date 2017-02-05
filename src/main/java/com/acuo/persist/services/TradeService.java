@@ -13,4 +13,6 @@ public interface TradeService<T extends Trade> extends Service<T> {
 
     Iterable<T> findByPortfolioId(String portfolioId);
 
+    Iterable<T> findAllIRS();
+
 }
