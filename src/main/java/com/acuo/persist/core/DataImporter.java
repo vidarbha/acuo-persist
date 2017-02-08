@@ -23,7 +23,8 @@ public interface DataImporter {
             "initmcexp",
             "initmc",
             "settings",
-            "assetTransfer"
+            "assetTransfer",
+            "portfolios"
     };
 
     void importFiles(String... fileNames);
