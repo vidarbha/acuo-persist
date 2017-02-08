@@ -18,6 +18,7 @@ public interface DataImporter {
             "custodianAccounts",
             "counterpartCustodianAccounts",
             "custodianAssets",
+            "buildEligibility",
             "mstatements",
             "initmcexp",
             "initmc",
