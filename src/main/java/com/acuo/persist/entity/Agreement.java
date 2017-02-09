@@ -23,6 +23,8 @@ public class Agreement extends Entity<Agreement> {
     @Property(name="id")
     private String agreementId;
 
+    private String ampId;
+
     private String name;
 
     @Convert(LocalDateConverter.class)
