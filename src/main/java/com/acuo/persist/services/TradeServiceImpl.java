@@ -48,7 +48,7 @@ public class TradeServiceImpl<T extends Trade> extends GenericService<T> impleme
     @Override
     public Iterable<T> findAllIRS()
     {
-        String query =  "MATCH (n:IRS) RETURN n";
+        String query =  "MATCH (n:IRS {tradeType:'Bilateral'}) RETURN n";
         return session.query(getEntityType(), query, Collections.emptyMap());
     }
 
