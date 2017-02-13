@@ -1,62 +1,66 @@
 package com.acuo.persist.entity;
 
+import com.acuo.persist.neo4j.converters.CurrencyConverter;
+import com.acuo.persist.neo4j.converters.LocalDateConverter;
+import com.acuo.persist.neo4j.converters.LocalTimeConverter;
+import com.opengamma.strata.basics.currency.Currency;
+import lombok.Getter;
+import lombok.Setter;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
+import org.neo4j.ogm.annotation.typeconversion.Convert;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Set;
 
 @NodeEntity
-public class Agreement extends Entity {
+@Getter
+@Setter
+public class Agreement extends Entity<Agreement> {
 
-    private String key;
+    @Property(name="id")
+    private String agreementId;
+
+    private String name;
+
+    @Convert(LocalDateConverter.class)
+    @Property(name = "agreementDate")
+    private LocalDate date;
 
     private String type;
 
-    public String getKey() {
-        return key;
-    }
+    @Convert(LocalTimeConverter.class)
+    private LocalTime notificationTime;
 
-    public String getType() {
-        return type;
-    }
-
-    @Relationship(type = "COUNTERPARTY_SIGNS", direction = Relationship.INCOMING)
-    private Set<LegalEntity> cptyEntitys;
+    @Convert(CurrencyConverter.class)
+    private Currency currency;
 
     @Relationship(type = "CLIENT_SIGNS", direction = Relationship.INCOMING)
-    private Set<LegalEntity> legalEntitys;
+    private ClientSignsRelation clientSignsRelation;
 
-    public void setKey(String key) {
-        this.key = key;
-    }
+    @Relationship(type = "COUNTERPARTY_SIGNS", direction = Relationship.INCOMING)
+    private CounterpartSignsRelation counterpartSignsRelation;
 
-    public void setType(String type) {
-        this.type = type;
-    }
+    @Relationship(type = "STEMS_FROM", direction = Relationship.INCOMING)
+    private  Set<MarginStatement> marginStatements;
 
-    public Set<LegalEntity> getCptyEntitys() {
-        return cptyEntitys;
-    }
+    @Relationship(type = "STEMS_FROM", direction = Relationship.INCOMING)
+    private  Set<MarginCall> marginCalls;
 
-    public void setCptyEntitys(Set<LegalEntity> cptyEntitys) {
-        this.cptyEntitys = cptyEntitys;
-    }
-
-    public Set<LegalEntity> getLegalEntitys() {
-        return legalEntitys;
-    }
-
-    public void setLegalEntitys(Set<LegalEntity> legalEntitys) {
-        this.legalEntitys = legalEntitys;
-    }
+    private String FCMCustodian;
 
     @Override
     public String toString() {
         return "Agreement{" +
-                "key='" + key + '\'' +
+                "agreementId='" + agreementId + '\'' +
+                ", name='" + name + '\'' +
+                ", date=" + date +
                 ", type='" + type + '\'' +
-                ", cptyEntitys=" + cptyEntitys +
-                ", legalEntitys=" + legalEntitys +
+                ", notificationTime=" + notificationTime +
+                ", currency=" + currency +
+                ", FCMCustodian=" + FCMCustodian +
                 '}';
     }
 }

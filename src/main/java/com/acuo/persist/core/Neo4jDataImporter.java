@@ -2,10 +2,12 @@ package com.acuo.persist.core;
 
 import com.acuo.common.util.ArgChecker;
 import com.acuo.persist.configuration.PropertiesHelper;
+import com.acuo.persist.utils.GraphData;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.google.inject.Singleton;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +15,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +41,7 @@ public class Neo4jDataImporter implements DataImporter {
                              @Named(PropertiesHelper.ACUO_CYPHER_DIR_TEMPLATE) String directoryTemplate) {
         this.loader = loader;
         this.workingDirPath = dataDir;
-        this.dataDirPath = getDataLink(dataImportLink);
+        this.dataDirPath = GraphData.getDataLink(dataImportLink);
         this.directoryTemplate = directoryTemplate;
         substitutions.put("%workingDirPath%", workingDirPath);
         substitutions.put("%dataImportLink%", dataDirPath);
@@ -45,26 +49,20 @@ public class Neo4jDataImporter implements DataImporter {
                 directoryTemplate);
     }
 
-    private String getDataLink(String dataImportLink) {
-        if (dataImportLink.startsWith("file://") || dataImportLink.startsWith("http://"))
-            return dataImportLink;
-        return "file://" + Resources.getResource(dataImportLink).getPath();
-    }
-
     @Override
     public void importFiles(String... fileNames) {
         Arrays.asList(fileNames).stream().forEach(f -> importFile(f));
     }
 
-    private void importFile(String fileNames) {
+    private void importFile(String fileName) {
         try {
-            String filePath = String.format(directoryTemplate, workingDirPath, fileNames);
-            LOG.info("Importing files [{}] from {}", fileNames, filePath);
-            String file = Resources.toString(Resources.getResource(filePath), Charsets.UTF_8); // FileUtils.getFile(filePath);
+            String filePath = String.format(directoryTemplate, workingDirPath, fileName);
+            LOG.info("Importing files [{}] from {}", fileName, filePath);
+            String file = GraphData.readFile(filePath);
             String query = buildQuery(file, substitutions);
             loader.loadData(query);
         } catch (Exception e) {
-            LOG.error("an error occured while importing file {}", fileNames, e);
+            LOG.error("an error occured while importing file {}", fileName, e);
         }
     }
 

@@ -1,15 +1,19 @@
 package com.acuo.persist.entity;
 
-public class Counterpart extends Entity {
+import com.google.common.collect.ImmutableList;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.neo4j.ogm.annotation.Labels;
+import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
 
-    private String counterpartId;
-    private String name;
+import java.util.List;
 
-    public String getCounterpartId() {
-        return counterpartId;
-    }
+@NodeEntity
+@Data
+@EqualsAndHashCode(callSuper = false)
+public class Counterpart extends Firm {
 
-    public String getName() {
-        return name;
-    }
+    @Labels
+    private final List<String> labels = ImmutableList.of("Counterpart");
 }

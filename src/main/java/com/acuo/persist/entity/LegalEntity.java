@@ -1,48 +1,43 @@
 package com.acuo.persist.entity;
 
+import lombok.*;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
+import org.neo4j.ogm.annotation.Relationship;
+
+import java.util.Set;
 
 @NodeEntity
-public class LegalEntity extends Entity {
-
-    private String  holidayZone;
-
-    private String name;
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false, exclude={"firm"})
+@ToString(exclude={"firm"})
+public class LegalEntity extends Entity<LegalEntity> {
 
     @Property(name="id")
     private String legalEntityId;
 
-    @Override
-    public String toString() {
-        return "LegalEntity{" +
-                "holidayZone='" + holidayZone + '\'' +
-                ", name='" + name + '\'' +
-                ", legalEntityId='" + legalEntityId + '\'' +
-                '}';
-    }
+    private String name;
 
-    public String getHolidayZone() {
-        return holidayZone;
-    }
+    private String  holidayZone;
 
-    public void setHolidayZone(String holidayZone) {
-        this.holidayZone = holidayZone;
-    }
+    private String shortName;
 
-    public String getName() {
-        return name;
-    }
+    @Relationship(type = "PREFERENCES")
+    private Set<Preferences> preferences;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    @Relationship(type = "CLIENT_SIGNS")
+    private Set<ClientSignsRelation> clientSignsRelations;
 
-    public String getLegalEntityId() {
-        return legalEntityId;
-    }
+    @Relationship(type = "COUNTERPARTY_SIGNS")
+    private Set<CounterpartSignsRelation> counterpartSignsRelations;
 
-    public void setLegalEntityId(String legalEntityId) {
-        this.legalEntityId = legalEntityId;
-    }
+    @Relationship(type = "DIRECTED_TO", direction = Relationship.INCOMING)
+    private Set<MarginStatement> marginStatements;
+
+    @Relationship(type = "SENT_FROM", direction = Relationship.INCOMING)
+    private Set<MarginStatement> fromMarginStatements;
+
+    @Relationship(type = "MANAGES", direction = Relationship.INCOMING)
+    private Firm firm;
 }

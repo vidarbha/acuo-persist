@@ -3,8 +3,10 @@ package com.acuo.persist.services;
 import com.acuo.persist.entity.Trade;
 import com.google.inject.persist.Transactional;
 
-public interface TradeService extends Service<Trade> {
-    Iterable<Trade> findByClientId(String id);
+public interface TradeService<T extends Trade> extends Service<T> {
 
-    Iterable<Trade> findBilateralTradesByClientId(String clientId);
+    Iterable<T> findBilateralTradesByClientId(String clientId);
+
+    T findById(Long id);
+
 }

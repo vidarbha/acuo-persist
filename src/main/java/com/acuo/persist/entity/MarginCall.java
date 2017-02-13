@@ -1,243 +1,81 @@
 package com.acuo.persist.entity;
 
+import com.acuo.common.model.margin.Types;
+import com.acuo.persist.neo4j.converters.LocalDateConverter;
+import com.acuo.persist.neo4j.converters.LocalDateTimeConverter;
+import lombok.*;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
-import org.neo4j.ogm.annotation.typeconversion.DateString;
+import org.neo4j.ogm.annotation.typeconversion.Convert;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Set;
 
 @NodeEntity
-public class MarginCall extends Entity{
-
-    private String direction;
-
-    @DateString(value = "dd/MM/yy")
-    private Date callDate;
-
-    private Double callAmount;
-
-    private String callType;
-
-    private String IMRole;
-
-    @DateString(value = "dd/MM/yy")
-    private Date valuationDate;
-
-    private Double exposure;
-
-    private Double pendingCollateral;
-
-//    @DateString(value = "dd/MM/yy HH:mm:ss")
-//    private Date notificationTime;
-
-    private String agreementId;
-
-    private Double collateralValue;
-
-    private Double deliverAmount;
-
-    private String currency;
+@Data
+@EqualsAndHashCode(callSuper = false, exclude = {"marginCalls", "agreement"})
+@ToString(exclude = {"marginCalls", "agreement"})
+public class MarginCall extends Entity<MarginCall> {
 
     @Property(name="id")
     private String marginCallId;
 
+    @Convert(LocalDateConverter.class)
+    private LocalDate callDate;
+
+    private Types.MarginType marginType;
+
+    private String direction;
+
+    @Convert(LocalDateConverter.class)
+    private LocalDate valuationDate;
+
+    private String currency;
+
+    private Double excessAmount;
+
+    private Double balanceAmount;
+
+    private Double deliverAmount;
+
     private Double returnAmount;
 
-    private String status;
+    private Double pendingCollateral;
+
+    private Double exposure;
+
+    private String IMRole;
 
     private Integer parentRank;
 
-    private Double roundedDeliverAmount;
+    @Convert(LocalDateTimeConverter.class)
+    private LocalDateTime notificationTime;
 
     private Double roundedReturnAmount;
 
+    private Double roundedDeliverAmount;
+
     private Integer belowMTA;
 
+    @Relationship(type = "FIRST")
+    private Step firstStep;
 
-    public String getDirection() {
-        return direction;
-    }
+    @Relationship(type = "LAST")
+    private Step lastStep;
 
-    public void setDirection(String direction) {
-        this.direction = direction;
-    }
+    @Relationship(type = "MATCHED_TO_EXPECTED", direction = Relationship.OUTGOING)
+    private MarginCall matchedToExpected;
 
-    public Date getCallDate() {
-        return callDate;
-    }
+    @Relationship(type = "CHILD_OF", direction = Relationship.INCOMING)
+    private Set<ChildOf> children;
 
-    public void setCallDate(Date callDate) {
-        this.callDate = callDate;
-    }
+    @Relationship(type = "STEMS_FROM", direction = Relationship.OUTGOING)
+    private Agreement agreement;
 
-    public Double getCallAmount() {
-        return callAmount;
-    }
+    private Double marginAmount;
 
-    public void setCallAmount(Double callAmount) {
-        this.callAmount = callAmount;
-    }
+    private String status;
 
-    public String getCallType() {
-        return callType;
-    }
-
-    public void setCallType(String callType) {
-        this.callType = callType;
-    }
-
-    public String getIMRole() {
-        return IMRole;
-    }
-
-    public void setIMRole(String IMRole) {
-        this.IMRole = IMRole;
-    }
-
-    public Date getValuationDate() {
-        return valuationDate;
-    }
-
-    public void setValuationDate(Date valuationDate) {
-        this.valuationDate = valuationDate;
-    }
-
-    public Double getExposure() {
-        return exposure;
-    }
-
-    public void setExposure(Double exposure) {
-        this.exposure = exposure;
-    }
-
-    public Double getPendingCollateral() {
-        return pendingCollateral;
-    }
-
-    public void setPendingCollateral(Double pendingCollateral) {
-        this.pendingCollateral = pendingCollateral;
-    }
-
-//    public Date getNotificationTime() {
-//        return notificationTime;
-//    }
-//
-//    public void setNotificationTime(Date notificationTime) {
-//        this.notificationTime = notificationTime;
-//    }
-
-    public String getAgreementId() {
-        return agreementId;
-    }
-
-    public void setAgreementId(String agreementId) {
-        this.agreementId = agreementId;
-    }
-
-    public Double getCollateralValue() {
-        return collateralValue;
-    }
-
-    public void setCollateralValue(Double collateralValue) {
-        this.collateralValue = collateralValue;
-    }
-
-    public Double getDeliverAmount() {
-        return deliverAmount;
-    }
-
-    public void setDeliverAmount(Double deliverAmount) {
-        this.deliverAmount = deliverAmount;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
-
-    public String getMarginCallId() {
-        return marginCallId;
-    }
-
-    public void setMarginCallId(String marginCallId) {
-        this.marginCallId = marginCallId;
-    }
-
-    public Double getReturnAmount() {
-        return returnAmount;
-    }
-
-    public void setReturnAmount(Double returnAmount) {
-        this.returnAmount = returnAmount;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Integer getParentRank() {
-        return parentRank;
-    }
-
-    public void setParentRank(Integer parentRank) {
-        this.parentRank = parentRank;
-    }
-
-    public Double getRoundedDeliverAmount() {
-        return roundedDeliverAmount;
-    }
-
-    public void setRoundedDeliverAmount(Double roundedDeliverAmount) {
-        this.roundedDeliverAmount = roundedDeliverAmount;
-    }
-
-    public Double getRoundedReturnAmount() {
-        return roundedReturnAmount;
-    }
-
-    public void setRoundedReturnAmount(Double roundedReturnAmount) {
-        this.roundedReturnAmount = roundedReturnAmount;
-    }
-
-    public Integer getBelowMTA() {
-        return belowMTA;
-    }
-
-    public void setBelowMTA(Integer belowMTA) {
-        this.belowMTA = belowMTA;
-    }
-
-    @Override
-    public String toString() {
-        return "MarginCall{" +
-                "direction='" + direction + '\'' +
-                ", callDate=" + callDate +
-                ", callAmount=" + callAmount +
-                ", callType='" + callType + '\'' +
-                ", IMRole='" + IMRole + '\'' +
-                ", valuationDate=" + valuationDate +
-                ", exposure=" + exposure +
-                ", pendingCollateral=" + pendingCollateral +
-//                ", notificationTime=" + notificationTime +
-                ", agreementId='" + agreementId + '\'' +
-                ", collateralValue=" + collateralValue +
-                ", deliverAmount=" + deliverAmount +
-                ", currency='" + currency + '\'' +
-                ", marginCallId='" + marginCallId + '\'' +
-                ", returnAmount=" + returnAmount +
-                ", status='" + status + '\'' +
-                ", parentRank=" + parentRank +
-                ", roundedDeliverAmount=" + roundedDeliverAmount +
-                ", roundedReturnAmount=" + roundedReturnAmount +
-                ", belowMTA=" + belowMTA +
-                '}';
-    }
 }

@@ -25,7 +25,7 @@ public class DataImporterTest {
 
 	@Test
 	public void testCreateClient() {
-		String query = "^LOAD CSV WITH HEADERS FROM.*AS clientLine.*";
+		String query = "^LOAD CSV WITH HEADERS FROM.*AS line.*";
 
 		importer.importFiles("clients");
 

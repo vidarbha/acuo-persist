@@ -9,14 +9,20 @@ apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/ja
 apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/java/integration-test.gradle"
 apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/java/sonarqube.gradle"
 
+/*repositories {
+    maven {
+        url "http://repo.spring.io/libs-snapshot"
+    }
+}*/
+
 group = 'com.acuo.collateral'
 
 ext.versions += [
-        common  : '0.2.4',
+        common  : '0.3.0-SNAPSHOT',
         guice   : '4.0',
         okhttp  : '3.3.1',
-        neo4j   : '3.0.6',
-        neo4jOgm: '2.0.5',
+        neo4j   : '3.0.7',
+        neo4jOgm: '2.1.0',
 ]
 
 configurations {
@@ -25,14 +31,15 @@ configurations {
 }
 
 dependencies {
+    compile("com.acuo.collateral:acuo-common:${versions.common}") { changing = true }
     compile(
-            "com.acuo.collateral:acuo-common:${versions.common}",
-
             "com.google.inject:guice:${versions.guice}",
             "com.google.inject.extensions:guice-servlet:${versions.guice}",
             "com.google.inject.extensions:guice-persist:${versions.guice}",
             "com.google.inject.extensions:guice-multibindings:${versions.guice}",
             "com.google.inject.extensions:guice-assistedinject:${versions.guice}",
+            //"org.springframework.data:spring-data-neo4j:4.2.0.RC1",
+            //"org.springframework.guice:spring-guice:1.0.0.BUILD-SNAPSHOT",
 
             "org.neo4j:neo4j:${versions.neo4j}",
             "org.neo4j.driver:neo4j-java-driver:${versions.neo4jBolt}",

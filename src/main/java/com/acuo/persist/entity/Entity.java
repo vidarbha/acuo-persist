@@ -2,7 +2,7 @@ package com.acuo.persist.entity;
 
 import org.neo4j.ogm.annotation.GraphId;
 
-public abstract class Entity {
+public abstract class Entity<T extends Entity> {
 
     @GraphId
     private Long id;
@@ -16,9 +16,9 @@ public abstract class Entity {
         if (this == o) return true;
         if (o == null || id == null || getClass() != o.getClass()) return false;
 
-        Entity entity = (Entity) o;
+        T entity = (T) o;
 
-        if (!id.equals(entity.id)) return false;
+        if (!id.equals(entity.getId())) return false;
 
         return true;
     }

@@ -4,6 +4,7 @@ import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 import org.neo4j.ogm.annotation.typeconversion.DateString;
@@ -22,4 +23,7 @@ public class Valuation extends Entity{
 
     @Relationship(type = "VALUE")
     private Set<Value> values;
+
+    @Property(name = "id")
+    private String valuationId;
 }

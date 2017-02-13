@@ -12,6 +12,8 @@ public interface Service<T> {
 
     T findById(String id);
 
-    T createOrUpdateById(T entity, String id);
+    T find(Long id, int depth);
+
+    T findById(String id, int depth);
 
 }
