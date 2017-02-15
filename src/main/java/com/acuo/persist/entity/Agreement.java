@@ -4,8 +4,9 @@ import com.acuo.persist.neo4j.converters.CurrencyConverter;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import com.acuo.persist.neo4j.converters.LocalTimeConverter;
 import com.opengamma.strata.basics.currency.Currency;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
@@ -16,8 +17,9 @@ import java.time.LocalTime;
 import java.util.Set;
 
 @NodeEntity
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper = false, exclude = {"clientSignsRelation", "counterpartSignsRelation", "marginStatements", "marginCalls"})
+@ToString(exclude = {"clientSignsRelation", "counterpartSignsRelation", "marginStatements", "marginCalls"})
 public class Agreement extends Entity<Agreement> {
 
     @Property(name="id")
@@ -39,6 +41,20 @@ public class Agreement extends Entity<Agreement> {
     @Convert(CurrencyConverter.class)
     private Currency currency;
 
+    private String FCMCustodian;
+
+    private Double tolerance;
+
+    private String interestTransfer;
+
+    private String interestPaymentNetting;
+
+    private String interestAdjustment;
+
+    private String negativeInterest;
+
+    private String dailyInterestCompounding;
+
     @Relationship(type = "CLIENT_SIGNS", direction = Relationship.INCOMING)
     private ClientSignsRelation clientSignsRelation;
 
@@ -50,19 +66,4 @@ public class Agreement extends Entity<Agreement> {
 
     @Relationship(type = "STEMS_FROM", direction = Relationship.INCOMING)
     private  Set<MarginCall> marginCalls;
-
-    private String FCMCustodian;
-
-    @Override
-    public String toString() {
-        return "Agreement{" +
-                "agreementId='" + agreementId + '\'' +
-                ", name='" + name + '\'' +
-                ", date=" + date +
-                ", type='" + type + '\'' +
-                ", notificationTime=" + notificationTime +
-                ", currency=" + currency +
-                ", FCMCustodian=" + FCMCustodian +
-                '}';
-    }
 }
