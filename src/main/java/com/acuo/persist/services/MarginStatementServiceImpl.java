@@ -48,7 +48,7 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
     @Override
     public Iterable<MarginStatement> allStatementsForRecon(ClientId clientId) {
         String query =
-                "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement)<-[]-(mc:MarginCall)-[:LAST]->(step:Step {status:'Unrecon'}) " +
+                "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement)<-[]-(mc:MarginCall)-[:LAST]->(step:Step) where step.status in ['Unrecon','Expected']" +
                 "WITH m " +
                 "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m)<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
                 "RETURN m, mc, nodes(p), rels(p)";
