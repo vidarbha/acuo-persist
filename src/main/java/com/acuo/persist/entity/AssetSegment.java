@@ -8,7 +8,7 @@ import org.neo4j.ogm.annotation.Property;
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class AssetSegment extends Entity<AssetSegment>{
+public class AssetSegment extends Entity<AssetSegment> {
 
     private String assetId;
     private Double quantities;

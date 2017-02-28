@@ -11,7 +11,7 @@ import org.neo4j.ogm.annotation.Relationship;
 @Data
 @EqualsAndHashCode(callSuper = false, exclude = {"of"})
 @ToString(exclude = {"of"})
-public class AssetTransfer extends Entity<AssetTransfer>{
+public class AssetTransfer extends Entity<AssetTransfer> {
 
     @Property(name = "id")
     private String assertTransferId;

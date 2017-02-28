@@ -9,7 +9,7 @@ import org.neo4j.ogm.annotation.StartNode;
 @RelationshipEntity(type = "PREFERENCES")
 @Getter
 @Setter
-public class Preferences extends Entity<Preferences>{
+public class Preferences extends Entity<Preferences> {
 
     private Double tolerance;
 

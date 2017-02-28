@@ -18,7 +18,7 @@ import java.time.LocalDate;
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Leg extends Entity {
+public class Leg extends Entity<Leg> {
 
     private Double notional;
 

@@ -10,7 +10,7 @@ import java.util.Set;
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Fund extends Entity {
+public class Fund extends Entity<Fund> {
 
     private String fundId;
 

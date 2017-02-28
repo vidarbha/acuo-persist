@@ -7,6 +7,6 @@ import org.neo4j.ogm.annotation.NodeEntity;
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Product extends Entity {
+public class Product extends Entity<Product> {
 
 }
