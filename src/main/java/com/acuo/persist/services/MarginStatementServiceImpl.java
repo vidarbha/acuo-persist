@@ -56,6 +56,18 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
     }
 
     @Override
+    public Iterable<MarginStatement> allUnmatchedStatements(ClientId clientId) {
+        String query =
+                "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement) " +
+                "WITH m " +
+                "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-" +
+                "(m) <-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step {status:'Unrecon'}) " +
+                "WHERE NOT exists((mc)-[:MATCHED_TO_EXPECTED]->()) " +
+                "RETURN m, nodes(p), rels(p)";
+        return session.query(MarginStatement.class, query, ImmutableMap.of("clientId", clientId.toString()));
+    }
+
+    @Override
     public MarginStatement statementForRecon(MarginStatementId marginStatementId) {
         String query =
                 "MATCH (m:MarginStatement {id:{marginStatementId}})<-[]-(mc:MarginCall)-[:LAST]->(step:Step {status:'Unrecon'}) " +
