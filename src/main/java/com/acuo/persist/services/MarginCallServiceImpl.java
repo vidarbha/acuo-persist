@@ -18,7 +18,7 @@ public class MarginCallServiceImpl extends GenericService<MarginCall> implements
 
     @Override
     public void setStatus(String marginCallId, CallStatus status) {
-        MarginCall marginCall = this.findById(marginCallId, 2);
+        MarginCall marginCall = findById(marginCallId);
         Step previousStep = marginCall.getLastStep();
         Step lastStep = new Step();
         Next next = new Next();
@@ -27,7 +27,7 @@ public class MarginCallServiceImpl extends GenericService<MarginCall> implements
         previousStep.setNext(next);
         lastStep.setStatus(status);
         marginCall.setLastStep(lastStep);
-        this.createOrUpdate(marginCall);
+        createOrUpdate(marginCall);
     }
 
     @Override

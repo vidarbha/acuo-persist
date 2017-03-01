@@ -1,13 +1,12 @@
 package com.acuo.persist.entity;
 
 import com.acuo.common.model.margin.Types;
-import com.acuo.persist.neo4j.converters.LocalDateConverter;
-import com.acuo.persist.neo4j.converters.LocalDateTimeConverter;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
-import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,9 +32,6 @@ public class MarginCall extends StatementItem {
     private Double pendingCollateral;
 
     private Double exposure;
-
-
-
 
     @Relationship(type = "FIRST")
     private Step firstStep;
