@@ -27,4 +27,9 @@ public class InitialMargin extends MarginCall {
                 notificationTime,marginAmount,status);
     }
 
+    public InitialMargin()
+    {
+
+    }
+
 }
