@@ -16,6 +16,7 @@ import java.util.Set;
 public class TradingAccount extends Entity<TradingAccount> {
 
     @Index(unique = true)
+    @Property(name="id")
     private String accountId;
 
     private String name;

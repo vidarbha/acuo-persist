@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
@@ -45,8 +46,9 @@ public abstract class Trade<T extends Trade> extends Entity {
 
     private String seniority;
 
-    @Index(unique = true, primary=true)
-    protected Long tradeId;
+    @Index(unique = true)
+    @Property(name="id")
+    protected String tradeId;
 
     @Relationship(type = "VALUATED", direction = Relationship.OUTGOING)
     private Set<Valuation> valuations = new HashSet<>();

@@ -2,6 +2,8 @@ package com.acuo.persist.services;
 
 import com.acuo.common.typeref.TypeReference;
 import com.acuo.persist.entity.Trade;
+import com.acuo.persist.ids.ClientId;
+import com.acuo.persist.ids.PortfolioId;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 
@@ -14,22 +16,14 @@ import java.util.Iterator;
 public class TradeServiceImpl<T extends Trade> extends GenericService<T> implements TradeService<T> {
 
     @Override
-    public Iterable<T> findBilateralTradesByClientId(String clientId) {
+    public Iterable<T> findBilateralTradesByClientId(ClientId clientId) {
         String query =  "MATCH (:Client {id:{id}}) " +
                         "-[:MANAGES]-> (:LegalEntity) " +
                         "-[:HAS]-> (:TradingAccount) " +
                         "-[:POSITIONS_ON]-> (trade:Trade) " +
                         "WITH trade " +
                         "MATCH p=(trade)-[r*0..1]-() RETURN trade, nodes(p), rels(p)";
-        return session.query(getEntityType(), query, ImmutableMap.of("id",clientId));
-    }
-
-    @Override
-    public T findById(Long id) {
-        String query =  "MATCH (trade:Trade {tradeId: {id} }) " +
-                        "WITH trade " +
-                        "MATCH p=(trade)-[r*0..1]-() RETURN trade, nodes(p), rels(p)";
-        return session.queryForObject(getEntityType(), query, ImmutableMap.of("id",id));
+        return session.query(getEntityType(), query, ImmutableMap.of("id",clientId.toString()));
     }
 
     @Override
@@ -39,15 +33,13 @@ public class TradeServiceImpl<T extends Trade> extends GenericService<T> impleme
     }
 
     @Override
-    public Iterable<T> findByPortfolioId(String portfolioId)
-    {
+    public Iterable<T> findByPortfolioId(PortfolioId portfolioId) {
         String query =  "MATCH (t:IRS)-[r:BELONGS_TO]->(p:Portfolio {id:{id}}) return t";
-        return session.query(getEntityType(), query, ImmutableMap.of("id",portfolioId));
+        return session.query(getEntityType(), query, ImmutableMap.of("id",portfolioId.toString()));
     }
 
     @Override
-    public Iterable<T> findAllIRS()
-    {
+    public Iterable<T> findAllIRS() {
         String query =  "MATCH (n:IRS {tradeType:'Bilateral'}) RETURN n";
         return session.query(getEntityType(), query, Collections.emptyMap());
     }
