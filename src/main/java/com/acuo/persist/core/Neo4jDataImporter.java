@@ -59,7 +59,7 @@ public class Neo4jDataImporter implements DataImporter {
             substitutions.put("%branch%", branch);
             String filePath = String.format(directoryTemplate, workingDirPath, fileName);
             LOG.info("Importing files [{}] from {}", fileName, filePath);
-            String file = GraphData.readFile(filePath);
+            String file = buildQuery(GraphData.readFile(filePath), substitutions);
             String query = buildQuery(file, substitutions);
             loader.loadData(query);
         } catch (Exception e) {
