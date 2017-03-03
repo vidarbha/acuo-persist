@@ -8,7 +8,7 @@ public class ImportServiceModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(ImportService.class).to(ImportService.class).in(Singleton.class);
+        bind(ImportService.class).in(Singleton.class);
     }
 
 }

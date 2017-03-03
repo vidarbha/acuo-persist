@@ -56,7 +56,7 @@ public class SessionIntegrationTest {
 		}
 
 		importer = new Neo4jDataImporter(dataLoader, workingDirectory, workingDirectory, directoryTemplate);
-		importer.importFiles(DataImporter.ALL_FILES);
+		importer.importFiles("develop", DataImporter.ALL_FILES);
 	}
 
 	@Test
