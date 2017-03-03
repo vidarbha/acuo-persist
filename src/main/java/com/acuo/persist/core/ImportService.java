@@ -10,8 +10,7 @@ public class ImportService {
     private final DataLoader loader;
     private final DataImporter importer;
 
-    public static final String DEFAULT_BRANCH = "master";
-    private String branch = DEFAULT_BRANCH;
+    private String branch = null;
 
     @Inject
     public ImportService(DataLoader loader, DataImporter importer) {
