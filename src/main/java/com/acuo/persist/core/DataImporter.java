@@ -24,9 +24,10 @@ public interface DataImporter {
             "initmc",
             "settings",
             "assetTransfer",
-            "portfolios"
+            "portfolios",
+            "infopres"
     };
 
-    void importFiles(String... fileNames);
+    void importFiles(final String branch, String... fileNames);
 
 }

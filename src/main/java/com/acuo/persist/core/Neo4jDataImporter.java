@@ -50,12 +50,13 @@ public class Neo4jDataImporter implements DataImporter {
     }
 
     @Override
-    public void importFiles(String... fileNames) {
-        Arrays.asList(fileNames).stream().forEach(f -> importFile(f));
+    public void importFiles(final String branch, String... fileNames) {
+        Arrays.asList(fileNames).stream().forEach(f -> importFile(branch, f));
     }
 
-    private void importFile(String fileName) {
+    private void importFile(String branch, String fileName) {
         try {
+            substitutions.put("%branch%", branch);
             String filePath = String.format(directoryTemplate, workingDirPath, fileName);
             LOG.info("Importing files [{}] from {}", fileName, filePath);
             String file = GraphData.readFile(filePath);
