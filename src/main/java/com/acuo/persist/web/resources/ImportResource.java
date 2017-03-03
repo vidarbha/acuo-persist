@@ -6,7 +6,7 @@ import com.codahale.metrics.annotation.Timed;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -21,17 +21,17 @@ public class ImportResource {
     }
 
     @GET
-    @Path("reload/{branch}")
+    @Path("reload")
     @Timed
-    public Response reload(@PathParam("branch") String value) {
+    public Response reload(@QueryParam("branch") String value) {
         service.branch(value).reload();
         return Response.status(Status.OK).build();
     }
 
     @GET
-    @Path("load/{branch}/{fileName}")
+    @Path("load")
     @Timed
-    public Response load(@PathParam("branch") String branch, @PathParam("fileName") String fileName) {
+    public Response load(@QueryParam("branch") String branch, @QueryParam("file") String fileName) {
         service.branch(branch).load(fileName);
         return Response.status(Status.OK).build();
     }
