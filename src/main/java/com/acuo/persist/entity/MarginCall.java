@@ -33,11 +33,7 @@ public class MarginCall extends StatementItem {
 
     private Double exposure;
 
-    @Relationship(type = "FIRST")
-    private Step firstStep;
 
-    @Relationship(type = "LAST")
-    private Step lastStep;
 
     @Relationship(type = "MATCHED_TO_EXPECTED", direction = Relationship.OUTGOING)
     private MarginCall matchedToExpected;
