@@ -16,7 +16,7 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode(callSuper = false, exclude = {"marginCalls", "agreement"})
 @ToString(exclude = {"marginCalls", "agreement"})
-public class MarginCall extends StatementItem {
+public class MarginCall<T extends MarginCall> extends StatementItem<T> {
 
     @Property(name="id")
     private String marginCallId;

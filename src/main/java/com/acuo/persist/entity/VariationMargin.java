@@ -6,7 +6,7 @@ import org.neo4j.ogm.annotation.NodeEntity;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false)
-public class VariationMargin extends MarginCall {
+@EqualsAndHashCode(callSuper = true)
+public class VariationMargin extends MarginCall<VariationMargin> {
 
 }
