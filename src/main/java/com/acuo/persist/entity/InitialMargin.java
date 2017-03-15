@@ -18,12 +18,24 @@ public class InitialMargin extends MarginCall<InitialMargin> {
     private Double initialBalanceNonCash;
     private String IMRole;
 
-    public InitialMargin(String marginCallId , LocalDate callDate, Types.MarginType marginType, String direction , LocalDate valuationDate, String currency,
+    public InitialMargin(String marginCallId, LocalDate callDate, Types.MarginType marginType, String direction, LocalDate valuationDate, String currency,
                          Double excessAmount, Double balanceAmount, Double deliverAmount, Double returnAmount, Double pendingCollateral, Double exposure, Integer parentRank,
-                         LocalDateTime notificationTime, Double marginAmount, String status)
-    {
-        super(marginCallId, callDate,marginType,direction,valuationDate,currency,
-                excessAmount,balanceAmount, deliverAmount, returnAmount, pendingCollateral, exposure, parentRank,
-                notificationTime,marginAmount,status);
+                         LocalDateTime notificationTime, Double marginAmount, String status) {
+        super(marginCallId,
+                callDate,
+                marginType,
+                direction,
+                valuationDate,
+                currency,
+                excessAmount,
+                balanceAmount,
+                deliverAmount,
+                returnAmount,
+                pendingCollateral,
+                exposure,
+                parentRank,
+                notificationTime,
+                marginAmount,
+                status);
     }
 }
