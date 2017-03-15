@@ -43,7 +43,7 @@ public class MarginCallServiceImpl extends GenericService<MarginCall> implements
     @Override
     public Iterable<MarginCall> callFor(String marginStatementId, CallStatus... statuses) {
         String query =
-                "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement {id:{msId}})<-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step) " +
+                "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement {id:{msId}})<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
                 "WHERE step.status IN {statuses} " +
                 "RETURN mc, nodes(p), rels(p)";
         return session.query(MarginCall.class, query, ImmutableMap.of("msId", marginStatementId, "statuses", statuses));

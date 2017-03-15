@@ -2,6 +2,7 @@ package com.acuo.persist.learning;
 
 import com.acuo.persist.services.GenericService;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.neo4j.harness.junit.Neo4jRule;
@@ -15,6 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class TestDeleteAcuo {
 
     private PersonService personGenericService;
@@ -78,7 +80,8 @@ public class TestDeleteAcuo {
 
         startTransaction(session);
         persistedPieter = Iterators.single(personGenericService.findAll().iterator());
-        Car persistedMercedes = Iterators.single(persistedPieter.cars.iterator()); // persistedPieter.cars.remove( persistedMercedes );
+        Car persistedMercedes = Iterators.single(persistedPieter.cars.iterator());
+        persistedPieter.cars.remove( persistedMercedes );
         carGenericService.delete(persistedMercedes.getId());
         endTransaciton();
 
