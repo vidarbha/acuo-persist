@@ -5,7 +5,7 @@ apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/ro
 apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/root/test-reports.gradle"
 
 apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/java/java-plugins.gradle"
-apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/develop/java/dependencies.gradle"
+apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/java/dependencies.gradle"
 apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/java/integration-test.gradle"
 apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/java/sonarqube.gradle"
 
@@ -18,7 +18,11 @@ apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/ja
 group = 'com.acuo.collateral'
 
 ext.versions += [
-    common  : '0.4.0-SNAPSHOT'
+        common  : '0.3.3',
+        guice   : '4.0',
+        okhttp  : '3.3.1',
+        neo4j   : '3.0.7',
+        neo4jOgm: '2.1.0',
 ]
 
 configurations {
@@ -27,17 +31,36 @@ configurations {
 }
 
 dependencies {
+    compile("com.acuo.collateral:acuo-common:${versions.common}") { changing = true }
+    compile(
+            "com.google.inject:guice:${versions.guice}",
+            "com.google.inject.extensions:guice-servlet:${versions.guice}",
+            "com.google.inject.extensions:guice-persist:${versions.guice}",
+            "com.google.inject.extensions:guice-multibindings:${versions.guice}",
+            "com.google.inject.extensions:guice-assistedinject:${versions.guice}",
+            //"org.springframework.data:spring-data-neo4j:4.2.0.RC1",
+            //"org.springframework.guice:spring-guice:1.0.0.BUILD-SNAPSHOT",
 
-    compile (
-        "com.acuo.collateral:acuo-common:${versions.common}"
-    ) { changing = true }
+            "org.neo4j:neo4j:${versions.neo4j}",
+            "org.neo4j.driver:neo4j-java-driver:${versions.neo4jBolt}",
 
-    /*compile (
-        "org.springframework.data:spring-data-neo4j:4.2.0.RC1",
-        "org.springframework.guice:spring-guice:1.0.0.BUILD-SNAPSHOT",
-    )*/
+            "org.neo4j:neo4j-ogm-core:${versions.neo4jOgm}",
+            "org.neo4j:neo4j-ogm-http-driver:${versions.neo4jOgm}",
+            "org.neo4j:neo4j-ogm-bolt-driver:${versions.neo4jOgm}",
+            "org.neo4j:neo4j-ogm-embedded-driver:${versions.neo4jOgm}",
+
+            "commons-beanutils:commons-beanutils:1.9.3",
+
+            "ch.qos.logback:logback-access:${versions.logback}",
+            "com.squareup.okhttp3:okhttp:${versions.okhttp}",
+            "com.smokejumperit.guice:core:1.1"
+    )
 
     testCompile(
-        "com.acuo.collateral:acuo-common:${versions.common}:tests"
+            "com.acuo.collateral:acuo-common:${versions.common}:tests",
+            "org.neo4j.test:neo4j-harness:${versions.neo4j}",
+            "org.neo4j:neo4j-ogm-test:${versions.neo4jOgm}",
+            "com.tngtech.java:junit-dataprovider:1.10.4",
+            "org.easymock:easymock:3.3"
     )
 }
