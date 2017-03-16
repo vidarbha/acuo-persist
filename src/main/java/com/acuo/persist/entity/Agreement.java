@@ -64,6 +64,5 @@ public class Agreement extends Entity<Agreement> {
     @Relationship(type = "STEMS_FROM", direction = Relationship.INCOMING)
     private  Set<MarginStatement> marginStatements;
 
-    @Relationship(type = "STEMS_FROM", direction = Relationship.INCOMING)
-    private  Set<MarginCall> marginCalls;
+
 }

@@ -15,8 +15,8 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"marginCalls", "agreement"})
-@ToString(exclude = {"marginCalls", "agreement"})
+@EqualsAndHashCode(callSuper = false, exclude = {"marginCalls", "marginStatement"})
+@ToString(exclude = {"marginCalls", "marginStatement"})
 public class MarginCall<T extends MarginCall> extends StatementItem<T> {
 
     @Property(name = "id")
@@ -68,8 +68,8 @@ public class MarginCall<T extends MarginCall> extends StatementItem<T> {
     @Relationship(type = "CHILD_OF", direction = Relationship.INCOMING)
     private Set<ChildOf> children;
 
-    @Relationship(type = "STEMS_FROM", direction = Relationship.OUTGOING)
-    private Agreement agreement;
+    @Relationship(type = "PART_OF", direction = Relationship.OUTGOING)
+    private MarginStatement marginStatement;
 
     private Double marginAmount;
 
