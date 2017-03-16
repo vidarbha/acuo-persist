@@ -19,7 +19,7 @@ public class AssetServiceImpl extends GenericService<Asset> implements AssetServ
     private static String ELIGIBLE_ASSET_BY_CLIENT_AND_CALLID =
             "MATCH path=(client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:HAS]->(:TradingAccount)" +
             "-[:ACCESSES]->(ca:CustodianAccount)-[holds:HOLDS]-(asset:Asset)-[is:IS_AVAILABLE_FOR]->(agreement:Agreement)<-" +
-            "[:STEMS_FROM]-(marginCall:MarginCall {id:{callId}})-[*1..2]->(ms:MarginStatement) " +
+            "[:STEMS_FROM]-(ms:MarginStatement)<-[*1..2]-(marginCall:MarginCall {id:{callId}})" +
             "WHERE marginCall.marginType IN is.marginType " +
             "AND (ms)-[:DIRECTED_TO]->(entity) " +
             "AND (entity)-[:CLIENT_SIGNS]-(agreement) " +
