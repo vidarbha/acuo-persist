@@ -12,13 +12,14 @@ import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-public abstract class Trade<T extends Trade> extends Entity {
+public abstract class Trade<T extends Trade> extends Entity implements Comparable<T> {
 
     private String underlyingAssetId;
 
@@ -59,5 +60,8 @@ public abstract class Trade<T extends Trade> extends Entity {
     @Relationship(type = "BELONGS_TO")
     private Portfolio portfolio;
 
-
+    @Override
+    public int compareTo(T o) {
+        return this.getTradeId().compareTo(o.getTradeId());
+    }
 }
