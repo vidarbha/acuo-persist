@@ -31,6 +31,8 @@ public class Neo4jSessionFactory implements Provider<SessionFactory> {
         this.configuration = new Configuration();
         this.configuration.autoIndexConfiguration().setAutoIndex("assert");
         this.configuration.driverConfiguration().setDriverClassName(driver).setURI(url)
+                .setConnectionPoolSize(150)
+                .setEncryptionLevel("NONE")
                 .setCredentials(new UsernamePasswordCredentials(userName, password));
 
     }
