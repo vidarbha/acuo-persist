@@ -20,7 +20,7 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
         String query =
                 "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement) " +
                 "WITH m " +
-                "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m)<-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step) " +
+                "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m)<-[*1..2]-(mc:StatementItem)-[:LAST]->(step:Step) " +
                 "WHERE step.status IN {statuses} RETURN m, nodes(p), rels(p)";
         return session.query(MarginStatement.class, query, ImmutableMap.of("clientId", clientId.toString(), "statuses", statuses));
     }
