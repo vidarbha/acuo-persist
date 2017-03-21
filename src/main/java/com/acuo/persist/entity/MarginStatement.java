@@ -63,6 +63,12 @@ public class MarginStatement extends Entity<MarginStatement> {
     @Relationship(type = "STEMS_FROM")
     private Agreement agreement;
 
+    @Relationship(type = "DIRECTED_TO")
+    private LegalEntity directedTo;
+
+    @Relationship(type = "SENT_FROM")
+    private LegalEntity sentFrom;
+
     @Relationship(type = "PART_OF", direction = Relationship.INCOMING)
     private Set<StatementItem> statementItems;
 
