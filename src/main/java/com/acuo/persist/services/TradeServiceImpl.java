@@ -11,8 +11,6 @@ import javax.inject.Singleton;
 import java.util.Collections;
 import java.util.Iterator;
 
-@Singleton
-@Transactional
 public class TradeServiceImpl<T extends Trade> extends GenericService<T> implements TradeService<T> {
 
     @Override
@@ -44,4 +42,21 @@ public class TradeServiceImpl<T extends Trade> extends GenericService<T> impleme
         return session.query(getEntityType(), query, Collections.emptyMap());
     }
 
+    public <S extends T> S createOrUpdate(S trade) {
+        T byId = findById(trade.getTradeId());
+        if(byId != null) {
+            delete(byId);
+        }
+        return save(trade);
+    }
+
+    public <S extends T> Iterable<S> createOrUpdate(Iterable<S> trades) {
+        for (S trade: trades) {
+            T byId = findById(trade.getTradeId());
+            if (byId != null) {
+                delete(byId);
+            }
+        }
+        return save(trades);
+    }
 }

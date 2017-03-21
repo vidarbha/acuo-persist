@@ -5,7 +5,6 @@ import com.acuo.persist.ids.ClientId;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 
-@Transactional
 public class AssetServiceImpl extends GenericService<Asset> implements AssetService{
 
     private static String ELIGIBLE_ASSET_WITH_ACCT_AND_TRANSFER_INFO =

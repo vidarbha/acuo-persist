@@ -8,7 +8,7 @@ import com.acuo.persist.spring.Call;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 
-@Transactional
+
 public class MarginCallServiceImpl extends GenericService<MarginCall> implements MarginCallService {
 
     @Override
@@ -17,6 +17,7 @@ public class MarginCallServiceImpl extends GenericService<MarginCall> implements
     }
 
     @Override
+    @Transactional
     public void setStatus(String marginCallId, CallStatus status) {
         MarginCall marginCall = findById(marginCallId);
         Step previousStep = marginCall.getLastStep();
@@ -27,7 +28,7 @@ public class MarginCallServiceImpl extends GenericService<MarginCall> implements
         previousStep.setNext(next);
         lastStep.setStatus(status);
         marginCall.setLastStep(lastStep);
-        createOrUpdate(marginCall);
+        save(marginCall);
     }
 
     @Override

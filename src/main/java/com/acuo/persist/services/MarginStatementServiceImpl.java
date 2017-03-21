@@ -7,7 +7,6 @@ import com.acuo.persist.ids.MarginStatementId;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 
-@Transactional
 public class MarginStatementServiceImpl extends GenericService<MarginStatement> implements MarginStatementService {
 
     @Override

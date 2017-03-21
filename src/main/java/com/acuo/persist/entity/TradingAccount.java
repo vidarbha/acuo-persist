@@ -30,8 +30,11 @@ public class TradingAccount extends Entity<TradingAccount> {
     @Relationship(type = "ACCESSES")
     private Set<CustodianAccount> custodianAccounts;
 
-    public void update(Trade trade) {
+    public void remove(Trade trade) {
         trades.remove(trade);
+    }
+
+    public void add(Trade trade) {
         trades.add(trade);
     }
 

@@ -69,8 +69,8 @@ public class TestDeleteAcuo {
         pieter.cars.add(mercedes);
         mercedes.owner = pieter;
         mercedes.type = "Mercedes";
-        personGenericService.createOrUpdate(pieter);
-        carGenericService.createOrUpdate(mercedes);
+        personGenericService.save(pieter);
+        carGenericService.save(mercedes);
         endTransaciton();
 
         startTransaction(session);
@@ -90,7 +90,7 @@ public class TestDeleteAcuo {
         bmw.type = "BMW";
         persistedPieter = Iterators.single(personGenericService.findAll().iterator());
         bmw.owner = persistedPieter; // persistedPieter.cars.add( bmw );
-        carGenericService.createOrUpdate(bmw);
+        carGenericService.save(bmw);
         endTransaciton();
 
         startTransaction(session);

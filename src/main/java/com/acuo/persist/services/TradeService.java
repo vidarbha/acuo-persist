@@ -15,4 +15,5 @@ public interface TradeService<T extends Trade> extends Service<T> {
 
     Iterable<T> findAllIRS();
 
+    <S extends T> Iterable<S> createOrUpdate(Iterable<S> trades);
 }

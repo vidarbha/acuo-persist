@@ -5,7 +5,6 @@ import com.acuo.persist.entity.LegalEntity;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 
-@Transactional
 public class LegalEntityServiceImpl extends GenericService<LegalEntity> implements LegalEntityService {
 
     @Override
