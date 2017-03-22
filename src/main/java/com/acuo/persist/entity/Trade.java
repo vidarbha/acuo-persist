@@ -5,6 +5,7 @@ import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
@@ -18,7 +19,8 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = false, exclude = {"valuations"})
+@ToString(exclude = {"valuations"})
 public abstract class Trade<T extends Trade> extends Entity implements Comparable<T> {
 
     private String underlyingAssetId;
@@ -51,8 +53,8 @@ public abstract class Trade<T extends Trade> extends Entity implements Comparabl
     @Property(name="id")
     protected String tradeId;
 
-    @Relationship(type = "VALUATED", direction = Relationship.OUTGOING)
-    private Set<Valuation> valuations = new HashSet<>();
+    @Relationship(type = "VALUATED")
+    private Set<Valuation> valuations;
 
     @Relationship(type = "POSITIONS_ON", direction = Relationship.INCOMING)
     private TradingAccount account;

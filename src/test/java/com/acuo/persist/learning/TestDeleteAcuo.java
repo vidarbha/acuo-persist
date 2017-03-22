@@ -12,11 +12,12 @@ import org.neo4j.ogm.session.Session;
 import org.neo4j.ogm.session.SessionFactory;
 import org.neo4j.ogm.transaction.Transaction;
 
+import javax.inject.Provider;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@Ignore
 public class TestDeleteAcuo {
 
     private PersonService personGenericService;
@@ -31,7 +32,7 @@ public class TestDeleteAcuo {
     public static class PersonService extends GenericService<Person> {
 
         public PersonService(Session session) {
-            this.session = session;
+            this.sessionProvider = () -> session;
         }
 
         @Override
@@ -43,7 +44,7 @@ public class TestDeleteAcuo {
     public static class CarService extends GenericService<Car> {
 
         public CarService(Session session) {
-            this.session = session;
+            this.sessionProvider = () -> session;
         }
 
         @Override
@@ -85,11 +86,13 @@ public class TestDeleteAcuo {
         carGenericService.delete(persistedMercedes.getId());
         endTransaciton();
 
+        session.clear();
         startTransaction(session);
         Car bmw = new Car();
         bmw.type = "BMW";
         persistedPieter = Iterators.single(personGenericService.findAll().iterator());
-        bmw.owner = persistedPieter; // persistedPieter.cars.add( bmw );
+        bmw.owner = persistedPieter;
+        persistedPieter.cars.add( bmw );
         carGenericService.save(bmw);
         endTransaciton();
 

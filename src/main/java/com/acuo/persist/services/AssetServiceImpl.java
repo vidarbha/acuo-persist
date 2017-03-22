@@ -35,19 +35,19 @@ public class AssetServiceImpl extends GenericService<Asset> implements AssetServ
     @Override
     public Iterable<Asset> findEligibleAssetByClientId(ClientId clientId) {
         String query = ELIGIBLE_ASSET_WITH_ACCT_AND_TRANSFER_INFO;
-        return session.query(getEntityType(), query, ImmutableMap.of("clientId",clientId.toString()));
+        return sessionProvider.get().query(getEntityType(), query, ImmutableMap.of("clientId",clientId.toString()));
     }
 
     @Override
     public Iterable<Asset> findReservedAssetByClientId(ClientId clientId) {
         String query = RESERVED_ASSET_BY_CLIENT_ID;
-        return session.query(getEntityType(), query, ImmutableMap.of("clientId",clientId.toString()));
+        return sessionProvider.get().query(getEntityType(), query, ImmutableMap.of("clientId",clientId.toString()));
     }
 
     @Override
     public Iterable<Asset> findAvailableAssetByClientIdAndCallId(ClientId clientId, String callId) {
         String query = ELIGIBLE_ASSET_BY_CLIENT_AND_CALLID;
-        return session.query(getEntityType(), query, ImmutableMap.of("clientId",clientId.toString(), "callId", callId));
+        return sessionProvider.get().query(getEntityType(), query, ImmutableMap.of("clientId",clientId.toString(), "callId", callId));
     }
 
     @Override

@@ -30,7 +30,9 @@ public abstract class AbstractPersistTest {
 
   @After
   public void tearDown() {
+    getUnitOfWork().begin();
     injector.getInstance(Session.class).purgeDatabase();
+    getUnitOfWork().end();
     injector.getInstance(PersistService.class).stop();
   }
 

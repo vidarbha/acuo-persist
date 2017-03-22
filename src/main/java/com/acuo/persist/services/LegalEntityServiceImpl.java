@@ -13,17 +13,19 @@ public class LegalEntityServiceImpl extends GenericService<LegalEntity> implemen
     }
 
     @Override
+    @Transactional
     public LegalEntity getClientLegalEntity(Agreement agreement) {
         String query = "MATCH (l:LegalEntity)-[r:ClientSignsRelation]->(a:Agreement {id:{id}}) " +
                         "RETURN l";
-        return  session.queryForObject(LegalEntity.class, query, ImmutableMap.of("id",agreement.getAgreementId()));
+        return  sessionProvider.get().queryForObject(LegalEntity.class, query, ImmutableMap.of("id",agreement.getAgreementId()));
     }
 
     @Override
+    @Transactional
     public LegalEntity getCtpyLegalEntity(Agreement agreement) {
         String query = "MATCH (l:LegalEntity)-[r:COUNTERPARTY_SIGNS]->(a:Agreement {id:{id}}) " +
                         "RETURN l";
-        return  session.queryForObject(LegalEntity.class, query, ImmutableMap.of("id",agreement.getAgreementId()));
+        return  sessionProvider.get().queryForObject(LegalEntity.class, query, ImmutableMap.of("id",agreement.getAgreementId()));
     }
 
 }

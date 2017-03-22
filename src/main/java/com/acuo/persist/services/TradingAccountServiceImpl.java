@@ -12,6 +12,7 @@ public class TradingAccountServiceImpl extends GenericService<TradingAccount> im
         return TradingAccount.class;
     }
 
+    @Transactional
     public void addTrade(String accountId, Trade trade) {
         TradingAccount account = findById(accountId, 2);
         account.remove(trade);
