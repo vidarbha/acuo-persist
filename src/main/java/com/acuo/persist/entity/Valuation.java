@@ -23,8 +23,7 @@ import static org.neo4j.ogm.annotation.Relationship.INCOMING;
 @ToString(exclude = {"values"})
 public class Valuation<T extends Valuation> extends Entity<T> {
 
-    @Convert(LocalDateConverter.class)
-    private LocalDate date;
+
 
     @Property(name = "id")
     private String valuationId;

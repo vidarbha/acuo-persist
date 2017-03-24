@@ -59,5 +59,5 @@ public class Asset extends Entity<Asset> {
     private AssetTransfer transfer;
 
     @Relationship(type = "VALUATED")
-    private Set<Valuation> valuations;
+    private Valuation valuation;
 }

@@ -54,7 +54,7 @@ public abstract class Trade<T extends Trade> extends Entity implements Comparabl
     protected String tradeId;
 
     @Relationship(type = "VALUATED")
-    private Set<Valuation> valuations;
+    private Valuation valuation;
 
     @Relationship(type = "POSITIONS_ON", direction = Relationship.INCOMING)
     private TradingAccount account;
