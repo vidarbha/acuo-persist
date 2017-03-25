@@ -21,10 +21,6 @@ public class Value<T extends Value> extends Entity<T> {
     @Convert(LocalDateConverter.class)
     private LocalDate date;
 
-
-
-    private String source;
-
     @Relationship(type = "VALUE", direction = INCOMING)
     private Valuation valuation;
 }

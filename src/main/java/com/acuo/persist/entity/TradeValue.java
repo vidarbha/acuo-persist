@@ -16,4 +16,6 @@ public class TradeValue extends Value<TradeValue>{
 
     @Convert(CurrencyConverter.class)
     private com.opengamma.strata.basics.currency.Currency currency;
+
+    private String source;
 }

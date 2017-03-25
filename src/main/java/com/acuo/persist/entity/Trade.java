@@ -19,8 +19,8 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"valuations"})
-@ToString(exclude = {"valuations"})
+@EqualsAndHashCode(callSuper = false, exclude = {"valuation"})
+@ToString(exclude = {"valuation"})
 public abstract class Trade<T extends Trade> extends Entity implements Comparable<T> {
 
     private String underlyingAssetId;
