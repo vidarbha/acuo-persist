@@ -31,6 +31,5 @@ public class Valuation<T extends Valuation> extends Entity<T> {
     @Relationship(type = "VALUE")
     private Set<Value> values;
 
-    @Relationship(type = "VALUATED", direction = Relationship.INCOMING)
-    private Portfolio portfolio;
+
 }

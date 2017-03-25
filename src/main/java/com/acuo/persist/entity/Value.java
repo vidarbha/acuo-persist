@@ -16,15 +16,12 @@ import static org.neo4j.ogm.annotation.Relationship.INCOMING;
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Value extends Entity<Value> {
+public class Value<T extends Value> extends Entity<T> {
 
     @Convert(LocalDateConverter.class)
     private LocalDate date;
 
-    private Double pv;
 
-    @Convert(CurrencyConverter.class)
-    private Currency currency;
 
     private String source;
 
