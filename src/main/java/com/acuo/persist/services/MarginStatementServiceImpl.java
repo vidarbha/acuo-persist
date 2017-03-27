@@ -92,4 +92,10 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
                 "RETURN m, nodes(p), rels(p)";
         return sessionProvider.get().queryForObject(MarginStatement.class, query, ImmutableMap.of("callId", callId));
     }
+
+    @Override
+    @Transactional
+    public void match(MarginStatementId fromId, MarginStatementId toId) {
+        MarginStatement from = findById(fromId.toString());
+    }
 }
