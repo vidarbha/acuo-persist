@@ -29,7 +29,7 @@ public class Valuation<T extends Valuation> extends Entity<T> {
     private String valuationId;
 
     @Relationship(type = "VALUE")
-    private Set<Value> values;
+    private Set<ValueRelation> values;
 
 
 }

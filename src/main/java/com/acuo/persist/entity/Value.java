@@ -18,9 +18,6 @@ import static org.neo4j.ogm.annotation.Relationship.INCOMING;
 @EqualsAndHashCode(callSuper = false)
 public class Value<T extends Value> extends Entity<T> {
 
-    @Convert(LocalDateConverter.class)
-    private LocalDate date;
-
     @Relationship(type = "VALUE", direction = INCOMING)
     private Valuation valuation;
 }
