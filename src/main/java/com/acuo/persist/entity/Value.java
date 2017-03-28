@@ -19,5 +19,5 @@ import static org.neo4j.ogm.annotation.Relationship.INCOMING;
 public class Value<T extends Value> extends Entity<T> {
 
     @Relationship(type = "VALUE", direction = INCOMING)
-    private Valuation valuation;
+    private ValueRelation valuation;
 }
