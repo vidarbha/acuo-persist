@@ -12,6 +12,6 @@ import org.neo4j.ogm.annotation.Relationship;
 @ToString(exclude = {"asset"})
 public class AssetValuation extends Valuation<AssetValuation>{
 
-    @Relationship(type = "VALUATED")
+    @Relationship(type = "VALUATED",direction = Relationship.INCOMING)
     private Asset asset;
 }

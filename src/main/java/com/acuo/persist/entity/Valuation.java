@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.neo4j.ogm.annotation.Relationship.INCOMING;
+import static org.neo4j.ogm.annotation.Relationship.OUTGOING;
 
 @NodeEntity
 @Data
@@ -23,12 +24,10 @@ import static org.neo4j.ogm.annotation.Relationship.INCOMING;
 @ToString(exclude = {"values"})
 public class Valuation<T extends Valuation> extends Entity<T> {
 
-
-
     @Property(name = "id")
     private String valuationId;
 
-    @Relationship(type = "VALUE")
+    @Relationship(type = "VALUE", direction = OUTGOING)
     private Set<ValueRelation> values;
 
 

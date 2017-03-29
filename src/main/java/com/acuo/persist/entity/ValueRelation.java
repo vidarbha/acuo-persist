@@ -10,7 +10,7 @@ import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.time.LocalDate;
 
-@RelationshipEntity(type="CLIENT_SIGNS")
+@RelationshipEntity(type="VALUE")
 @Getter
 @Setter
 public class ValueRelation extends Entity<ValueRelation>{
