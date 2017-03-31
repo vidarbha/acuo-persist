@@ -20,4 +20,6 @@ public interface MarginStatementService extends Service<MarginStatement> {
     MarginStatement statementForRecon(MarginStatementId marginStatementId);
 
     MarginStatement statementOf(String callId);
+
+    void match(MarginStatementId fromId, MarginStatementId toId);
 }

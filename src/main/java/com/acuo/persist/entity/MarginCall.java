@@ -62,8 +62,8 @@ public class MarginCall<T extends MarginCall> extends StatementItem<T> {
     @Relationship(type = "FIRST")
     private Step firstStep;
 
-    @Relationship(type = "MATCHED_TO_EXPECTED", direction = Relationship.OUTGOING)
-    private MarginCall matchedToExpected;
+//    @Relationship(type = "MATCHED_TO_EXPECTED", direction = Relationship.OUTGOING)
+//    private MarginCall matchedToExpected;
 
     @Relationship(type = "CHILD_OF", direction = Relationship.INCOMING)
     private Set<ChildOf> children;
