@@ -11,9 +11,6 @@ import org.neo4j.ogm.annotation.Property;
 @EqualsAndHashCode(callSuper = false)
 public class FCM extends LegalEntity {
 
-    @Index(unique = true, primary = true)
-    @Property(name = "id")
-    private String fcmId;
 
     private String name;
 
