@@ -3,14 +3,13 @@ package com.acuo.persist.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
 
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Rule extends Entity<Rule> {
+public class PAI extends StatementItem {
 
-    private String type;
-
-    private Double value;
-
+    @Property(name="id")
+    private String paiId;
 }

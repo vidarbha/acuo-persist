@@ -12,7 +12,7 @@ import java.util.Date;
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Exposure extends Entity {
+public class Exposure extends Entity<Exposure> {
 
     private String positionId;
 

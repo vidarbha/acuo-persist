@@ -7,10 +7,6 @@ import org.neo4j.ogm.annotation.NodeEntity;
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Rule extends Entity<Rule> {
-
-    private String type;
-
-    private Double value;
+public class VariationMargin extends MarginCall {
 
 }

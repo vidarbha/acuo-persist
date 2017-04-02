@@ -15,8 +15,8 @@ import java.time.LocalDate;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"possesses","holds", "earmarkedMarginCall"})
-@ToString(exclude = {"possesses","holds", "earmarkedMarginCall"})
+@EqualsAndHashCode(callSuper = false, exclude = {"holds", "earmarkedMarginCall", "transfer"})
+@ToString(exclude = {"holds", "earmarkedMarginCall", "transfer"})
 public class Asset extends Entity<Asset> {
 
     @Property(name = "id")
@@ -51,9 +51,9 @@ public class Asset extends Entity<Asset> {
     @Relationship(type = "EXCLUDED")
     private MarginCall earmarkedMarginCall;
 
-    @Relationship(type = "OF", direction = Relationship.INCOMING)
-    private AssetTransfer assetTransfer;
-
     @Relationship(type = "IS_AVAILABLE_FOR")
     private AvailableFor availableFor;
+
+    @Relationship(type = "OF", direction = Relationship.INCOMING)
+    private AssetTransfer transfer;
 }

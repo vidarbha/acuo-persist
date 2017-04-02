@@ -13,7 +13,7 @@ import java.util.Set;
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Portfolio extends Entity {
+public class Portfolio extends Entity<Portfolio> {
 
     @Property(name="id")
     private String portfolioId;

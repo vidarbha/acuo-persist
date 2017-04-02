@@ -16,7 +16,7 @@ import java.util.Set;
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Valuation extends Entity{
+public class Valuation extends Entity<Valuation> {
 
     @Convert(LocalDateConverter.class)
     private LocalDate date;

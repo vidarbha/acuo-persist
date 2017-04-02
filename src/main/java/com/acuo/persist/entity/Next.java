@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @RelationshipEntity(type = "NEXT")
 @Getter
 @Setter
-public class Next extends Entity<Next>{
+public class Next extends Entity<Next> {
 
     @Convert(LocalDateTimeConverter.class)
     private LocalDateTime time;

@@ -10,7 +10,7 @@ import org.neo4j.ogm.annotation.typeconversion.Convert;
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Value extends Entity{
+public class Value extends Entity<Value> {
 
     private Double pv;
 
