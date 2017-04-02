@@ -19,8 +19,8 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"valuations"})
-@ToString(exclude = {"valuations"})
+@EqualsAndHashCode(callSuper = false, exclude = {"valuation"})
+@ToString(exclude = {"valuation"})
 public abstract class Trade<T extends Trade> extends Entity implements Comparable<T> {
 
     private String underlyingAssetId;
@@ -54,7 +54,7 @@ public abstract class Trade<T extends Trade> extends Entity implements Comparabl
     protected String tradeId;
 
     @Relationship(type = "VALUATED")
-    private Set<Valuation> valuations;
+    private Valuation valuation;
 
     @Relationship(type = "POSITIONS_ON", direction = Relationship.INCOMING)
     private TradingAccount account;

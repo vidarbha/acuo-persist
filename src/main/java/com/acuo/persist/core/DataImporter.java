@@ -8,6 +8,7 @@ public interface DataImporter {
     String[] ALL_FILES = {
             "firms",
             "legalentities",
+            "currencies",
             "tradingAccounts",
             "clearingHouses",
             "fcms",

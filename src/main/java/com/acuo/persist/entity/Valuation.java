@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.neo4j.ogm.annotation.Relationship.INCOMING;
+import static org.neo4j.ogm.annotation.Relationship.OUTGOING;
 
 @NodeEntity
 @Data
@@ -23,15 +24,11 @@ import static org.neo4j.ogm.annotation.Relationship.INCOMING;
 @ToString(exclude = {"values"})
 public class Valuation<T extends Valuation> extends Entity<T> {
 
-    @Convert(LocalDateConverter.class)
-    private LocalDate date;
-
     @Property(name = "id")
     private String valuationId;
 
-    @Relationship(type = "VALUE")
-    private Set<Value> values;
+    @Relationship(type = "VALUE", direction = OUTGOING)
+    private Set<ValueRelation> values;
 
-    @Relationship(type = "VALUATED", direction = Relationship.INCOMING)
-    private Portfolio portfolio;
+
 }

@@ -12,4 +12,7 @@ public class TradeValuation extends Valuation<TradeValuation> {
 
     @Relationship(type = "VALUATED", direction = Relationship.INCOMING)
     private Trade trade;
+
+    @Relationship(type = "VALUATED", direction = Relationship.INCOMING)
+    private Portfolio portfolio;
 }
