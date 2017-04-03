@@ -14,12 +14,11 @@ import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"clientSignsRelation", "counterpartSignsRelation", "marginStatements", "marginCalls"})
-@ToString(exclude = {"clientSignsRelation", "counterpartSignsRelation", "marginStatements", "marginCalls"})
+@EqualsAndHashCode(callSuper = false, exclude = {"clientSignsRelation", "counterpartSignsRelation"})
+@ToString(exclude = {"clientSignsRelation", "counterpartSignsRelation"})
 public class Agreement extends Entity<Agreement> {
 
     @Property(name="id")

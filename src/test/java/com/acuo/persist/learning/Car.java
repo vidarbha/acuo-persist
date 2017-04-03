@@ -6,12 +6,12 @@ import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 
 @NodeEntity
-public class Car extends Entity {
-    public Car() {
+class Car extends Entity {
+    Car() {
     }
 
     @Property
-    public String type;
+    String type;
     @Relationship(type = "HAS_CAR", direction = "INCOMING")
-    public Person owner;
+    Person owner;
 }

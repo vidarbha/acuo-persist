@@ -8,10 +8,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 @NodeEntity
-public class Person extends Entity<Person> {
-    public Person() {
+class Person extends Entity<Person> {
+    Person() {
     }
 
     @Relationship(type = "HAS_CAR")
-    public Set<Car> cars = new HashSet();
+    Set<Car> cars = new HashSet<>();
 }

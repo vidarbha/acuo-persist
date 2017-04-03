@@ -15,8 +15,8 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"marginCalls", "marginStatement"})
-@ToString(exclude = {"marginCalls", "marginStatement"})
+@EqualsAndHashCode(callSuper = false, exclude = {"marginStatement"})
+@ToString(exclude = {"marginStatement"})
 public class MarginCall<T extends MarginCall> extends StatementItem<T> {
 
     @Property(name = "id")
