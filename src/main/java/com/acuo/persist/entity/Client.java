@@ -1,12 +1,15 @@
 package com.acuo.persist.entity;
 
+import com.acuo.persist.neo4j.converters.CurrencyConverter;
 import com.google.common.collect.ImmutableList;
+import com.opengamma.strata.basics.currency.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.Labels;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
+import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.util.List;
 import java.util.Set;
@@ -21,5 +24,8 @@ public class Client extends Firm {
 
     @Relationship(type = "HAS")
     private Set<Settings> settings;
+
+    @Convert(CurrencyConverter.class)
+    private com.opengamma.strata.basics.currency.Currency prefCurrency;
 
 }
