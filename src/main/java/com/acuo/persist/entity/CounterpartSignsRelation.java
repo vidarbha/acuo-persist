@@ -29,4 +29,8 @@ public class CounterpartSignsRelation extends Entity<CounterpartSignsRelation> {
 
     private Double initialPending;
 
+    private Double initialPendingNonCash;
+
+    private Double variationPendingNonCash;
+
 }
