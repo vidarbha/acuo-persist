@@ -86,6 +86,7 @@ public class Neo4jPersistService extends AbstractIdleService implements Provider
     @Override
     public Session get() {
         Session result = sessionThreadLocal.get();
+        log.debug("session {}, count {}", result, beginCountThreadLocal.get());
         if (result == null) {
             throw new IllegalStateException("No UnitOfWork active while attempting to retrieve Connection. " +
                     "Be sure to call UnitOfWork.begin() before retrieving a Connection or that you retrieve " +
