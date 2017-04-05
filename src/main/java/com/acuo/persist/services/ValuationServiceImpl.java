@@ -1,11 +1,17 @@
 package com.acuo.persist.services;
 
+import com.acuo.persist.entity.MarginValuation;
+import com.acuo.persist.entity.TradeValuation;
 import com.acuo.persist.entity.Valuation;
 import com.acuo.persist.ids.PortfolioId;
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 
 public class ValuationServiceImpl extends GenericService<Valuation> implements ValuationService {
+
+    @Inject
+    PortfolioService portfolioService;
 
     @Override
     public Class<Valuation> getEntityType() {
@@ -14,19 +20,35 @@ public class ValuationServiceImpl extends GenericService<Valuation> implements V
 
     @Override
     @Transactional
-    public Iterable<Valuation> allTradeValuationFor(PortfolioId portfolioId) {
+    public TradeValuation getOrCreateTradeValuationFor(PortfolioId portfolioId) {
         String query =
                 "MATCH p=(n:TradeValuation)<-[:VALUATED]-(:Portfolio {id:{id}}) " +
                 "RETURN p, nodes(p), rels(p)";
-        return sessionProvider.get().query(getEntityType(), query, ImmutableMap.of("id",portfolioId.toString()));
+        final String pId = portfolioId.toString();
+        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", pId);
+        TradeValuation valuation = sessionProvider.get().queryForObject(TradeValuation.class, query, parameters);
+        if (valuation == null) {
+            valuation = new TradeValuation();
+            valuation.setPortfolio(portfolioService.findById(pId));
+            valuation = createOrUpdate(valuation);
+        }
+        return valuation;
     }
 
     @Override
     @Transactional
-    public Iterable<Valuation> allMarginValuationFor(PortfolioId portfolioId) {
+    public MarginValuation getOrCreateMarginValuationFor(PortfolioId portfolioId) {
         String query =
                 "MATCH p=(n:MarginValuation)<-[:VALUATED]-(:Portfolio {id:{id}}) " +
                 "RETURN p, nodes(p), rels(p)";
-        return sessionProvider.get().query(getEntityType(), query, ImmutableMap.of("id",portfolioId.toString()));
+        final String pId = portfolioId.toString();
+        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", pId);
+        MarginValuation valuation = sessionProvider.get().queryForObject(MarginValuation.class, query, parameters);
+        if (valuation == null) {
+            valuation = new MarginValuation();
+            valuation.setPortfolio(portfolioService.findById(pId));
+            valuation = createOrUpdate(valuation);
+        }
+        return valuation;
     }
 }
