@@ -13,8 +13,8 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"valuation"})
-@ToString(exclude = {"valuation"})
+@EqualsAndHashCode(callSuper = false, exclude = {"valuations"})
+@ToString(exclude = {"valuations"})
 public class Portfolio extends Entity<Portfolio> {
 
     @Property(name="id")
@@ -34,6 +34,6 @@ public class Portfolio extends Entity<Portfolio> {
     private Agreement agreement;
 
     @Relationship(type = "VALUATED")
-    private Valuation valuation;
+    private Set<Valuation> valuations;
 
 }

@@ -9,19 +9,17 @@ import org.neo4j.ogm.annotation.Relationship;
 
 import java.util.Set;
 
+import static org.neo4j.ogm.annotation.Relationship.*;
+
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false, exclude = {"values"})
 @ToString(exclude = {"values"})
-public class Valuation<V extends Value> extends Entity<Valuation<V>> {
-
-    @Property(name = "id")
-    private String valuationId;
+public abstract class Valuation<V extends Value> extends Entity<Valuation<V>> {
 
     @Relationship(type = "VALUE")
     private Set<ValueRelation<V>> values;
 
-    @Relationship(type = "VALUATED", direction = Relationship.INCOMING)
+    @Relationship(type = "VALUATED", direction = INCOMING)
     private Portfolio portfolio;
-
 }
