@@ -40,7 +40,7 @@ public class ValuationServiceImpl extends GenericService<Valuation> implements V
     @Transactional
     public TradeValuation getTradeValuationFor(PortfolioId portfolioId) {
         String query =
-                "MATCH p=(n:TradeValuation)<-[:VALUATED]-(:Portfolio {id:{id}}) " +
+                "MATCH p=(value:TradeValue)<-[:VALUE]-(n:TradeValuation)<-[:VALUATED]-(:Portfolio {id:{id}}) " +
                         "RETURN p, nodes(p), rels(p)";
         final String pId = portfolioId.toString();
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", pId);
@@ -63,7 +63,7 @@ public class ValuationServiceImpl extends GenericService<Valuation> implements V
     @Transactional
     public MarginValuation getMarginValuationFor(PortfolioId portfolioId) {
         String query =
-                "MATCH p=(n:MarginValuation)<-[:VALUATED]-(:Portfolio {id:{id}}) " +
+                "MATCH p=(value:MarginValue)<-[:VALUE]-(n:MarginValuation)<-[:VALUATED]-(:Portfolio {id:{id}}) " +
                         "RETURN p, nodes(p), rels(p)";
         final String pId = portfolioId.toString();
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", pId);

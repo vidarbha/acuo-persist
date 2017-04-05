@@ -18,7 +18,7 @@ import static org.neo4j.ogm.annotation.Relationship.*;
 public abstract class Valuation<V extends Value> extends Entity<Valuation<V>> {
 
     @Relationship(type = "VALUE")
-    private Set<ValueRelation<V>> values;
+    private Set<ValueRelation> values;
 
     @Relationship(type = "VALUATED", direction = INCOMING)
     private Portfolio portfolio;
