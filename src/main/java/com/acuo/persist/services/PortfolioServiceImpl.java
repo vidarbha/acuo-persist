@@ -5,7 +5,7 @@ import com.acuo.persist.ids.TradeId;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 
-public class PortfolioServiceImpl extends GenericService<Portfolio> implements PortfolioService {
+public class PortfolioServiceImpl extends GenericService<Portfolio> implements PortfolioSerqvice {
 
     @Override
     public Class<Portfolio> getEntityType() {
