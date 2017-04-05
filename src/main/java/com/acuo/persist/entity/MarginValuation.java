@@ -4,10 +4,16 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Relationship;
+
+import java.util.Set;
 
 @NodeEntity
 @Data
-@ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
-public class MarginValuation extends Valuation<MarginValue> {
+@ToString(callSuper = true, exclude = {"values"})
+@EqualsAndHashCode(callSuper = true, exclude = {"values"})
+public class MarginValuation extends Valuation {
+
+    @Relationship(type = "VALUE")
+    private Set<MarginValueRelation> values;
 }

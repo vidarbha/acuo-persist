@@ -4,6 +4,7 @@ import com.acuo.common.util.GuiceJUnitRunner;
 import com.acuo.persist.core.ImportService;
 import com.acuo.persist.entity.TradeValuation;
 import com.acuo.persist.entity.TradeValue;
+import com.acuo.persist.entity.TradeValueRelation;
 import com.acuo.persist.entity.ValueRelation;
 import com.acuo.persist.ids.PortfolioId;
 import com.acuo.persist.modules.*;
@@ -47,7 +48,7 @@ public class ValuationServiceTest {
         TradeValuation valuation = valuationService.getOrCreateTradeValuationFor(PortfolioId.fromString("p2"));
 
         TradeValue newValue = createValue(Currency.USD, 1.0d, "Markit");
-        ValueRelation valueRelation = new ValueRelation();
+        TradeValueRelation valueRelation = new TradeValueRelation();
         valueRelation.setValuation(valuation);
         valueRelation.setDateTime(LocalDate.now());
         valueRelation.setValue(newValue);
@@ -57,7 +58,7 @@ public class ValuationServiceTest {
 
         valuation = valuationService.getTradeValuationFor(PortfolioId.fromString("p2"));
 
-        Set<ValueRelation> values = valuation.getValues();
+        Set<TradeValueRelation> values = valuation.getValues();
         assertThat(values).isNotEmpty();
     }
 

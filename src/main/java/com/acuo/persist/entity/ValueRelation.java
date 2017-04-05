@@ -13,13 +13,10 @@ import java.time.LocalDate;
 @RelationshipEntity(type="VALUE")
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class ValueRelation extends Entity<ValueRelation>{
+public abstract class ValueRelation extends Entity<ValueRelation>{
 
     @StartNode
     private Valuation valuation;
-
-    @EndNode
-    private Value value;
 
     @Convert(LocalDateConverter.class)
     private LocalDate dateTime;
