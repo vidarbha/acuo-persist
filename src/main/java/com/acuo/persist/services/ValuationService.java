@@ -8,9 +8,15 @@ import com.acuo.persist.ids.TradeId;
 
 public interface ValuationService extends Service<Valuation>{
 
+    TradeValuation getTradeValuationFor(TradeId tradeId);
+
     TradeValuation getOrCreateTradeValuationFor(TradeId tradeId);
 
+    TradeValuation getTradeValuationFor(PortfolioId portfolioId);
+
     TradeValuation getOrCreateTradeValuationFor(PortfolioId portfolioId);
+
+    MarginValuation getMarginValuationFor(PortfolioId portfolioId);
 
     MarginValuation getOrCreateMarginValuationFor(PortfolioId portfolioId);
 }

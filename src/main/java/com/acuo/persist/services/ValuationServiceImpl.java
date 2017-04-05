@@ -22,6 +22,14 @@ public class ValuationServiceImpl extends GenericService<Valuation> implements V
 
     @Override
     @Transactional
+    public TradeValuation getTradeValuationFor(TradeId tradeId) {
+        final Portfolio portfolio = portfolioService.findBy(tradeId);
+        final PortfolioId portfolioId = PortfolioId.fromString(portfolio.getPortfolioId());
+        return getTradeValuationFor(portfolioId);
+    }
+
+    @Override
+    @Transactional
     public TradeValuation getOrCreateTradeValuationFor(TradeId tradeId) {
         final Portfolio portfolio = portfolioService.findBy(tradeId);
         final PortfolioId portfolioId = PortfolioId.fromString(portfolio.getPortfolioId());
@@ -30,16 +38,22 @@ public class ValuationServiceImpl extends GenericService<Valuation> implements V
 
     @Override
     @Transactional
-    public TradeValuation getOrCreateTradeValuationFor(PortfolioId portfolioId) {
+    public TradeValuation getTradeValuationFor(PortfolioId portfolioId) {
         String query =
                 "MATCH p=(n:TradeValuation)<-[:VALUATED]-(:Portfolio {id:{id}}) " +
-                "RETURN p, nodes(p), rels(p)";
+                        "RETURN p, nodes(p), rels(p)";
         final String pId = portfolioId.toString();
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", pId);
-        TradeValuation valuation = sessionProvider.get().queryForObject(TradeValuation.class, query, parameters);
+        return sessionProvider.get().queryForObject(TradeValuation.class, query, parameters);
+    }
+
+    @Override
+    @Transactional
+    public TradeValuation getOrCreateTradeValuationFor(PortfolioId portfolioId) {
+        TradeValuation valuation = getTradeValuationFor(portfolioId);
         if (valuation == null) {
             valuation = new TradeValuation();
-            valuation.setPortfolio(portfolioService.findById(pId));
+            valuation.setPortfolio(portfolioService.findById(portfolioId.toString()));
             valuation = createOrUpdate(valuation);
         }
         return valuation;
@@ -47,16 +61,22 @@ public class ValuationServiceImpl extends GenericService<Valuation> implements V
 
     @Override
     @Transactional
-    public MarginValuation getOrCreateMarginValuationFor(PortfolioId portfolioId) {
+    public MarginValuation getMarginValuationFor(PortfolioId portfolioId) {
         String query =
                 "MATCH p=(n:MarginValuation)<-[:VALUATED]-(:Portfolio {id:{id}}) " +
-                "RETURN p, nodes(p), rels(p)";
+                        "RETURN p, nodes(p), rels(p)";
         final String pId = portfolioId.toString();
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", pId);
-        MarginValuation valuation = sessionProvider.get().queryForObject(MarginValuation.class, query, parameters);
+       return sessionProvider.get().queryForObject(MarginValuation.class, query, parameters);
+    }
+
+    @Override
+    @Transactional
+    public MarginValuation getOrCreateMarginValuationFor(PortfolioId portfolioId) {
+        MarginValuation valuation = getMarginValuationFor(portfolioId);
         if (valuation == null) {
             valuation = new MarginValuation();
-            valuation.setPortfolio(portfolioService.findById(pId));
+            valuation.setPortfolio(portfolioService.findById(portfolioId.toString()));
             valuation = createOrUpdate(valuation);
         }
         return valuation;
