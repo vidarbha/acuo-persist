@@ -1,9 +1,11 @@
 package com.acuo.persist.services;
 
 import com.acuo.persist.entity.MarginValuation;
+import com.acuo.persist.entity.Portfolio;
 import com.acuo.persist.entity.TradeValuation;
 import com.acuo.persist.entity.Valuation;
 import com.acuo.persist.ids.PortfolioId;
+import com.acuo.persist.ids.TradeId;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
@@ -16,6 +18,14 @@ public class ValuationServiceImpl extends GenericService<Valuation> implements V
     @Override
     public Class<Valuation> getEntityType() {
         return Valuation.class;
+    }
+
+    @Override
+    @Transactional
+    public TradeValuation getOrCreateTradeValuationFor(TradeId tradeId) {
+        final Portfolio portfolio = portfolioService.findBy(tradeId);
+        final PortfolioId portfolioId = PortfolioId.fromString(portfolio.getPortfolioId());
+        return getOrCreateTradeValuationFor(portfolioId);
     }
 
     @Override
