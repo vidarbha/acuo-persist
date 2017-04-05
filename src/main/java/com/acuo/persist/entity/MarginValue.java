@@ -10,9 +10,9 @@ import org.neo4j.ogm.annotation.typeconversion.Convert;
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class TradeValue extends Value<TradeValue>{
+public class MarginValue  extends Value<MarginValue> {
 
-    private Double pv;
+    private Double amount;
 
     @Convert(CurrencyConverter.class)
     private Currency currency;

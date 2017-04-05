@@ -10,8 +10,8 @@ import org.neo4j.ogm.annotation.Relationship;
 @Data
 @EqualsAndHashCode(callSuper = false, exclude = {"asset"})
 @ToString(exclude = {"asset"})
-public class AssetValuation extends Valuation<AssetValuation>{
+public class AssetValuation extends Valuation<AssetValue>{
 
-    @Relationship(type = "VALUATED",direction = Relationship.INCOMING)
+    @Relationship(type = "VALUATED", direction = Relationship.INCOMING)
     private Asset asset;
 }

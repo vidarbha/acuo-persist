@@ -16,7 +16,7 @@ public class ValuationServiceImpl extends GenericService<Valuation> implements V
     @Transactional
     public Iterable<Valuation> allTradeValuationFor(PortfolioId portfolioId) {
         String query =
-                "MATCH p=(n:TradeValuation)<-[:VALUATED]-(:Trade)-[:BELONGS_TO]->(:Portfolio {id:{id}}) " +
+                "MATCH p=(n:TradeValuation)<-[:VALUATED]-(:Portfolio {id:{id}}) " +
                 "RETURN p, nodes(p), rels(p)";
         return sessionProvider.get().query(getEntityType(), query, ImmutableMap.of("id",portfolioId.toString()));
     }

@@ -13,14 +13,11 @@ import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"valuation"})
-@ToString(exclude = {"valuation"})
+@EqualsAndHashCode(callSuper = false, exclude = {"account"})
+@ToString(exclude = {"account"})
 public abstract class Trade<T extends Trade> extends Entity implements Comparable<T> {
 
     private String underlyingAssetId;
@@ -52,9 +49,6 @@ public abstract class Trade<T extends Trade> extends Entity implements Comparabl
     @Index(unique = true)
     @Property(name="id")
     protected String tradeId;
-
-    @Relationship(type = "VALUATED")
-    private Valuation valuation;
 
     @Relationship(type = "POSITIONS_ON", direction = Relationship.INCOMING)
     private TradingAccount account;
