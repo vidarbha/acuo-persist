@@ -24,16 +24,14 @@ public class ValuationServiceImpl extends GenericService<Valuation> implements V
     @Transactional
     public TradeValuation getTradeValuationFor(TradeId tradeId) {
         final Portfolio portfolio = portfolioService.findBy(tradeId);
-        final PortfolioId portfolioId = PortfolioId.fromString(portfolio.getPortfolioId());
-        return getTradeValuationFor(portfolioId);
+        return getTradeValuationFor(portfolio.getPortfolioId());
     }
 
     @Override
     @Transactional
     public TradeValuation getOrCreateTradeValuationFor(TradeId tradeId) {
         final Portfolio portfolio = portfolioService.findBy(tradeId);
-        final PortfolioId portfolioId = PortfolioId.fromString(portfolio.getPortfolioId());
-        return getOrCreateTradeValuationFor(portfolioId);
+        return getOrCreateTradeValuationFor(portfolio.getPortfolioId());
     }
 
     @Override
