@@ -8,6 +8,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.format.DateTimeFormatter;
 
 @Slf4j
 public class GraphData {
@@ -23,5 +24,9 @@ public class GraphData {
     public static String readFile(String filePath) throws IOException, URISyntaxException {
         String path = GraphData.getDataLink(filePath);
         return IOUtils.toString(new URI(path), Charsets.UTF_8);
+    }
+
+    public static DateTimeFormatter getStatementDateFormatter() {
+        return DateTimeFormatter.ofPattern("yyyy/MM/dd");
     }
 }

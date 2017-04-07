@@ -3,6 +3,7 @@ package com.acuo.persist.entity;
 import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.neo4j.converters.CurrencyConverter;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
+import com.acuo.persist.utils.GraphData;
 import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,7 +25,7 @@ import static java.util.stream.Collectors.toSet;
 @EqualsAndHashCode(callSuper = false)
 public class MarginStatement extends Entity<MarginStatement> {
 
-    @Property(name="id")
+    @Property(name = "id")
     private String statementId;
 
     @Convert(LocalDateConverter.class)
@@ -75,15 +76,29 @@ public class MarginStatement extends Entity<MarginStatement> {
     @Relationship(type = "PART_OF", direction = Relationship.INCOMING)
     private Set<StatementItem> statementItems;
 
-    public Set<MarginCall> getMarginCalls()
-    {
-        if(statementItems != null)
+    public Set<MarginCall> getMarginCalls() {
+        if (statementItems != null)
             return statementItems.stream()
                     .filter(statementItem -> statementItem.getMarginType().equals(Initial)
-                        || statementItem.getMarginType().equals(Variation))
-                    .map(statementItem -> (MarginCall)statementItem)
+                            || statementItem.getMarginType().equals(Variation))
+                    .map(statementItem -> (MarginCall) statementItem)
                     .collect(toSet());
         else
             return Collections.emptySet();
+    }
+
+    public MarginStatement() {
+    }
+
+    public MarginStatement(Agreement agreement, LocalDate date, StatementDirection direction) {
+        this.statementId = marginStatementId(agreement, date);
+        this.direction = direction;
+        this.currency = agreement.getCurrency();
+        this.date = date;
+    }
+
+    private String marginStatementId(Agreement agreement, LocalDate date) {
+        String todayFormatted = GraphData.getStatementDateFormatter().format(date);
+        return todayFormatted + "-" + agreement.getAgreementId();
     }
 }

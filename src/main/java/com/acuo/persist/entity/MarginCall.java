@@ -2,6 +2,7 @@ package com.acuo.persist.entity;
 
 import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.entity.enums.StatementStatus;
+import com.acuo.persist.utils.GraphData;
 import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,7 +12,6 @@ import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,12 +22,10 @@ import static com.opengamma.strata.basics.currency.Currency.USD;
 @Data
 @EqualsAndHashCode(callSuper = false, exclude = {"marginStatement"})
 @ToString(exclude = {"marginStatement"})
-public class MarginCall<T extends MarginCall> extends StatementItem<T> {
-
-    private static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> {
 
     @Property(name = "id")
-    private String marginCallId;
+    protected String marginCallId;
 
     private Double excessAmount;
     private Double balanceAmount;
@@ -52,7 +50,7 @@ public class MarginCall<T extends MarginCall> extends StatementItem<T> {
 
     public MarginCall(TradeValue value, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
         this.valuationDate = valuationDate(value);
-        this.marginCallId = marginCallId(agreement, valuationDate);
+
         this.callDate = callDate(valuationDate);
 
         this.currency = agreement.getCurrency();
@@ -106,15 +104,14 @@ public class MarginCall<T extends MarginCall> extends StatementItem<T> {
         setLastStep(step);
     }
 
+    protected String marginCallId(Agreement agreement, LocalDate valuationDate, MarginType marginType) {
+        String todayFormatted = GraphData.getStatementDateFormatter().format(valuationDate);
+        return todayFormatted + "-" + agreement.getAgreementId() + "-" + marginType.name();
+    }
+
     private LocalDate valuationDate(TradeValue value) {
         ValueRelation relation = value.getValuation();
         return relation.getDateTime();
-    }
-
-    private String marginCallId(Agreement agreement, LocalDate valuationDate) {
-        MarginType marginType = MarginType.Variation;
-        String todayFormatted = valuationDate.format(dateTimeFormatter);
-        return todayFormatted + "-" + agreement.getAgreementId() + "-" + marginType.name();
     }
 
     private LocalDate callDate(LocalDate valuationDate) {

@@ -1,9 +1,9 @@
 package com.acuo.persist.services;
 
 import com.acuo.persist.entity.Agreement;
+import com.acuo.persist.entity.MarginStatement;
 import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.entity.enums.StatementStatus;
-import com.acuo.persist.entity.MarginStatement;
 import com.acuo.persist.ids.ClientId;
 import com.acuo.persist.ids.MarginStatementId;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
@@ -107,12 +107,14 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
     @Override
     @Transactional
     public MarginStatement getMarginStatement(Agreement agreement, LocalDate date, StatementDirection direction) {
-        String query = "MATCH p=(a:Agreement {id:{agreementId}})<-[:STEMS_FROM]-(m:MarginStatement {date:{date}} {status:{status}}) " +
+        String query = "MATCH p=(a:Agreement {id:{agreementId}})<-[:STEMS_FROM]-(m:MarginStatement {date:{date}, direction:{direction}}) " +
                 "RETURN m, nodes(p), rels(p)";
         String dateStr = new LocalDateConverter().toGraphProperty(date);
         String agreementId = agreement.getAgreementId();
         String dir = direction.name();
-        ImmutableMap<String, String> parameters = ImmutableMap.of("agreementId", agreementId, "date", dateStr, "direction", dir);
+        ImmutableMap<String, String> parameters = ImmutableMap.of("agreementId", agreementId,
+                                                                  "date", dateStr,
+                                                                  "direction", dir);
         return sessionProvider.get().queryForObject(MarginStatement.class, query, parameters);
     }
 
@@ -121,7 +123,8 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
     public MarginStatement getOrCreateMarginStatement(Agreement agreement, LocalDate date, StatementDirection direction) {
         MarginStatement marginStatement = getMarginStatement(agreement, date, direction);
         if (marginStatement == null) {
-
+            marginStatement = new MarginStatement(agreement, date, direction);
+            marginStatement = save(marginStatement);
         }
         return marginStatement;
     }

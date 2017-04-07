@@ -9,6 +9,7 @@ import org.neo4j.ogm.annotation.NodeEntity;
 import java.util.Map;
 
 import static com.acuo.common.model.margin.Types.MarginType.Initial;
+import static com.acuo.common.model.margin.Types.MarginType.Variation;
 
 @NodeEntity
 @Data
@@ -26,5 +27,6 @@ public class InitialMargin extends MarginCall<InitialMargin> {
     public InitialMargin(TradeValue value, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
         super(value, statementStatus, agreement, rates);
         this.marginType = Initial;
+        this.marginCallId = marginCallId(agreement, valuationDate, Initial);
     }
 }
