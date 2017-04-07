@@ -91,6 +91,7 @@ public class MarginStatement extends Entity<MarginStatement> {
     }
 
     public MarginStatement(Agreement agreement, LocalDate date, StatementDirection direction) {
+        this.agreement = agreement;
         this.statementId = marginStatementId(agreement, date);
         this.direction = direction;
         this.currency = agreement.getCurrency();
