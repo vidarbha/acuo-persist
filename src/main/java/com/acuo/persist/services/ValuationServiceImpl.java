@@ -38,8 +38,8 @@ public class ValuationServiceImpl extends GenericService<Valuation> implements V
     @Transactional
     public TradeValuation getTradeValuationFor(PortfolioId portfolioId) {
         String query =
-                "MATCH p=(value:TradeValue)<-[:VALUE]-(n:TradeValuation)<-[:VALUATED]-(:Portfolio {id:{id}}) " +
-                        "RETURN p, nodes(p), rels(p)";
+                "MATCH p=()<-[*0..1]-(n:TradeValuation)<-[:VALUATED]-(:Portfolio {id:{id}}) " +
+                        "RETURN p, nodes(p), relationships(p)";
         final String pId = portfolioId.toString();
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", pId);
         return sessionProvider.get().queryForObject(TradeValuation.class, query, parameters);
@@ -61,8 +61,8 @@ public class ValuationServiceImpl extends GenericService<Valuation> implements V
     @Transactional
     public MarginValuation getMarginValuationFor(PortfolioId portfolioId) {
         String query =
-                "MATCH p=(value:MarginValue)<-[:VALUE]-(n:MarginValuation)<-[:VALUATED]-(:Portfolio {id:{id}}) " +
-                        "RETURN p, nodes(p), rels(p)";
+                "MATCH p=(v)<-[*0..1]-(n:MarginValuation)<-[:VALUATED]-(:Portfolio {id:{id}}) " +
+                        "RETURN p, nodes(p), relationships(p)";
         final String pId = portfolioId.toString();
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", pId);
        return sessionProvider.get().queryForObject(MarginValuation.class, query, parameters);
