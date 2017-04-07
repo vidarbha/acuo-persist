@@ -1,6 +1,7 @@
 package com.acuo.persist.entity;
 
-import com.acuo.common.model.margin.Types;
+import com.acuo.persist.entity.enums.StatementDirection;
+import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.neo4j.converters.CurrencyConverter;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import com.acuo.persist.neo4j.converters.LocalDateTimeConverter;
@@ -15,6 +16,8 @@ import org.neo4j.ogm.annotation.typeconversion.Convert;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import static com.acuo.common.model.margin.Types.MarginType;
+
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false, exclude = {"statementItem"})
@@ -23,23 +26,22 @@ public class StatementItem<T extends StatementItem> extends Entity<T> {
 
     @Convert(LocalDateConverter.class)
     protected LocalDate callDate;
-    protected Types.MarginType marginType;
-    protected String direction;
-    protected CallStatus status;
+    protected MarginType marginType;
+    protected StatementDirection direction;
+    protected StatementStatus status;
     @Convert(CurrencyConverter.class)
     protected Currency currency;
     @Convert(LocalDateConverter.class)
     protected LocalDate valuationDate;
-    protected Integer parentRank;
-    protected Double marginAmount;
     @Convert(LocalDateTimeConverter.class)
     protected LocalDateTime notificationTime;
+    protected Integer parentRank;
 
     @Relationship(type = "FIRST")
-    private Step firstStep;
+    protected Step firstStep;
 
     @Relationship(type = "LAST")
-    private Step lastStep;
+    protected Step lastStep;
 
     @Relationship(type = "MATCHED_TO_EXPECTED", direction = Relationship.INCOMING)
     private StatementItem statementItem;

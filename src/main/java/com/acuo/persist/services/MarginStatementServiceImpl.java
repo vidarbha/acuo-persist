@@ -1,11 +1,16 @@
 package com.acuo.persist.services;
 
-import com.acuo.persist.entity.CallStatus;
+import com.acuo.persist.entity.Agreement;
+import com.acuo.persist.entity.enums.StatementDirection;
+import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.entity.MarginStatement;
 import com.acuo.persist.ids.ClientId;
 import com.acuo.persist.ids.MarginStatementId;
+import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
+
+import java.time.LocalDate;
 
 public class MarginStatementServiceImpl extends GenericService<MarginStatement> implements MarginStatementService {
 
@@ -16,7 +21,7 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
 
     @Override
     @Transactional
-    public Iterable<MarginStatement> allStatementsFor(ClientId clientId, CallStatus... statuses) {
+    public Iterable<MarginStatement> allStatementsFor(ClientId clientId, StatementStatus... statuses) {
         String query =
                 "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement) " +
                 "WITH m " +
@@ -38,7 +43,7 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
 
     @Override
     @Transactional
-    public MarginStatement statementFor(MarginStatementId marginStatementId, CallStatus... statuses) {
+    public MarginStatement statementFor(MarginStatementId marginStatementId, StatementStatus... statuses) {
         String query =
                 "MATCH p=(f:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-" +
                 "(m:MarginStatement {id:{marginStatementId}})<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
@@ -97,5 +102,27 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
     @Transactional
     public void match(MarginStatementId fromId, MarginStatementId toId) {
         MarginStatement from = findById(fromId.toString());
+    }
+
+    @Override
+    @Transactional
+    public MarginStatement getMarginStatement(Agreement agreement, LocalDate date, StatementDirection direction) {
+        String query = "MATCH p=(a:Agreement {id:{agreementId}})<-[:STEMS_FROM]-(m:MarginStatement {date:{date}} {status:{status}}) " +
+                "RETURN m, nodes(p), rels(p)";
+        String dateStr = new LocalDateConverter().toGraphProperty(date);
+        String agreementId = agreement.getAgreementId();
+        String dir = direction.name();
+        ImmutableMap<String, String> parameters = ImmutableMap.of("agreementId", agreementId, "date", dateStr, "direction", dir);
+        return sessionProvider.get().queryForObject(MarginStatement.class, query, parameters);
+    }
+
+    @Override
+    @Transactional
+    public MarginStatement getOrCreateMarginStatement(Agreement agreement, LocalDate date, StatementDirection direction) {
+        MarginStatement marginStatement = getMarginStatement(agreement, date, direction);
+        if (marginStatement == null) {
+
+        }
+        return marginStatement;
     }
 }

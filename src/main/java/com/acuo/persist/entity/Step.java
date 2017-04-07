@@ -1,5 +1,6 @@
 package com.acuo.persist.entity;
 
+import com.acuo.persist.entity.enums.StatementStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -10,7 +11,7 @@ import org.neo4j.ogm.annotation.Relationship;
 @EqualsAndHashCode(callSuper = false)
 public class Step extends Entity<Step> {
 
-    private CallStatus status;
+    private StatementStatus status;
 
     @Relationship(type = "NEXT")
     private Next next;

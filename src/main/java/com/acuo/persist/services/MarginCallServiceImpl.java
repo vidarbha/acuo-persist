@@ -1,6 +1,6 @@
 package com.acuo.persist.services;
 
-import com.acuo.persist.entity.CallStatus;
+import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.entity.MarginCall;
 import com.acuo.persist.entity.Next;
 import com.acuo.persist.entity.Step;
@@ -18,7 +18,7 @@ public class MarginCallServiceImpl extends GenericService<MarginCall> implements
 
     @Override
     @Transactional
-    public void setStatus(String marginCallId, CallStatus status) {
+    public void setStatus(String marginCallId, StatementStatus status) {
         MarginCall marginCall = findById(marginCallId);
         Step previousStep = marginCall.getLastStep();
         Step lastStep = new Step();
@@ -33,7 +33,7 @@ public class MarginCallServiceImpl extends GenericService<MarginCall> implements
 
     @Override
     @Transactional
-    public Iterable<MarginCall> allCallsFor(String clientId, CallStatus... statuses) {
+    public Iterable<MarginCall> allCallsFor(String clientId, StatementStatus... statuses) {
         String query =
                 "MATCH p=(:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[r:CLIENT_SIGNS]->(a:Agreement)<-[:STEMS_FROM]-" +
                         "(m:MarginStatement)<-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step) " +
@@ -44,7 +44,7 @@ public class MarginCallServiceImpl extends GenericService<MarginCall> implements
 
     @Override
     @Transactional
-    public Iterable<MarginCall> callFor(String marginStatementId, CallStatus... statuses) {
+    public Iterable<MarginCall> callFor(String marginStatementId, StatementStatus... statuses) {
         String query =
                 "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement {id:{msId}})<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
                 "WHERE step.status IN {statuses} " +

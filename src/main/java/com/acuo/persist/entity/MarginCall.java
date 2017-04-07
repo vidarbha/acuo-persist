@@ -1,9 +1,7 @@
 package com.acuo.persist.entity;
 
-import com.acuo.common.model.margin.Types;
-import com.acuo.persist.neo4j.converters.CurrencyConverter;
-import com.acuo.persist.neo4j.converters.LocalDateConverter;
-import com.acuo.persist.neo4j.converters.LocalDateTimeConverter;
+import com.acuo.persist.entity.enums.StatementDirection;
+import com.acuo.persist.entity.enums.StatementStatus;
 import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,14 +9,13 @@ import lombok.ToString;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
-import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Set;
 
+import static com.acuo.common.model.margin.Types.MarginType;
 import static com.opengamma.strata.basics.currency.Currency.USD;
 
 @NodeEntity
@@ -31,14 +28,7 @@ public class MarginCall<T extends MarginCall> extends StatementItem<T> {
 
     @Property(name = "id")
     private String marginCallId;
-    @Convert(LocalDateConverter.class)
-    private LocalDate callDate;
-    protected Types.MarginType marginType;
-    private String direction;
-    @Convert(LocalDateConverter.class)
-    private LocalDate valuationDate;
-    @Convert(CurrencyConverter.class)
-    private Currency currency;
+
     private Double excessAmount;
     private Double balanceAmount;
     private Double deliverAmount;
@@ -46,26 +36,21 @@ public class MarginCall<T extends MarginCall> extends StatementItem<T> {
     private Double pendingCollateral;
     private Double exposure;
     private String IMRole;
-    private Integer parentRank;
-    @Convert(LocalDateTimeConverter.class)
-    private LocalDateTime notificationTime;
     private Double roundedReturnAmount;
     private Double roundedDeliverAmount;
     private Integer belowMTA;
     private Double marginAmount;
-    private CallStatus status;
 
     @Relationship(type = "PART_OF")
     private MarginStatement marginStatement;
-    @Relationship(type = "FIRST")
-    private Step firstStep;
+
     @Relationship(type = "CHILD_OF", direction = Relationship.INCOMING)
     private Set<ChildOf> children;
 
     public MarginCall() {
     }
 
-    public MarginCall(TradeValue value, CallStatus callStatus, Agreement agreement, Map<Currency, Double> rates) {
+    public MarginCall(TradeValue value, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
         this.valuationDate = valuationDate(value);
         this.marginCallId = marginCallId(agreement, valuationDate);
         this.callDate = callDate(valuationDate);
@@ -73,7 +58,7 @@ public class MarginCall<T extends MarginCall> extends StatementItem<T> {
         this.currency = agreement.getCurrency();
         this.parentRank = 0;
         this.notificationTime = callDate.atTime(agreement.getNotificationTime());
-        this.status = callStatus;
+        this.status = statementStatus;
 
         Double pv = pv(value, agreement.getCurrency(), rates);
         this.balanceAmount = balance(agreement.getClientSignsRelation());
@@ -81,16 +66,16 @@ public class MarginCall<T extends MarginCall> extends StatementItem<T> {
 
         this.excessAmount = pv - (balanceAmount + pendingCollateral);
 
-        Double exposure;
+        this.exposure = null;
 
         double amount = balanceAmount + pendingCollateral;
         if (excessAmount < 0) {
             exposure = 0 - pv;
-            this.direction = "OUT";
+            this.direction = StatementDirection.OUT;
 
         } else {
             exposure = pv;
-            this.direction = "IN";
+            this.direction = StatementDirection.IN;
         }
 
         if (sign(exposure) == sign(amount) && exposure > 0) {
@@ -114,7 +99,11 @@ public class MarginCall<T extends MarginCall> extends StatementItem<T> {
             }
         }
         this.marginAmount = deliverAmount + returnAmount;
-        this.exposure = exposure;
+
+        Step step = new Step();
+        step.setStatus(statementStatus);
+        setFirstStep(step);
+        setLastStep(step);
     }
 
     private LocalDate valuationDate(TradeValue value) {
@@ -123,7 +112,7 @@ public class MarginCall<T extends MarginCall> extends StatementItem<T> {
     }
 
     private String marginCallId(Agreement agreement, LocalDate valuationDate) {
-        Types.MarginType marginType = Types.MarginType.Variation;
+        MarginType marginType = MarginType.Variation;
         String todayFormatted = valuationDate.format(dateTimeFormatter);
         return todayFormatted + "-" + agreement.getAgreementId() + "-" + marginType.name();
     }
@@ -132,10 +121,10 @@ public class MarginCall<T extends MarginCall> extends StatementItem<T> {
         return valuationDate.plusDays(1);
     }
 
-    private Double pv(TradeValue value, Currency targetCurrecy, Map<Currency, Double> rates) {
+    private Double pv(TradeValue value, Currency targetCurrency, Map<Currency, Double> rates) {
         Double pv = value.getPv();
         com.opengamma.strata.basics.currency.Currency from = value.getCurrency();
-        return convert(pv, from, targetCurrecy, rates);
+        return convert(pv, from, targetCurrency, rates);
     }
 
     private Double balance(ClientSignsRelation clientSignsRelation) {

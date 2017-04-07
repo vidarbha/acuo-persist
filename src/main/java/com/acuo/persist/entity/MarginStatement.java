@@ -1,8 +1,8 @@
 package com.acuo.persist.entity;
 
-import com.acuo.common.model.margin.Types;
+import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.neo4j.converters.CurrencyConverter;
-import com.acuo.persist.neo4j.converters.LocalDateTimeConverter;
+import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,10 +11,13 @@ import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static com.acuo.common.model.margin.Types.MarginType.Initial;
+import static com.acuo.common.model.margin.Types.MarginType.Variation;
+import static java.util.stream.Collectors.toSet;
 
 @NodeEntity
 @Data
@@ -24,8 +27,8 @@ public class MarginStatement extends Entity<MarginStatement> {
     @Property(name="id")
     private String statementId;
 
-    @Convert(LocalDateTimeConverter.class)
-    private LocalDateTime date;
+    @Convert(LocalDateConverter.class)
+    private LocalDate date;
 
     private Double interestPayment;
 
@@ -39,7 +42,7 @@ public class MarginStatement extends Entity<MarginStatement> {
 
     private Double pendingNonCash;
 
-    private String direction;
+    private StatementDirection direction;
 
     private String legalEntityId;
 
@@ -75,8 +78,11 @@ public class MarginStatement extends Entity<MarginStatement> {
     public Set<MarginCall> getMarginCalls()
     {
         if(statementItems != null)
-            return statementItems.stream().filter(statementItem -> statementItem.getMarginType().equals(Types.MarginType.Initial) || statementItem.getMarginType().equals(Types.MarginType.Variation))
-                    .map(statementItem -> (MarginCall)statementItem).collect(Collectors.toSet());
+            return statementItems.stream()
+                    .filter(statementItem -> statementItem.getMarginType().equals(Initial)
+                        || statementItem.getMarginType().equals(Variation))
+                    .map(statementItem -> (MarginCall)statementItem)
+                    .collect(toSet());
         else
             return Collections.emptySet();
     }
