@@ -21,7 +21,7 @@ public class CurrencyServiceImpl extends GenericService<CurrencyEntity> implemen
     @Override
     public Double getFXValue(Currency currency) {
         String query =
-                "MATCH (c:Currency{id:{id}})-[r:FX_RATE]->(usd:CurrencyEntity {id:'USD'}) " +
+                "MATCH (c:Currency{id:{id}})-[r:FX_RATE]->(usd:Currency {id:'USD'}) " +
                         "RETURN r.fxRate";
         return sessionProvider.get().queryForObject(Double.class, query, ImmutableMap.of("id", currency.getCode()));
     }
@@ -31,7 +31,7 @@ public class CurrencyServiceImpl extends GenericService<CurrencyEntity> implemen
     public Map<Currency, Double> getAllFX() {
         Map<Currency, Double> values = new HashMap<>();
         String query =
-                "MATCH (c:Currency)-[r:FX_RATE]->(usd:CurrencyEntity {id:'USD'}) " +
+                "MATCH (c:Currency)-[r:FX_RATE]->(usd:Currency {id:'USD'}) " +
                         "RETURN c.id as id, r.fxRate as rate";
         Result result = sessionProvider.get().query(query, Collections.emptyMap());
         result.forEach(map -> values.put(Currency.of((String) map.get("id")), (Double) map.get("rate")));

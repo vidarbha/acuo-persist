@@ -84,11 +84,11 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
         }
 
         if (sign(exposure) == sign(balanceAndPendingAmount) && exposure > 0) {
-            deliverAmount = marginAmount;
+            deliverAmount = excessAmount;
             returnAmount = 0d;
         } else if (sign(exposure) == sign(balanceAndPendingAmount) && exposure < 0) {
             deliverAmount = 0d;
-            returnAmount = marginAmount;
+            returnAmount = excessAmount;
         } else {
             deliverAmount = exposure;
             returnAmount = Math.abs(balanceAndPendingAmount);
@@ -147,8 +147,8 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
 
     private static Double convert(Double value, Currency from, Currency to, Map<Currency, Double> rates) {
         if (from.equals(to)) return value;
-        double fromRate = (!from.equals(USD)) ? rates.get(from.getCode()) : 1;
-        double toRate = (!to.equals(USD)) ? rates.get(to.getCode()) : 1;
+        double fromRate = (!from.equals(USD)) ? rates.get(from) : 1;
+        double toRate = (!to.equals(USD)) ? rates.get(to) : 1;
         return value * toRate / fromRate;
     }
 
