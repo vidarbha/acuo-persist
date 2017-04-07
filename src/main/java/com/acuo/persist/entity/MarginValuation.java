@@ -2,10 +2,18 @@ package com.acuo.persist.entity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Relationship;
+
+import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false)
-public class MarginValuation extends TradeValuation {
+@ToString(callSuper = true, exclude = {"values"})
+@EqualsAndHashCode(callSuper = true, exclude = {"values"})
+public class MarginValuation extends Valuation {
+
+    @Relationship(type = "VALUE")
+    private Set<MarginValueRelation> values;
 }

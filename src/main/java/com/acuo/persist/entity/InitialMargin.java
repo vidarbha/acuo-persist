@@ -1,17 +1,21 @@
 package com.acuo.persist.entity;
 
-import com.acuo.common.model.margin.Types;
+import com.acuo.persist.entity.enums.StatementStatus;
+import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.NodeEntity;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.Map;
+
+import static com.acuo.common.model.margin.Types.MarginType.Initial;
+import static com.acuo.common.model.margin.Types.MarginType.Variation;
 
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class InitialMargin extends MarginCall<InitialMargin> {
+
     private Double exchangeRequirement;
     private Double brokerRequirement;
     private Double initialBalanceCash;
@@ -20,24 +24,15 @@ public class InitialMargin extends MarginCall<InitialMargin> {
 
     public InitialMargin() {}
 
-    public InitialMargin(String marginCallId, LocalDate callDate, Types.MarginType marginType, String direction, LocalDate valuationDate, String currency,
-                         Double excessAmount, Double balanceAmount, Double deliverAmount, Double returnAmount, Double pendingCollateral, Double exposure, Integer parentRank,
-                         LocalDateTime notificationTime, Double marginAmount, String status) {
-        super(marginCallId,
-                callDate,
-                marginType,
-                direction,
-                valuationDate,
-                currency,
-                excessAmount,
-                balanceAmount,
-                deliverAmount,
-                returnAmount,
-                pendingCollateral,
-                exposure,
-                parentRank,
-                notificationTime,
-                marginAmount,
-                status);
+    public InitialMargin(TradeValue value, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
+        super(value, statementStatus, agreement, rates);
+        this.marginType = Initial;
+        this.marginCallId = marginCallId(agreement, valuationDate, Initial);
+    }
+
+    public InitialMargin(MarginValue value, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
+        super(value, statementStatus, agreement, rates);
+        this.marginType = Initial;
+        this.marginCallId = marginCallId(agreement, valuationDate, Initial);
     }
 }

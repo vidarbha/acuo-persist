@@ -1,5 +1,7 @@
 package com.acuo.persist.entity;
 
+import com.acuo.persist.entity.enums.Direction;
+import com.acuo.persist.entity.enums.Status;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.NodeEntity;
