@@ -29,4 +29,10 @@ public class InitialMargin extends MarginCall<InitialMargin> {
         this.marginType = Initial;
         this.marginCallId = marginCallId(agreement, valuationDate, Initial);
     }
+
+    public InitialMargin(MarginValue value, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
+        super(value, statementStatus, agreement, rates);
+        this.marginType = Initial;
+        this.marginCallId = marginCallId(agreement, valuationDate, Initial);
+    }
 }

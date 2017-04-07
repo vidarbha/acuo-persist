@@ -24,4 +24,10 @@ public class VariationMargin extends MarginCall<VariationMargin> {
         this.marginType = Variation;
         this.marginCallId = marginCallId(agreement, valuationDate, Variation);
     }
+
+    public VariationMargin(MarginValue value, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
+        super(value, statementStatus, agreement, rates);
+        this.marginType = Variation;
+        this.marginCallId = marginCallId(agreement, valuationDate, Variation);
+    }
 }

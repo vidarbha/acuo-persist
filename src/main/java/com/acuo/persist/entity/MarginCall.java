@@ -49,6 +49,14 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
     }
 
     public MarginCall(TradeValue value, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
+        this(value, statementStatus, agreement, amount(value, agreement.getCurrency(), rates));
+    }
+
+    public MarginCall(MarginValue value, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
+        this(value, statementStatus, agreement, amount(value, agreement.getCurrency(), rates));
+    }
+
+    private MarginCall(Value value, StatementStatus statementStatus, Agreement agreement, Double amount) {
         this.valuationDate = valuationDate(value);
 
         this.callDate = callDate(valuationDate);
@@ -58,33 +66,32 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
         this.notificationTime = callDate.atTime(agreement.getNotificationTime());
         this.status = statementStatus;
 
-        Double pv = pv(value, agreement.getCurrency(), rates);
         this.balanceAmount = balance(agreement.getClientSignsRelation());
         this.pendingCollateral = pendingCollateral(agreement.getClientSignsRelation());
 
-        this.excessAmount = pv - (balanceAmount + pendingCollateral);
+        this.excessAmount = amount - (balanceAmount + pendingCollateral);
 
         this.exposure = null;
 
-        double amount = balanceAmount + pendingCollateral;
+        double balanceAndPendingAmount = balanceAmount + pendingCollateral;
         if (excessAmount < 0) {
-            exposure = 0 - pv;
+            exposure = 0 - amount;
             this.direction = StatementDirection.OUT;
 
         } else {
-            exposure = pv;
+            exposure = amount;
             this.direction = StatementDirection.IN;
         }
 
-        if (sign(exposure) == sign(amount) && exposure > 0) {
+        if (sign(exposure) == sign(balanceAndPendingAmount) && exposure > 0) {
             deliverAmount = marginAmount;
             returnAmount = 0d;
-        } else if (sign(exposure) == sign(amount) && exposure < 0) {
+        } else if (sign(exposure) == sign(balanceAndPendingAmount) && exposure < 0) {
             deliverAmount = 0d;
             returnAmount = marginAmount;
         } else {
             deliverAmount = exposure;
-            returnAmount = Math.abs(amount);
+            returnAmount = Math.abs(balanceAndPendingAmount);
         }
 
         Double rounding = agreement.getClientSignsRelation().getRounding() != null ? agreement.getClientSignsRelation().getRounding() : 0;
@@ -104,12 +111,12 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
         setLastStep(step);
     }
 
-    protected String marginCallId(Agreement agreement, LocalDate valuationDate, MarginType marginType) {
+    String marginCallId(Agreement agreement, LocalDate valuationDate, MarginType marginType) {
         String todayFormatted = GraphData.getStatementDateFormatter().format(valuationDate);
         return todayFormatted + "-" + agreement.getAgreementId() + "-" + marginType.name();
     }
 
-    private LocalDate valuationDate(TradeValue value) {
+    private LocalDate valuationDate(Value value) {
         ValueRelation relation = value.getValuation();
         return relation.getDateTime();
     }
@@ -118,8 +125,14 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
         return valuationDate.plusDays(1);
     }
 
-    private Double pv(TradeValue value, Currency targetCurrency, Map<Currency, Double> rates) {
+    private static Double amount(TradeValue value, Currency targetCurrency, Map<Currency, Double> rates) {
         Double pv = value.getPv();
+        com.opengamma.strata.basics.currency.Currency from = value.getCurrency();
+        return convert(pv, from, targetCurrency, rates);
+    }
+
+    private static Double amount(MarginValue value, Currency targetCurrency, Map<Currency, Double> rates) {
+        Double pv = value.getAmount();
         com.opengamma.strata.basics.currency.Currency from = value.getCurrency();
         return convert(pv, from, targetCurrency, rates);
     }
@@ -132,7 +145,7 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
         return clientSignsRelation.getVariationPending() != null ? clientSignsRelation.getVariationPending() : 0.0d;
     }
 
-    private Double convert(Double value, Currency from, Currency to, Map<Currency, Double> rates) {
+    private static Double convert(Double value, Currency from, Currency to, Map<Currency, Double> rates) {
         if (from.equals(to)) return value;
         double fromRate = (!from.equals(USD)) ? rates.get(from.getCode()) : 1;
         double toRate = (!to.equals(USD)) ? rates.get(to.getCode()) : 1;
