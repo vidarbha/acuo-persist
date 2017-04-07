@@ -37,7 +37,6 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
     private Double roundedReturnAmount;
     private Double roundedDeliverAmount;
     private Integer belowMTA;
-    private Double marginAmount;
 
     @Relationship(type = "PART_OF")
     private MarginStatement marginStatement;

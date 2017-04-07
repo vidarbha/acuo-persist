@@ -27,6 +27,7 @@ public class StatementItem<T extends StatementItem> extends Entity<T> {
     @Convert(LocalDateConverter.class)
     protected LocalDate callDate;
     protected MarginType marginType;
+    protected Double marginAmount;
     protected StatementDirection direction;
     protected StatementStatus status;
     @Convert(CurrencyConverter.class)
