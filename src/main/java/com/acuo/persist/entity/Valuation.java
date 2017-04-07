@@ -14,7 +14,6 @@ import static org.neo4j.ogm.annotation.Relationship.*;
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-@ToString(exclude = {"values"})
 public abstract class Valuation extends Entity<Valuation> {
 
     @Relationship(type = "VALUATED", direction = INCOMING)
