@@ -8,7 +8,7 @@ import org.neo4j.ogm.annotation.Property;
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Currency extends Entity<Currency> {
+public class CurrencyEntity extends Entity<CurrencyEntity> {
 
     @Property(name = "id")
     private String currencyId;

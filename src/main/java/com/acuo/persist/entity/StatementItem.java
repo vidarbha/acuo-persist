@@ -1,8 +1,10 @@
 package com.acuo.persist.entity;
 
 import com.acuo.common.model.margin.Types;
+import com.acuo.persist.neo4j.converters.CurrencyConverter;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import com.acuo.persist.neo4j.converters.LocalDateTimeConverter;
+import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -23,8 +25,9 @@ public class StatementItem<T extends StatementItem> extends Entity<T> {
     protected LocalDate callDate;
     protected Types.MarginType marginType;
     protected String direction;
-    protected String status;
-    protected String currency;
+    protected CallStatus status;
+    @Convert(CurrencyConverter.class)
+    protected Currency currency;
     @Convert(LocalDateConverter.class)
     protected LocalDate valuationDate;
     protected Integer parentRank;
