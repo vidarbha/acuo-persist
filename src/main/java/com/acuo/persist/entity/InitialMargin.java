@@ -6,10 +6,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.NodeEntity;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 import static com.acuo.common.model.margin.Types.MarginType.Initial;
-import static com.acuo.common.model.margin.Types.MarginType.Variation;
 
 @NodeEntity
 @Data
@@ -24,14 +24,8 @@ public class InitialMargin extends MarginCall<InitialMargin> {
 
     public InitialMargin() {}
 
-    public InitialMargin(TradeValue value, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
-        super(value, statementStatus, agreement, rates);
-        this.marginType = Initial;
-        this.marginCallId = marginCallId(agreement, valuationDate, Initial);
-    }
-
-    public InitialMargin(MarginValue value, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
-        super(value, statementStatus, agreement, rates);
+    public InitialMargin(Double value, LocalDate valuationDate, Currency currency, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
+        super(value, valuationDate, currency, statementStatus, agreement, rates);
         this.marginType = Initial;
         this.marginCallId = marginCallId(agreement, valuationDate, Initial);
     }
