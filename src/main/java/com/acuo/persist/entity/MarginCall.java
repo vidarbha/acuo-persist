@@ -47,16 +47,12 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
     public MarginCall() {
     }
 
-    public MarginCall(TradeValue value, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
-        this(value, statementStatus, agreement, amount(value, agreement.getCurrency(), rates));
+    public MarginCall(Double amount, LocalDate valuationDate, Currency currency, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
+        this(convert(amount, currency, agreement.getCurrency(), rates), valuationDate, statementStatus, agreement);
     }
 
-    public MarginCall(MarginValue value, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
-        this(value, statementStatus, agreement, amount(value, agreement.getCurrency(), rates));
-    }
-
-    private MarginCall(Value value, StatementStatus statementStatus, Agreement agreement, Double amount) {
-        this.valuationDate = valuationDate(value);
+    private MarginCall(Double amount, LocalDate valuationDate, StatementStatus statementStatus, Agreement agreement) {
+        this.valuationDate = valuationDate;
 
         this.callDate = callDate(valuationDate);
 
@@ -115,25 +111,8 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
         return todayFormatted + "-" + agreement.getAgreementId() + "-" + marginType.name();
     }
 
-    private LocalDate valuationDate(Value value) {
-        ValueRelation relation = value.getValuation();
-        return relation.getDateTime();
-    }
-
     private LocalDate callDate(LocalDate valuationDate) {
         return valuationDate.plusDays(1);
-    }
-
-    private static Double amount(TradeValue value, Currency targetCurrency, Map<Currency, Double> rates) {
-        Double pv = value.getPv();
-        com.opengamma.strata.basics.currency.Currency from = value.getCurrency();
-        return convert(pv, from, targetCurrency, rates);
-    }
-
-    private static Double amount(MarginValue value, Currency targetCurrency, Map<Currency, Double> rates) {
-        Double pv = value.getAmount();
-        com.opengamma.strata.basics.currency.Currency from = value.getCurrency();
-        return convert(pv, from, targetCurrency, rates);
     }
 
     private Double balance(ClientSignsRelation clientSignsRelation) {
