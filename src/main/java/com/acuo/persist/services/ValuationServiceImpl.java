@@ -1,9 +1,11 @@
 package com.acuo.persist.services;
 
+import com.acuo.persist.entity.AssetValuation;
 import com.acuo.persist.entity.MarginValuation;
 import com.acuo.persist.entity.Portfolio;
 import com.acuo.persist.entity.TradeValuation;
 import com.acuo.persist.entity.Valuation;
+import com.acuo.persist.ids.AssetId;
 import com.acuo.persist.ids.PortfolioId;
 import com.acuo.persist.ids.TradeId;
 import com.google.common.collect.ImmutableMap;
@@ -14,6 +16,9 @@ public class ValuationServiceImpl extends GenericService<Valuation> implements V
 
     @Inject
     PortfolioService portfolioService;
+
+    @Inject
+    AssetService assetService;
 
     @Override
     public Class<Valuation> getEntityType() {
@@ -75,6 +80,29 @@ public class ValuationServiceImpl extends GenericService<Valuation> implements V
         if (valuation == null) {
             valuation = new MarginValuation();
             valuation.setPortfolio(portfolioService.findById(portfolioId.toString()));
+            valuation = createOrUpdate(valuation);
+        }
+        return valuation;
+    }
+
+    @Override
+    @Transactional
+    public AssetValuation getAssetValuationFor(AssetId assetId) {
+        String query =
+                "MATCH p=()<-[*0..1]-(n:AssetValuation)<-[:VALUATED]-(:Asset {id:{id}}) " +
+                        "RETURN p, nodes(p), relationships(p)";
+        final String aId = assetId.toString();
+        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", aId);
+        return sessionProvider.get().queryForObject(AssetValuation.class, query, parameters);
+    }
+
+    @Override
+    @Transactional
+    public AssetValuation getOrCreateAssetValuationFor(AssetId assetId) {
+        AssetValuation valuation = getAssetValuationFor(assetId);
+        if (valuation == null) {
+            valuation = new AssetValuation();
+            valuation.setAsset(assetService.findById(assetId.toString()));
             valuation = createOrUpdate(valuation);
         }
         return valuation;
