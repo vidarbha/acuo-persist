@@ -8,9 +8,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.inject.Singleton;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
@@ -61,7 +59,7 @@ public class TradeServiceImpl<T extends Trade> extends GenericService<T> impleme
     }
 
     @Transactional
-    public <S extends T> S createOrUpdate(S trade) {
+    public T createOrUpdate(T trade) {
         if (log.isDebugEnabled()) {
             log.debug("createOrUpdate {}",trade);
         }
