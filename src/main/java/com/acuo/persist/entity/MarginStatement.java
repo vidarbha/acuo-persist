@@ -1,6 +1,5 @@
 package com.acuo.persist.entity;
 
-import com.acuo.common.util.LocalDateUtils;
 import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.neo4j.converters.CurrencyConverter;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
