@@ -1,5 +1,6 @@
 package com.acuo.persist.entity;
 
+import com.acuo.common.util.LocalDateUtils;
 import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.neo4j.converters.CurrencyConverter;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
@@ -18,6 +19,7 @@ import java.util.Set;
 
 import static com.acuo.common.model.margin.Types.MarginType.Initial;
 import static com.acuo.common.model.margin.Types.MarginType.Variation;
+import static com.acuo.common.util.ArithmeticUtils.addition;
 import static java.util.stream.Collectors.toSet;
 
 @NodeEntity
@@ -90,12 +92,28 @@ public class MarginStatement extends Entity<MarginStatement> {
     public MarginStatement() {
     }
 
-    public MarginStatement(Agreement agreement, LocalDate date, StatementDirection direction) {
+    public MarginStatement(Agreement agreement, LocalDate valuationDate, StatementDirection direction) {
+        LocalDate callDate = LocalDateUtils.add(valuationDate, 1);
         this.agreement = agreement;
-        this.statementId = marginStatementId(agreement, date);
+        this.statementId = marginStatementId(agreement, callDate);
         this.direction = direction;
         this.currency = agreement.getCurrency();
-        this.date = date;
+        this.date = callDate;
+        ClientSignsRelation clientSignsRelation = agreement.getClientSignsRelation();
+        CounterpartSignsRelation counterpartSignsRelation = agreement.getCounterpartSignsRelation();
+        LegalEntity client = clientSignsRelation.getLegalEntity();
+        LegalEntity counterpart = counterpartSignsRelation.getLegalEntity();
+        if (direction.equals(StatementDirection.IN)) {
+            this.setDirectedTo(counterpart);
+            this.setSentFrom(client);
+            this.setPendingCash(addition(clientSignsRelation.getInitialPending(), clientSignsRelation.getVariationPending()));
+            this.setPendingNonCash(addition(clientSignsRelation.getInitialPendingNonCash(), clientSignsRelation.getVariationPendingNonCash()));
+        } else {
+            this.setDirectedTo(client);
+            this.setSentFrom(counterpart);
+            this.setPendingCash(addition(counterpartSignsRelation.getInitialPending(), counterpartSignsRelation.getVariationPending()));
+            this.setPendingNonCash(addition(counterpartSignsRelation.getInitialPendingNonCash(), counterpartSignsRelation.getVariationPendingNonCash()));
+        }
     }
 
     private String marginStatementId(Agreement agreement, LocalDate date) {
