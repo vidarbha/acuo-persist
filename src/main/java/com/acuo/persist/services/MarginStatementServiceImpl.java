@@ -106,10 +106,10 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
 
     @Override
     @Transactional
-    public MarginStatement getMarginStatement(Agreement agreement, LocalDate date, StatementDirection direction) {
+    public MarginStatement getMarginStatement(Agreement agreement, LocalDate callDate, StatementDirection direction) {
         String query = "MATCH p=(a:Agreement {id:{agreementId}})<-[:STEMS_FROM]-(m:MarginStatement {date:{date}, direction:{direction}}) " +
                 "RETURN m, nodes(p), rels(p)";
-        String dateStr = new LocalDateConverter().toGraphProperty(date);
+        String dateStr = new LocalDateConverter().toGraphProperty(callDate);
         String agreementId = agreement.getAgreementId();
         String dir = direction.name();
         ImmutableMap<String, String> parameters = ImmutableMap.of("agreementId", agreementId,
@@ -120,10 +120,10 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
 
     @Override
     @Transactional
-    public MarginStatement getOrCreateMarginStatement(Agreement agreement, LocalDate date, StatementDirection direction) {
-        MarginStatement marginStatement = getMarginStatement(agreement, date, direction);
+    public MarginStatement getOrCreateMarginStatement(Agreement agreement, LocalDate callDate, StatementDirection direction) {
+        MarginStatement marginStatement = getMarginStatement(agreement, callDate, direction);
         if (marginStatement == null) {
-            marginStatement = new MarginStatement(agreement, date, direction);
+            marginStatement = new MarginStatement(agreement, callDate, direction);
             marginStatement = save(marginStatement);
         }
         return marginStatement;

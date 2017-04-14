@@ -27,7 +27,7 @@ public interface MarginStatementService extends Service<MarginStatement> {
 
     void match(MarginStatementId fromId, MarginStatementId toId);
 
-    MarginStatement getMarginStatement(Agreement agreement, LocalDate date, StatementDirection direction);
+    MarginStatement getMarginStatement(Agreement agreement, LocalDate callDate, StatementDirection direction);
 
-    MarginStatement getOrCreateMarginStatement(Agreement agreement, LocalDate date, StatementDirection direction);
+    MarginStatement getOrCreateMarginStatement(Agreement agreement, LocalDate callDate, StatementDirection direction);
 }

@@ -92,8 +92,7 @@ public class MarginStatement extends Entity<MarginStatement> {
     public MarginStatement() {
     }
 
-    public MarginStatement(Agreement agreement, LocalDate valuationDate, StatementDirection direction) {
-        LocalDate callDate = LocalDateUtils.add(valuationDate, 1);
+    public MarginStatement(Agreement agreement, LocalDate callDate, StatementDirection direction) {
         this.agreement = agreement;
         this.statementId = marginStatementId(agreement, callDate);
         this.direction = direction;

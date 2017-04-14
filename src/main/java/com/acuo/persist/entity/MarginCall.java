@@ -1,6 +1,5 @@
 package com.acuo.persist.entity;
 
-import com.acuo.common.util.LocalDateUtils;
 import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.utils.GraphData;
@@ -48,15 +47,13 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
     public MarginCall() {
     }
 
-    public MarginCall(Double amount, LocalDate valuationDate, Currency currency, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
-        this(convert(amount, currency, agreement.getCurrency(), rates), valuationDate, statementStatus, agreement);
+    public MarginCall(Double amount, LocalDate valuationDate, LocalDate callDate, Currency currency, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
+        this(convert(amount, currency, agreement.getCurrency(), rates), valuationDate, callDate, statementStatus, agreement);
     }
 
-    private MarginCall(Double amount, LocalDate valuationDate, StatementStatus statementStatus, Agreement agreement) {
+    private MarginCall(Double amount, LocalDate valuationDate, LocalDate callDate, StatementStatus statementStatus, Agreement agreement) {
         this.valuationDate = valuationDate;
-
-        this.callDate = LocalDateUtils.add(valuationDate, 1);
-
+        this.callDate = callDate;
         this.currency = agreement.getCurrency();
         this.parentRank = 0;
         this.notificationTime = callDate.atTime(agreement.getNotificationTime());
