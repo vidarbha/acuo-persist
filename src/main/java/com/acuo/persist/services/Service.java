@@ -22,11 +22,13 @@ public interface Service<T> {
 
     Iterable<T> findAll();
 
+    Iterable<T> findAll(int depth);
+
     T find(Long id);
 
-    T findById(String id);
-
     T find(Long id, int depth);
+
+    T findById(String id);
 
     T findById(String id, int depth);
 

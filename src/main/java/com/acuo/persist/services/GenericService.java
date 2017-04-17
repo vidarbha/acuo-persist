@@ -109,10 +109,15 @@ public abstract class GenericService<T> implements Service<T> {
 
     @Override
     public Iterable<T> findAll() {
+        return findAll(DEPTH_LIST);
+    }
+
+    @Override
+    public Iterable<T> findAll(int depth) {
         if (log.isDebugEnabled()) {
-            log.debug("findAll");
+            log.debug("findAll depth [{}]", depth);
         }
-        return sessionProvider.get().loadAll(getEntityType(), DEPTH_LIST);
+        return sessionProvider.get().loadAll(getEntityType(), depth);
     }
 
     @Override
