@@ -4,7 +4,7 @@ import com.acuo.persist.entity.Asset;
 import com.acuo.persist.ids.ClientId;
 import com.google.common.collect.ImmutableMap;
 
-public class AssetServiceImpl extends GenericService<Asset> implements AssetService{
+public class AssetServiceImpl extends GenericService<Asset> implements AssetService {
 
     private static String ELIGIBLE_ASSET_WITH_ACCT_AND_TRANSFER_INFO =
             "MATCH path=(client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:HAS]->(:TradingAccount)" +
@@ -26,22 +26,9 @@ public class AssetServiceImpl extends GenericService<Asset> implements AssetServ
             "MATCH path=(Custodian)-[MANAGES]->(ca)-[holds]->(asset)-[is]-() " +
             "RETURN asset, nodes(path), relationships(path)";
 
-    private static String RESERVED_ASSET_BY_CLIENT_ID =
-            "MATCH path=(client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:HAS]->(:TradingAccount)" +
-            "-[:ACCESSES]->(ca:CustodianAccount)-[holds:HOLDS]->(asset:Asset)-[:IS_AVAILABLE_FOR]->(agreement:Agreement) " +
-            "WHERE (entity)-[:CLIENT_SIGNS]->(agreement) " +
-            "AND holds.reservedQuantity>0 " +
-            "RETURN asset, nodes(path), relationships(path)";
-
     @Override
     public Iterable<Asset> findEligibleAssetByClientId(ClientId clientId) {
         String query = ELIGIBLE_ASSET_WITH_ACCT_AND_TRANSFER_INFO;
-        return sessionProvider.get().query(getEntityType(), query, ImmutableMap.of("clientId",clientId.toString()));
-    }
-
-    @Override
-    public Iterable<Asset> findReservedAssetByClientId(ClientId clientId) {
-        String query = RESERVED_ASSET_BY_CLIENT_ID;
         return sessionProvider.get().query(getEntityType(), query, ImmutableMap.of("clientId",clientId.toString()));
     }
 

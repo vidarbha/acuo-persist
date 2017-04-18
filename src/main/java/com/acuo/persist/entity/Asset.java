@@ -48,9 +48,6 @@ public class Asset extends Entity<Asset> {
     @Relationship(type = "HOLDS", direction = Relationship.INCOMING)
     private Holds holds;
 
-    @Relationship(type = "EXCLUDED")
-    private MarginCall earmarkedMarginCall;
-
     @Relationship(type = "IS_AVAILABLE_FOR")
     private AvailableFor availableFor;
 
@@ -59,4 +56,7 @@ public class Asset extends Entity<Asset> {
 
     @Relationship(type = "VALUATED")
     private AssetValuation valuation;
+
+    @Relationship(type = "PRICING_SOURCE")
+    private PricingSource pricingSource;
 }

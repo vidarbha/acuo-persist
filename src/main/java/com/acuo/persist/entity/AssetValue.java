@@ -17,7 +17,7 @@ public class AssetValue extends Value<AssetValue> {
 
     private Double yield;
 
-    private Double price;
+    private Double unitValue;
 
     @Convert(LocalDateConverter.class)
     private LocalDate valuationDateTime;
@@ -31,7 +31,4 @@ public class AssetValue extends Value<AssetValue> {
     private Currency reportCurrency;
 
     private Double coupon;
-
-
-
 }
