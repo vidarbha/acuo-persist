@@ -1,5 +1,6 @@
 package com.acuo.persist.entity;
 
+import com.acuo.common.converter.Converter;
 import com.acuo.persist.entity.enums.StatementStatus;
 import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
@@ -25,4 +26,17 @@ public class VariationMargin extends MarginCall<VariationMargin> {
         this.marginType = Variation;
         this.marginCallId = marginCallId(agreement, callDate, Variation);
     }
+
+    public static Converter<com.acuo.common.model.margin.MarginCall, VariationMargin> converter = Converter.ofNullable(
+            com.acuo.common.model.margin.MarginCall.class,
+            VariationMargin.class,
+            call -> {
+                VariationMargin margin = new VariationMargin();
+                return margin;
+            },
+            variationMargin -> {
+                com.acuo.common.model.margin.MarginCall call = new com.acuo.common.model.margin.MarginCall();
+                return call;
+            }
+    );
 }
