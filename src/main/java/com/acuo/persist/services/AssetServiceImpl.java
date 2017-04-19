@@ -7,12 +7,12 @@ import com.google.common.collect.ImmutableMap;
 public class AssetServiceImpl extends GenericService<Asset> implements AssetService {
 
     private static String ELIGIBLE_ASSET_WITH_ACCT_AND_TRANSFER_INFO =
-            "MATCH path=(client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:HAS]->(:TradingAccount)" +
-            "-[:ACCESSES]->(ca:CustodianAccount)-[holds:HOLDS]->(a:Asset)-[:IS_AVAILABLE_FOR]->(agreement:Agreement) " +
-            "WHERE (entity)-[:CLIENT_SIGNS]->(agreement) " +
-            "WITH a, client, path " +
-            "OPTIONAL MATCH transfer=(a:Asset)<-[:OF]-(:AssetTransfer)-[:FROM|TO]->(:CustodianAccount)<-[:HAS]-(client) " +
-            "RETURN a, nodes(path), relationships(path), nodes(transfer), relationships(transfer)";
+            "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:CLIENT_SIGNS]->(agreement:Agreement)<-[:IS_AVAILABLE_FOR]-(asset:Asset) " +
+            "WITH asset, client " +
+            "MATCH path=(ca:CustodianAccount)-[holds:HOLDS]->(asset:Asset)-[:VALUATED]->(valuation:Valuation)-[:VALUE]->(value:AssetValue) " +
+            "WITH asset, client, path " +
+            "OPTIONAL MATCH transfer=(asset)<-[:OF]-(:AssetTransfer)-[:FROM|TO]->(:CustodianAccount)<-[:HAS]-(client) " +
+            "RETURN asset, nodes(path), relationships(path), nodes(transfer), relationships(transfer)";
 
     private static String ELIGIBLE_ASSET_BY_CLIENT_AND_CALLID =
             "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:HAS]->(:TradingAccount)" +

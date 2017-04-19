@@ -1,5 +1,6 @@
 package com.acuo.persist.modules;
 
+import com.acuo.common.model.results.AssetValuation;
 import com.acuo.persist.entity.FRA;
 import com.acuo.persist.entity.IRS;
 import com.acuo.persist.entity.Trade;
@@ -30,6 +31,7 @@ public class RepositoryModule extends AbstractModule {
         bind(CurrencyService.class).to(CurrencyServiceImpl.class);
         bind(StatementItemService.class).to(StatementItemServiceImpl.class);
         bind(DisputeService.class).to(DisputeServiceImpl.class);
+        bind(AssetValuationService.class).to(AssetValuationServiceImpl.class);
     }
 
 }
