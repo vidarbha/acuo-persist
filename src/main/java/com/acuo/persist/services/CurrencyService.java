@@ -10,4 +10,6 @@ public interface CurrencyService extends Service<CurrencyEntity> {
     Double getFXValue(Currency currency);
 
     Map<Currency, Double> getAllFX();
+
+    CurrencyEntity find(String id);
 }

@@ -41,12 +41,12 @@ public class CurrencyServiceImpl extends GenericService<CurrencyEntity> implemen
     }
 
     @Override
-    public CurrencyEntity findById(String id) {
+    public CurrencyEntity find(String id) {
         ArgChecker.notNull(id, "id");
         String query = "MATCH (i:Currency {id: {id} }) return i";
         CurrencyEntity entity = sessionProvider.get().queryForObject(CurrencyEntity.class, query, ImmutableMap.of("id",id));
         if(entity != null)
-            return find(((CurrencyEntity) entity).getId(), 1);
+            return find(entity.getId(), 1);
         else
             return null;
     }
