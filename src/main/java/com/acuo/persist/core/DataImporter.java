@@ -7,13 +7,14 @@ public interface DataImporter {
 
     String[] ALL_FILES = {
             "firms",
+            "workingZones",
             "legalentities",
-            "currencies",
-            "tradingAccounts",
             "clearingHouses",
             "fcms",
-            "clearedAgreements",
+            "tradingAccounts",
             "bilateralAgreements",
+            "clearedAgreements",
+            "ratingScores",
             "assetCategories",
             "custodianAccounts",
             "counterpartCustodianAccounts",
@@ -22,10 +23,12 @@ public interface DataImporter {
             "mstatements",
             "initmcexp",
             "initmc",
+            "infopres",
             "settings",
             "assetTransfer",
+            "currencies",
             "portfolios",
-            "infopres"
+            "books"
     };
 
     void importFiles(final String branch, String... fileNames);

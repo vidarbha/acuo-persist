@@ -2,17 +2,30 @@ package com.acuo.persist.services;
 
 import com.acuo.persist.entity.Agreement;
 import com.acuo.persist.entity.MarginStatement;
+import com.acuo.persist.entity.StatementItem;
 import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.ids.ClientId;
 import com.acuo.persist.ids.MarginStatementId;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+@Slf4j
 public class MarginStatementServiceImpl extends GenericService<MarginStatement> implements MarginStatementService {
+
+    private final StatementItemService statementItemService;
+
+    @Inject
+    public MarginStatementServiceImpl(StatementItemService statementItemService) {
+        this.statementItemService = statementItemService;
+    }
 
     @Override
     public Class<MarginStatement> getEntityType() {
@@ -98,6 +111,17 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
         return sessionProvider.get().queryForObject(MarginStatement.class, query, ImmutableMap.of("callId", callId));
     }
 
+    public void reconcile(MarginStatementId marginStatementId, Double amount) {
+        log.info("reconciling all items for margin statement [{}]", marginStatementId);
+        MarginStatement marginStatement = findById(marginStatementId.toString(), 2);
+        Set<StatementItem> receviedMarginCalls = filter(marginStatement.getStatementItems(), StatementStatus.Unrecon);
+        for (StatementItem marginCall : receviedMarginCalls) {
+            log.debug("parent call {} and children {}", marginCall);
+            statementItemService.setStatus(marginCall, StatementStatus.Reconciled);
+        }
+        log.info("margin statement {} reconciled",marginStatement);
+    }
+
     @Override
     @Transactional
     public void match(MarginStatementId fromId, MarginStatementId toId) {
@@ -127,5 +151,11 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
             marginStatement = save(marginStatement);
         }
         return marginStatement;
+    }
+
+    private Set<StatementItem> filter(Set<StatementItem> calls, StatementStatus status) {
+        return calls.stream()
+                .filter(mc -> status.equals(mc.getLastStep().getStatus()))
+                .collect(Collectors.toSet());
     }
 }

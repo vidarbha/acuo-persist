@@ -12,6 +12,7 @@ import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @NodeEntity
 @Data
@@ -49,7 +50,7 @@ public class Asset extends Entity<Asset> {
     private Holds holds;
 
     @Relationship(type = "IS_AVAILABLE_FOR")
-    private AvailableFor availableFor;
+    private Set<AvailableFor> availableFor;
 
     @Relationship(type = "OF", direction = Relationship.INCOMING)
     private AssetTransfer transfer;
