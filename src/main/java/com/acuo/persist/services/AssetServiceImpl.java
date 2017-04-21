@@ -9,7 +9,7 @@ public class AssetServiceImpl extends GenericService<Asset, String> implements A
     private static String ELIGIBLE_ASSET_WITH_ACCT_AND_TRANSFER_INFO =
             "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:CLIENT_SIGNS]->(agreement:Agreement)-[:IS_COMPOSED_OF]->(rule:Rule)-[:APPLIES_TO]->(asset:Asset) " +
             "WITH asset, client, rule " +
-            "MATCH h=(ca:CustodianAccount)-[holds:HOLDS]->(asset) " +
+            "MATCH h=(:Custodian)-[:MANAGES]->(ca:CustodianAccount)-[holds:HOLDS]->(asset) " +
             "MATCH v=(asset)-[:VALUATED]->(:AssetValuation)-[:VALUE]->(:AssetValue) " +
             "OPTIONAL MATCH t=(asset)<-[:OF]-(:AssetTransfer)-[:FROM|TO]->(:CustodianAccount)<-[:HAS]-(client) " +
             "RETURN asset, " +
@@ -24,7 +24,7 @@ public class AssetServiceImpl extends GenericService<Asset, String> implements A
             "WHERE marginCall.marginType IN rule.marginType " +
             "AND NOT (asset)-[:EXCLUDED]->(marginCall) " +
             "WITH DISTINCT asset, rule " +
-            "MATCH h=(ca:CustodianAccount)-[:HOLDS]->(asset) " +
+            "MATCH h=(:Custodian)-[:MANAGES]->(ca:CustodianAccount)-[:HOLDS]->(asset) " +
             "MATCH v=(asset)-[:VALUATED]->(:AssetValuation)-[:VALUE]->(:AssetValue) " +
             "MATCH r=(rule)-[:APPLIES_TO]->(asset) " +
             "RETURN asset, " +

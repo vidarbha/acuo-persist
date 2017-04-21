@@ -46,7 +46,7 @@ public class PortfolioServiceImplTest {
 
     @Test
     public void testLoadPortfolio() {
-        Portfolio p2 = portfolioService.find("p2");
+        Portfolio p2 = portfolioService.find(PortfolioId.fromString("p2"));
         assertThat(p2).isNotNull();
     }
 }

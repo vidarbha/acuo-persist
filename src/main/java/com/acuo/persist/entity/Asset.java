@@ -6,6 +6,7 @@ import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
@@ -21,6 +22,7 @@ import java.util.Set;
 public class Asset extends Entity<Asset> {
 
     @Property(name = "id")
+    @Index(primary = true)
     private String assetId;
     private String idType;
     private String name;

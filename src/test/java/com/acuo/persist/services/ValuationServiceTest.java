@@ -5,7 +5,6 @@ import com.acuo.persist.core.ImportService;
 import com.acuo.persist.entity.TradeValuation;
 import com.acuo.persist.entity.TradeValue;
 import com.acuo.persist.entity.TradeValueRelation;
-import com.acuo.persist.entity.ValueRelation;
 import com.acuo.persist.ids.PortfolioId;
 import com.acuo.persist.modules.*;
 import com.opengamma.strata.basics.currency.Currency;

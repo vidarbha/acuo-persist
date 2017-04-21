@@ -7,6 +7,7 @@ import com.acuo.persist.utils.GraphData;
 import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
@@ -27,6 +28,7 @@ import static java.util.stream.Collectors.toSet;
 public class MarginStatement extends Entity<MarginStatement> {
 
     @Property(name = "id")
+    @Index(primary = true)
     private String statementId;
 
     @Convert(LocalDateConverter.class)

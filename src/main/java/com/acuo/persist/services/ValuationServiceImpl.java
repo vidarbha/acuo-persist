@@ -56,7 +56,7 @@ public class ValuationServiceImpl extends GenericService<Valuation, String> impl
         TradeValuation valuation = getTradeValuationFor(portfolioId);
         if (valuation == null) {
             valuation = new TradeValuation();
-            valuation.setPortfolio(portfolioService.find(portfolioId.toString()));
+            valuation.setPortfolio(portfolioService.find(portfolioId));
             valuation = createOrUpdate(valuation);
         }
         return valuation;
@@ -79,7 +79,7 @@ public class ValuationServiceImpl extends GenericService<Valuation, String> impl
         MarginValuation valuation = getMarginValuationFor(portfolioId);
         if (valuation == null) {
             valuation = new MarginValuation();
-            valuation.setPortfolio(portfolioService.find(portfolioId.toString()));
+            valuation.setPortfolio(portfolioService.find(portfolioId));
             valuation = createOrUpdate(valuation);
         }
         return valuation;
