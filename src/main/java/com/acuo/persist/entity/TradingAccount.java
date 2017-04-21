@@ -17,7 +17,7 @@ import java.util.TreeSet;
 public class TradingAccount extends Entity<TradingAccount> {
 
     @Property(name="id")
-    @Index(unique = true)
+    @Index(primary = true)
     private String accountId;
 
     private String name;
