@@ -2,7 +2,6 @@ package com.acuo.persist.learning;
 
 import com.acuo.persist.services.GenericService;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.neo4j.harness.junit.Neo4jRule;
@@ -11,8 +10,6 @@ import org.neo4j.ogm.config.Configuration;
 import org.neo4j.ogm.session.Session;
 import org.neo4j.ogm.session.SessionFactory;
 import org.neo4j.ogm.transaction.Transaction;
-
-import javax.inject.Provider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -29,7 +26,7 @@ public class TestDeleteAcuo {
     public Neo4jRule neo4jRule = new Neo4jRule()
             .withConfig("dbms.security.auth_enabled", "false");
 
-    public static class PersonService extends GenericService<Person> {
+    public static class PersonService extends GenericService<Person, Long> {
 
         public PersonService(Session session) {
             this.sessionProvider = () -> session;
@@ -41,7 +38,7 @@ public class TestDeleteAcuo {
         }
     }
 
-    public static class CarService extends GenericService<Car> {
+    public static class CarService extends GenericService<Car, Long> {
 
         public CarService(Session session) {
             this.sessionProvider = () -> session;

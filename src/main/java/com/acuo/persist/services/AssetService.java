@@ -3,7 +3,7 @@ package com.acuo.persist.services;
 import com.acuo.persist.entity.Asset;
 import com.acuo.persist.ids.ClientId;
 
-public interface AssetService extends Service<Asset> {
+public interface AssetService extends Service<Asset, String>  {
 
     Iterable<Asset> findEligibleAssetByClientId(ClientId clientId);
 

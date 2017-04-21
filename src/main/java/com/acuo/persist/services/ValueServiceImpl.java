@@ -2,7 +2,7 @@ package com.acuo.persist.services;
 
 import com.acuo.persist.entity.Value;
 
-public class ValueServiceImpl extends GenericService<Value> implements  ValueService{
+public class ValueServiceImpl extends GenericService<Value, String> implements  ValueService{
 
     @Override
     public Class<Value> getEntityType() {

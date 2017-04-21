@@ -8,7 +8,7 @@ import com.acuo.persist.ids.AssetId;
 import com.acuo.persist.ids.PortfolioId;
 import com.acuo.persist.ids.TradeId;
 
-public interface ValuationService extends Service<Valuation>{
+public interface ValuationService extends Service<Valuation, String> {
 
     TradeValuation getTradeValuationFor(TradeId tradeId);
 

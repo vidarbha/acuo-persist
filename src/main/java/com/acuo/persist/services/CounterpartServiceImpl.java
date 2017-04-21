@@ -5,7 +5,7 @@ import com.acuo.persist.entity.LegalEntity;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 
-public class CounterpartServiceImpl extends GenericService<Counterpart> implements CounterpartService {
+public class CounterpartServiceImpl extends GenericService<Counterpart, String> implements CounterpartService {
 
     @Override
     public Class<Counterpart> getEntityType() {

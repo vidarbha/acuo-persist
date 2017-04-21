@@ -12,7 +12,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 
-public class ValuationServiceImpl extends GenericService<Valuation> implements ValuationService {
+public class ValuationServiceImpl extends GenericService<Valuation, String> implements ValuationService {
 
     @Inject
     PortfolioService portfolioService;
@@ -56,7 +56,7 @@ public class ValuationServiceImpl extends GenericService<Valuation> implements V
         TradeValuation valuation = getTradeValuationFor(portfolioId);
         if (valuation == null) {
             valuation = new TradeValuation();
-            valuation.setPortfolio(portfolioService.findById(portfolioId.toString()));
+            valuation.setPortfolio(portfolioService.find(portfolioId.toString()));
             valuation = createOrUpdate(valuation);
         }
         return valuation;
@@ -79,7 +79,7 @@ public class ValuationServiceImpl extends GenericService<Valuation> implements V
         MarginValuation valuation = getMarginValuationFor(portfolioId);
         if (valuation == null) {
             valuation = new MarginValuation();
-            valuation.setPortfolio(portfolioService.findById(portfolioId.toString()));
+            valuation.setPortfolio(portfolioService.find(portfolioId.toString()));
             valuation = createOrUpdate(valuation);
         }
         return valuation;
@@ -102,8 +102,8 @@ public class ValuationServiceImpl extends GenericService<Valuation> implements V
         AssetValuation valuation = getAssetValuationFor(assetId);
         if (valuation == null) {
             valuation = new AssetValuation();
-            valuation.setAsset(assetService.findById(assetId.toString()));
-            valuation = createOrUpdate(valuation);
+            valuation.setAsset(assetService.find(assetId.toString()));
+            valuation = save(valuation, 1);
         }
         return valuation;
     }

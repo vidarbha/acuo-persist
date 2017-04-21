@@ -4,7 +4,7 @@ import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.entity.MarginCall;
 import com.acuo.persist.spring.Call;
 
-public interface MarginCallService extends Service<MarginCall>  {
+public interface MarginCallService extends Service<MarginCall, String> {
 
     void setStatus(String marginCallId, StatementStatus status);
 

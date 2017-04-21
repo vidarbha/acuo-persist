@@ -1,18 +1,17 @@
 package com.acuo.persist.services;
 
 import com.acuo.common.util.ArgChecker;
-import com.acuo.persist.entity.Entity;
-import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.ogm.session.Session;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import java.io.Serializable;
 
 @Slf4j
 @Transactional
-public abstract class GenericService<T> implements Service<T> {
+public abstract class GenericService<T, ID extends Serializable> implements Service<T, ID> {
 
     private static final int DEPTH_LIST = 0;
     private static final int DEPTH_ENTITY = 1;
@@ -44,7 +43,7 @@ public abstract class GenericService<T> implements Service<T> {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(ID id) {
         ArgChecker.notNull(id, "id");
         if (log.isDebugEnabled()) {
             log.debug("delete {}", id);
@@ -121,7 +120,7 @@ public abstract class GenericService<T> implements Service<T> {
     }
 
     @Override
-    public T find(Long id) {
+    public T find(ID id) {
         ArgChecker.notNull(id, "id");
         if (log.isDebugEnabled()) {
             log.debug("find {}", id);
@@ -130,39 +129,11 @@ public abstract class GenericService<T> implements Service<T> {
     }
 
     @Override
-    public T find(Long id, int depth) {
+    public T find(ID id, int depth) {
         ArgChecker.notNull(id, "id");
         if (log.isDebugEnabled()) {
             log.debug("find {} depth {}", id, depth);
         }
         return sessionProvider.get().load(getEntityType(), id, depth);
-    }
-
-    @Override
-    public T findById(String id) {
-        ArgChecker.notNull(id, "id");
-        if (log.isDebugEnabled()) {
-            log.debug("findById {}", id);
-        }
-        String query = "MATCH (i:" + getEntityType().getSimpleName() + " {id: {id} }) return i";
-        T entity = sessionProvider.get().queryForObject(getEntityType(), query, ImmutableMap.of("id",id));
-        if(entity != null)
-            return find(((Entity) entity).getId(), DEPTH_ENTITY);
-        else
-            return null;
-    }
-
-    @Override
-    public T findById(String id, int depth) {
-        ArgChecker.notNull(id, "id");
-        if (log.isDebugEnabled()) {
-            log.debug("findById {} depth {}", id, depth);
-        }
-        String query = "MATCH (i:" + getEntityType().getSimpleName() + " {id: {id} }) return i";
-        T entity = sessionProvider.get().queryForObject(getEntityType(), query, ImmutableMap.of("id",id));
-        if(entity != null)
-            return find(((Entity) entity).getId(), depth);
-        else
-            return null;
     }
 }

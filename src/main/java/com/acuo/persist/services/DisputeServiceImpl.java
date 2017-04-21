@@ -5,7 +5,7 @@ import com.acuo.persist.ids.MarginStatementId;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 
-public class DisputeServiceImpl extends GenericService<Dispute> implements DisputeService {
+public class DisputeServiceImpl extends GenericService<Dispute, String> implements DisputeService {
 
     @Override
     public Class<Dispute> getEntityType() {

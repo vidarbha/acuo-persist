@@ -15,13 +15,14 @@ import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import static com.acuo.common.model.margin.Types.MarginType;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"statementItem"})
-@ToString(exclude = {"statementItem"})
+@EqualsAndHashCode(callSuper = false, exclude = {"statementItem", "marginStatement", "children"})
+@ToString(exclude = {"statementItem", "marginStatement", "children"})
 public class StatementItem<T extends StatementItem> extends Entity<T> {
 
     @Convert(LocalDateConverter.class)
@@ -38,6 +39,9 @@ public class StatementItem<T extends StatementItem> extends Entity<T> {
     protected LocalDateTime notificationTime;
     protected Integer parentRank;
 
+    @Relationship(type = "PART_OF")
+    private MarginStatement marginStatement;
+
     @Relationship(type = "FIRST")
     protected Step firstStep;
 
@@ -46,4 +50,7 @@ public class StatementItem<T extends StatementItem> extends Entity<T> {
 
     @Relationship(type = "MATCHED_TO_EXPECTED", direction = Relationship.INCOMING)
     private StatementItem statementItem;
+
+    @Relationship(type = "CHILD_OF", direction = Relationship.INCOMING)
+    private Set<ChildOf> children;
 }

@@ -38,10 +38,9 @@ public class AssetValuationServiceImpl implements AssetValuationService {
         deleteLatestValue(assetValuation);
 
         final LocalDate valuationDateTime = value.getValuationDateTime();
-
-
         createValueRelation(assetValuation, valuationDateTime, value);
-        return valueService.createOrUpdate(value);
+
+        return valueService.save(value, 1);
     }
 
     public Collection<AssetValue> persist(List<com.acuo.common.model.results.AssetValuation> valuations) {
@@ -55,11 +54,10 @@ public class AssetValuationServiceImpl implements AssetValuationService {
         final LocalDate valuationDateTime = valuation.getValuationDateTime();
         AssetValue assetValue = createAssetValue(valuation, valuationDateTime);
 
-        persist(assetId, assetValue);
+        assetValue = persist(assetId, assetValue);
 
-        final AssetValue value = valueService.createOrUpdate(assetValue);
         log.info("valuation inserted in the db with timestamp set to {}", assetValue.getValuationDateTime());
-        return value;
+        return assetValue;
     }
 
     private void createValueRelation(AssetValuation assetValuation, LocalDate valuationDateTime, AssetValue assetValue) {

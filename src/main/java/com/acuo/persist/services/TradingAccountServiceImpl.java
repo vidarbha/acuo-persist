@@ -5,7 +5,7 @@ import com.acuo.persist.entity.TradingAccount;
 import com.google.inject.persist.Transactional;
 
 
-public class TradingAccountServiceImpl extends GenericService<TradingAccount> implements TradingAccountService {
+public class TradingAccountServiceImpl extends GenericService<TradingAccount, String> implements TradingAccountService {
 
     @Override
     public Class<TradingAccount> getEntityType() {
@@ -14,7 +14,7 @@ public class TradingAccountServiceImpl extends GenericService<TradingAccount> im
 
     @Transactional
     public void addTrade(String accountId, Trade trade) {
-        TradingAccount account = findById(accountId, 2);
+        TradingAccount account = find(accountId, 2);
         account.remove(trade);
         account.add(trade);
         save(account);

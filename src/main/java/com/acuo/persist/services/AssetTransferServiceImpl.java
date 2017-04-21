@@ -5,7 +5,7 @@ import org.neo4j.ogm.model.Result;
 
 import java.util.Collections;
 
-public class AssetTransferServiceImpl extends GenericService<AssetTransfer> implements AssetTransferService{
+public class AssetTransferServiceImpl extends GenericService<AssetTransfer, String> implements AssetTransferService {
 
     @Override
     public Class<AssetTransfer> getEntityType() {

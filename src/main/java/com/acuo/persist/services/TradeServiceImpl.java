@@ -10,12 +10,13 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toList;
 
 @Slf4j
-public class TradeServiceImpl<T extends Trade> extends GenericService<T> implements TradeService<T> {
+public class TradeServiceImpl<T extends Trade> extends GenericService<T, String> implements TradeService<T> {
 
     @Override
     @Transactional
@@ -28,7 +29,7 @@ public class TradeServiceImpl<T extends Trade> extends GenericService<T> impleme
                         "-[:HAS]-> (:TradingAccount) " +
                         "-[:POSITIONS_ON]-> (trade:Trade) " +
                         "WITH trade " +
-                        "MATCH p=(trade)-[r*0..1]-() RETURN trade, nodes(p), rels(p)";
+                        "MATCH p=(trade)-[r*0..1]-() RETURN trade, nodes(p), relationships(p)";
         return sessionProvider.get().query(getEntityType(), query, ImmutableMap.of("id",clientId.toString()));
     }
 
@@ -63,7 +64,7 @@ public class TradeServiceImpl<T extends Trade> extends GenericService<T> impleme
         if (log.isDebugEnabled()) {
             log.debug("createOrUpdate {}",trade);
         }
-        T byId = findById(trade.getTradeId());
+        T byId = find(trade.getTradeId());
         if(byId != null) {
             delete(byId);
         }
@@ -76,8 +77,8 @@ public class TradeServiceImpl<T extends Trade> extends GenericService<T> impleme
             log.debug("createOrUpdate {}",trades);
         }
         List<T> toDelete = StreamSupport.stream(trades.spliterator(), false)
-                .map(trade -> findById(trade.getTradeId()))
-                .filter(trade -> trade != null)
+                .map(trade -> find(trade.getTradeId()))
+                .filter(Objects::nonNull)
                 .collect(toList());
         if (!toDelete.isEmpty())
             delete(toDelete);

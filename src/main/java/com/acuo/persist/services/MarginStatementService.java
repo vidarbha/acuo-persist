@@ -1,15 +1,15 @@
 package com.acuo.persist.services;
 
 import com.acuo.persist.entity.Agreement;
+import com.acuo.persist.entity.MarginStatement;
 import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.entity.enums.StatementStatus;
-import com.acuo.persist.entity.MarginStatement;
 import com.acuo.persist.ids.ClientId;
 import com.acuo.persist.ids.MarginStatementId;
 
 import java.time.LocalDate;
 
-public interface MarginStatementService extends Service<MarginStatement> {
+public interface MarginStatementService extends Service<MarginStatement, String> {
 
     Iterable<MarginStatement> allStatementsFor(ClientId clientId, StatementStatus... statuses);
 

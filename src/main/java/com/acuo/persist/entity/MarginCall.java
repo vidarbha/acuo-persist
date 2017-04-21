@@ -7,24 +7,24 @@ import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
-import org.neo4j.ogm.annotation.Relationship;
 
 import java.time.LocalDate;
 import java.util.Map;
-import java.util.Set;
 
 import static com.acuo.common.model.margin.Types.MarginType;
 import static com.opengamma.strata.basics.currency.Currency.USD;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"marginStatement"})
-@ToString(exclude = {"marginStatement"})
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> {
 
     @Property(name = "id")
+    @Index(primary = true)
     protected String marginCallId;
 
     private Double excessAmount;
@@ -38,11 +38,6 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
     private Double roundedDeliverAmount;
     private Integer belowMTA;
 
-    @Relationship(type = "PART_OF")
-    private MarginStatement marginStatement;
-
-    @Relationship(type = "CHILD_OF", direction = Relationship.INCOMING)
-    private Set<ChildOf> children;
 
     public MarginCall() {
     }

@@ -1,8 +1,6 @@
 package com.acuo.persist.services;
 
-import com.acuo.common.util.ArgChecker;
 import com.acuo.persist.entity.CurrencyEntity;
-import com.acuo.persist.entity.Entity;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 import com.opengamma.strata.basics.currency.Currency;
@@ -12,7 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CurrencyServiceImpl extends GenericService<CurrencyEntity> implements CurrencyService {
+public class CurrencyServiceImpl extends GenericService<CurrencyEntity, String> implements CurrencyService {
 
     @Override
     public Class<CurrencyEntity> getEntityType() {
@@ -38,16 +36,5 @@ public class CurrencyServiceImpl extends GenericService<CurrencyEntity> implemen
         Result result = sessionProvider.get().query(query, Collections.emptyMap());
         result.forEach(map -> values.put(Currency.of((String) map.get("id")), (Double) map.get("rate")));
         return values;
-    }
-
-    @Override
-    public CurrencyEntity find(String id) {
-        ArgChecker.notNull(id, "id");
-        String query = "MATCH (i:Currency {id: {id} }) return i";
-        CurrencyEntity entity = sessionProvider.get().queryForObject(CurrencyEntity.class, query, ImmutableMap.of("id",id));
-        if(entity != null)
-            return find(entity.getId(), 1);
-        else
-            return null;
     }
 }

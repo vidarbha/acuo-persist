@@ -14,6 +14,7 @@ import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Set;
 
 @NodeEntity
 @Data
@@ -60,8 +61,7 @@ public class Agreement extends Entity<Agreement> {
     @Relationship(type = "COUNTERPARTY_SIGNS", direction = Relationship.INCOMING)
     private CounterpartSignsRelation counterpartSignsRelation;
 
-    /*@Relationship(type = "STEMS_FROM", direction = Relationship.INCOMING)
-    private  Set<MarginStatement> marginStatements;*/
-
+    @Relationship(type = "IS_COMPOSED_OF")
+    private Set<Rule> rules;
 
 }

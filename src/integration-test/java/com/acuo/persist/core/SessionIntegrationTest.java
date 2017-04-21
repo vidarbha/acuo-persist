@@ -66,7 +66,7 @@ public class SessionIntegrationTest {
 
 	@Test
 	public void testFindByClientId() {
-		Client client = clientService.findById("999");
+		Client client = clientService.find("999");
 		assertNotNull(client.getFirmId());
 	}
 

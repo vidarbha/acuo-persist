@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class MarginStatementServiceImpl extends GenericService<MarginStatement> implements MarginStatementService {
+public class MarginStatementServiceImpl extends GenericService<MarginStatement, String> implements MarginStatementService {
 
     private final StatementItemService statementItemService;
 
@@ -39,7 +39,7 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
                 "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement) " +
                 "WITH m " +
                 "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m)<-[*1..2]-(mc:StatementItem)-[:LAST]->(step:Step) " +
-                "WHERE step.status IN {statuses} RETURN m, nodes(p), rels(p)";
+                "WHERE step.status IN {statuses} RETURN m, nodes(p), relationships(p)";
         return sessionProvider.get().query(MarginStatement.class, query, ImmutableMap.of("clientId", clientId.toString(), "statuses", statuses));
     }
 
@@ -50,7 +50,7 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
                 "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement) " +
                 "WITH m " +
                 "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-" +
-                "(m) <-[*1..2]-(mc:StatementItem)-[:LAST]->(step:Step) RETURN m, nodes(p), rels(p)";
+                "(m) <-[*1..2]-(mc:StatementItem)-[:LAST]->(step:Step) RETURN m, nodes(p), relationships(p)";
         return sessionProvider.get().query(MarginStatement.class, query, ImmutableMap.of("clientId", clientId.toString()));
     }
 
@@ -61,7 +61,7 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
                 "MATCH p=(f:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-" +
                 "(m:MarginStatement {id:{marginStatementId}})<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
                 "WHERE step.status IN {statuses} " +
-                "RETURN m, nodes(p), rels(p)";
+                "RETURN m, nodes(p), relationships(p)";
         return sessionProvider.get().queryForObject(MarginStatement.class, query, ImmutableMap.of("marginStatementId", marginStatementId.toString(), "statuses", statuses));
     }
 
@@ -72,7 +72,7 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
                 "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement)<-[]-(mc:StatementItem)-[:LAST]->(step:Step) where step.status in ['Unrecon']" +
                 "WITH m " +
                 "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m)<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
-                "RETURN m, mc, nodes(p), rels(p)";
+                "RETURN m, mc, nodes(p), relationships(p)";
         return sessionProvider.get().query(MarginStatement.class, query, ImmutableMap.of("clientId", clientId.toString()));
     }
 
@@ -85,7 +85,7 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
                 "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-" +
                 "(m) <-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step {status:'Unrecon'}) " +
                 "WHERE NOT exists((mc)-[:MATCHED_TO_EXPECTED]->()) " +
-                "RETURN m, nodes(p), rels(p)";
+                "RETURN m, nodes(p), relationships(p)";
         return sessionProvider.get().query(MarginStatement.class, query, ImmutableMap.of("clientId", clientId.toString()));
     }
 
@@ -96,7 +96,7 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
                 "MATCH (m:MarginStatement {id:{marginStatementId}})<-[]-(mc:MarginCall)-[:LAST]->(step:Step {status:'Unrecon'}) " +
                 "WITH m " +
                 "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m)<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
-                "RETURN m, mc, nodes(p), rels(p)";
+                "RETURN m, mc, nodes(p), relationships(p)";
         return sessionProvider.get().queryForObject(MarginStatement.class, query, ImmutableMap.of("marginStatementId", marginStatementId.toString()));
     }
 
@@ -107,13 +107,15 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
                 "MATCH (m:MarginStatement)<-[*1..2]-(mc:MarginCall {id:{callId}}) " +
                 "WITH m " +
                 "MATCH p=(f:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m)<-[*1..2]-(mc:MarginCall) " +
-                "RETURN m, nodes(p), rels(p)";
+                "RETURN m, nodes(p), relationships(p)";
         return sessionProvider.get().queryForObject(MarginStatement.class, query, ImmutableMap.of("callId", callId));
     }
 
+    @Override
+    @Transactional
     public void reconcile(MarginStatementId marginStatementId, Double amount) {
         log.info("reconciling all items for margin statement [{}]", marginStatementId);
-        MarginStatement marginStatement = findById(marginStatementId.toString(), 2);
+        MarginStatement marginStatement = find(marginStatementId.toString(), 2);
         Set<StatementItem> receviedMarginCalls = filter(marginStatement.getStatementItems(), StatementStatus.Unrecon);
         for (StatementItem marginCall : receviedMarginCalls) {
             log.debug("parent call {} and children {}", marginCall);
@@ -125,14 +127,14 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
     @Override
     @Transactional
     public void match(MarginStatementId fromId, MarginStatementId toId) {
-        MarginStatement from = findById(fromId.toString());
+        MarginStatement from = find(fromId.toString());
     }
 
     @Override
     @Transactional
     public MarginStatement getMarginStatement(Agreement agreement, LocalDate callDate, StatementDirection direction) {
         String query = "MATCH p=(a:Agreement {id:{agreementId}})<-[:STEMS_FROM]-(m:MarginStatement {date:{date}, direction:{direction}}) " +
-                "RETURN m, nodes(p), rels(p)";
+                "RETURN m, nodes(p), relationships(p)";
         String dateStr = new LocalDateConverter().toGraphProperty(callDate);
         String agreementId = agreement.getAgreementId();
         String dir = direction.name();

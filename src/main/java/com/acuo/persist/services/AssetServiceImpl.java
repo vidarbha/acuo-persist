@@ -4,25 +4,33 @@ import com.acuo.persist.entity.Asset;
 import com.acuo.persist.ids.ClientId;
 import com.google.common.collect.ImmutableMap;
 
-public class AssetServiceImpl extends GenericService<Asset> implements AssetService {
+public class AssetServiceImpl extends GenericService<Asset, String> implements AssetService {
 
     private static String ELIGIBLE_ASSET_WITH_ACCT_AND_TRANSFER_INFO =
-            "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:CLIENT_SIGNS]->(agreement:Agreement)<-[:IS_AVAILABLE_FOR]-(asset:Asset) " +
-            "WITH asset, client " +
-            "MATCH path=(ca:CustodianAccount)-[holds:HOLDS]->(asset:Asset)-[:VALUATED]->(valuation:Valuation)-[:VALUE]->(value:AssetValue) " +
-            "WITH asset, client, path " +
-            "OPTIONAL MATCH transfer=(asset)<-[:OF]-(:AssetTransfer)-[:FROM|TO]->(:CustodianAccount)<-[:HAS]-(client) " +
-            "RETURN asset, nodes(path), relationships(path), nodes(transfer), relationships(transfer)";
+            "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:CLIENT_SIGNS]->(agreement:Agreement)-[:IS_COMPOSED_OF]->(rule:Rule)-[:APPLIES_TO]->(asset:Asset) " +
+            "WITH asset, client, rule " +
+            "MATCH h=(ca:CustodianAccount)-[holds:HOLDS]->(asset) " +
+            "MATCH v=(asset)-[:VALUATED]->(:AssetValuation)-[:VALUE]->(:AssetValue) " +
+            "OPTIONAL MATCH t=(asset)<-[:OF]-(:AssetTransfer)-[:FROM|TO]->(:CustodianAccount)<-[:HAS]-(client) " +
+            "RETURN asset, " +
+            "nodes(h), relationships(h), " +
+            "nodes(v), relationships(v), " +
+            "nodes(t), relationships(t)";
 
     private static String ELIGIBLE_ASSET_BY_CLIENT_AND_CALLID =
-            "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:CLIENT_SIGNS]->(agreement:Agreement)<-[is:IS_AVAILABLE_FOR]-(asset:Asset) " +
-            "WITH asset, client, agreement, entity, is " +
+            "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:CLIENT_SIGNS]->(agreement:Agreement)-[:IS_COMPOSED_OF]->(rule:Rule)-[:APPLIES_TO]->(asset:Asset) " +
+            "WITH asset, client, agreement, entity, rule " +
             "MATCH (agreement)<-[:STEMS_FROM]-(ms:MarginStatement)<-[*1..2]-(marginCall:MarginCall {id:{callId}}),(ms)-[:DIRECTED_TO]->(entity) " +
-            "WHERE marginCall.marginType IN is.marginType " +
+            "WHERE marginCall.marginType IN rule.marginType " +
             "AND NOT (asset)-[:EXCLUDED]->(marginCall) " +
-            "WITH DISTINCT asset " +
-            "MATCH path=(ca:CustodianAccount)-[holds]->(asset)-[:VALUATED]->(valuation:Valuation)-[:VALUE]->(value:AssetValue) " +
-            "RETURN asset, nodes(path), relationships(path)";
+            "WITH DISTINCT asset, rule " +
+            "MATCH h=(ca:CustodianAccount)-[:HOLDS]->(asset) " +
+            "MATCH v=(asset)-[:VALUATED]->(:AssetValuation)-[:VALUE]->(:AssetValue) " +
+            "MATCH r=(rule)-[:APPLIES_TO]->(asset) " +
+            "RETURN asset, " +
+            "nodes(h), relationships(h), " +
+            "nodes(v), relationships(v), " +
+            "nodes(r), relationships(r)";
 
     @Override
     public Iterable<Asset> findEligibleAssetByClientId(ClientId clientId) {
