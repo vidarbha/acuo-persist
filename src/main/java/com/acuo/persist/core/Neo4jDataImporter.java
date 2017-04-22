@@ -31,32 +31,43 @@ public class Neo4jDataImporter implements DataImporter {
     private final DataLoader loader;
     private static final String ENCODING = "UTF-8";
     private final String workingDirPath;
+    private final String dataBranch;
     private final String dataDirPath;
     private final String directoryTemplate;
     private Map<String, String> substitutions = new HashMap<>();
 
     @Inject
-    public Neo4jDataImporter(DataLoader loader, @Named(PropertiesHelper.ACUO_DATA_DIR) String dataDir,
+    public Neo4jDataImporter(DataLoader loader,
+                             @Named(PropertiesHelper.ACUO_DATA_DIR) String dataDir,
+                             @Named(PropertiesHelper.ACUO_DATA_BRANCH) String dataBranch,
                              @Named(PropertiesHelper.ACUO_DATA_IMPORT_LINK) String dataImportLink,
                              @Named(PropertiesHelper.ACUO_CYPHER_DIR_TEMPLATE) String directoryTemplate) {
         this.loader = loader;
         this.workingDirPath = dataDir;
+        this.dataBranch = dataBranch;
         this.dataDirPath = GraphData.getDataLink(dataImportLink);
         this.directoryTemplate = directoryTemplate;
         substitutions.put("%workingDirPath%", workingDirPath);
         substitutions.put("%dataImportLink%", dataDirPath);
-        LOG.info("data importer created with working [{}] data [{}] template [{}]", workingDirPath, dataDirPath,
+        LOG.info("data importer created with working [{}] branch [{}] data [{}] template [{}]", workingDirPath,
+                dataBranch,
+                dataDirPath,
                 directoryTemplate);
     }
 
     @Override
-    public void importFiles(String... fileNames) {
-        Arrays.asList(fileNames).stream().forEach(f -> importFile(f));
+    public void importFiles(String branch, String... fileNames) {
+        if (branch == null)
+            branch = dataBranch;
+        final String value = branch;
+        Arrays.asList(fileNames).stream().forEach(f -> importFile(value, f));
     }
 
-    private void importFile(String fileName) {
+    private void importFile(String branch, String fileName) {
         try {
+            substitutions.put("%branch%", branch);
             String filePath = String.format(directoryTemplate, workingDirPath, fileName);
+            filePath = buildQuery(filePath, substitutions);
             LOG.info("Importing files [{}] from {}", fileName, filePath);
             String file = GraphData.readFile(filePath);
             String query = buildQuery(file, substitutions);

@@ -5,7 +5,6 @@ import com.acuo.persist.entity.LegalEntity;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 
-@Transactional
 public class CounterpartServiceImpl extends GenericService<Counterpart> implements CounterpartService {
 
     @Override
@@ -14,9 +13,10 @@ public class CounterpartServiceImpl extends GenericService<Counterpart> implemen
     }
 
     @Override
+    @Transactional
     public Counterpart getCounterpart(LegalEntity legalEntity) {
         String query = "MATCH (cp:Counterpart)-[r:MANAGES]->(l:LegalEntity {id:{id}}) " +
                         "RETURN cp";
-        return  session.queryForObject(Counterpart.class, query, ImmutableMap.of("id",legalEntity.getLegalEntityId()));
+        return  sessionProvider.get().queryForObject(Counterpart.class, query, ImmutableMap.of("id",legalEntity.getLegalEntityId()));
     }
 }

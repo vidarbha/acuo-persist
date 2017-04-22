@@ -28,6 +28,7 @@ public class RepositoryModule extends AbstractModule {
         bind(AssetTransferService.class).to(AssetTransferServiceImpl.class);
         bind(CustodianAccountService.class).to(CustodianAccountServiceImpl.class);
         bind(CurrencyService.class).to(CurrencyServiceImpl.class);
+        bind(StatementItemService.class).to(StatementItemServiceImpl.class);
     }
 
 }

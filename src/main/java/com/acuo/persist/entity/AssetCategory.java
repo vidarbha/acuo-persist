@@ -28,7 +28,7 @@ public class AssetCategory extends Entity<AssetCategory> {
 
     private Double maturityUp;
 
-    @Relationship(type = "IS_ELIGIBLE_UNDER", direction = Relationship.OUTGOING)
+    @Relationship(type = "IS_ELIGIBLE_UNDER")
     private EligibleUnder eligibleUnder;
 
 }

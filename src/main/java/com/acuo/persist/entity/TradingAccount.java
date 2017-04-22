@@ -9,6 +9,7 @@ import org.neo4j.ogm.annotation.Relationship;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 @NodeEntity
 @Data
@@ -16,6 +17,7 @@ import java.util.Set;
 public class TradingAccount extends Entity<TradingAccount> {
 
     @Index(unique = true)
+    @Property(name="id")
     private String accountId;
 
     private String name;
@@ -23,12 +25,17 @@ public class TradingAccount extends Entity<TradingAccount> {
     private String shortName;
 
     @Relationship(type = "POSITIONS_ON")
-    private Set<Trade> trades = new HashSet<>();
+    private Set<Trade> trades = new TreeSet<>();
 
     @Relationship(type = "ACCESSES")
     private Set<CustodianAccount> custodianAccounts;
 
-    public boolean add(Trade trade) {
-        return trades.add(trade);
+    public void remove(Trade trade) {
+        trades.remove(trade);
     }
+
+    public void add(Trade trade) {
+        trades.add(trade);
+    }
+
 }

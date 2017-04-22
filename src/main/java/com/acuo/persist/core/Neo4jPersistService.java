@@ -15,76 +15,14 @@ import javax.inject.Provider;
 @Slf4j
 public class Neo4jPersistService extends AbstractIdleService implements Provider<Session>, UnitOfWork, PersistService {
 
-    private final ThreadLocal<Session> sessions = new ThreadLocal<>();
+    private final ThreadLocal<Session> sessionThreadLocal = new ThreadLocal<>();
+    private final ThreadLocal<Integer> beginCountThreadLocal = new ThreadLocal<Integer>();
 
-    private final Provider<SessionFactory> sessionFactoryProvider;
-
-    private volatile SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
     @Inject
-    Neo4jPersistService(Provider<SessionFactory> sessionFactoryProvider) {
-        this.sessionFactoryProvider = sessionFactoryProvider;
-    }
-
-    @Override
-    public Session get() {
-        if (!isWorking()) {
-            begin();
-        }
-
-        Session session = sessions.get();
-
-        if (session == null) {
-            throw new IllegalStateException("Requested Session outside work unit. "
-                    + "Try calling UnitOfWork.begin() first, or use a PersistFilter if you "
-                    + "are inside a servlet environment.");
-        }
-
-        return session;
-    }
-
-    public boolean isWorking() {
-        return sessions.get() != null;
-    }
-
-    @Override
-    public synchronized void start() {
-        if (sessionFactory != null)
-        {
-            throw new IllegalStateException("Persistence service was already initialized.");
-        }
-
-        this.sessionFactory = sessionFactoryProvider.get();
-    }
-
-    @Override
-    public synchronized void stop() {
-        // Do nothing...
-    }
-
-    @Override
-    public void begin() {
-        if(sessionFactory == null)
-            start();
-        if (sessions.get() != null) {
-            throw new IllegalStateException(
-                    "Work already begun on this thread. Looks like you have called UnitOfWork.begin() twice"
-                            + " without a balancing call to end() in between.");
-        }
-
-        sessions.set(sessionFactory.openSession());
-    }
-
-    @Override
-    public void end() {
-        Session session = sessions.get();
-
-        // Let's not penalize users for calling end() multiple times.
-        if (session == null) {
-            return;
-        }
-
-        sessions.remove();
+    Neo4jPersistService(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
@@ -95,5 +33,72 @@ public class Neo4jPersistService extends AbstractIdleService implements Provider
     @Override
     protected void shutDown() {
         stop();
+    }
+
+    @Override
+    public void start() {
+    /*
+     * Nothing to do here really. We're injecting the DataSource this uses directly, not creating it
+     * when the service starts, and there isn't any concept of "closing" the DataSource itself.
+     */
+    }
+
+    @Override
+    public void stop() {
+    /*
+     * Nothing to do here either. Some DataSources have a close() method, but it's not part of the
+     * interface so....
+     */
+    }
+
+    @Override
+    public void begin() {
+        if (!isWorking()) {
+            sessionThreadLocal.set(getSession());
+            beginCountThreadLocal.set(1);
+        } else {
+            beginCountThreadLocal.set(beginCountThreadLocal.get() + 1);
+        }
+    }
+
+    @Override
+    public void end() {
+        Integer beginCount = beginCountThreadLocal.get();
+        if (beginCount == null)
+            return;
+
+        beginCountThreadLocal.set(--beginCount);
+
+        if (beginCount == 0) {
+            closeSession(sessionThreadLocal.get());
+            sessionThreadLocal.remove();
+            beginCountThreadLocal.remove();
+        }
+    }
+
+    /**
+     * @return {@code true} if work is currently active on the current thread; {@code false} otherwise.
+     */
+    public boolean isWorking() {
+        return sessionThreadLocal.get() != null;
+    }
+
+    @Override
+    public Session get() {
+        Session result = sessionThreadLocal.get();
+        if (result == null) {
+            throw new IllegalStateException("No UnitOfWork active while attempting to retrieve Connection. " +
+                    "Be sure to call UnitOfWork.begin() before retrieving a Connection or that you retrieve " +
+                    "the Connection in a @Transactional method.");
+        }
+        return result;
+    }
+
+    private Session getSession() {
+        return sessionFactory.openSession();
+    }
+
+    private void closeSession(Session conn) {
+
     }
 }

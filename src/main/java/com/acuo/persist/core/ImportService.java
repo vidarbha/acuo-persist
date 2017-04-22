@@ -1,12 +1,34 @@
 package com.acuo.persist.core;
 
-import org.neo4j.ogm.annotation.Transient;
+import com.google.inject.Singleton;
 
-@Transient
-public interface ImportService {
+import javax.inject.Inject;
 
-    void reload();
+@Singleton
+public class ImportService {
 
-    void load(String fileName);
+    private final DataLoader loader;
+    private final DataImporter importer;
 
+    private String branch = null;
+
+    @Inject
+    public ImportService(DataLoader loader, DataImporter importer) {
+        this.loader = loader;
+        this.importer = importer;
+    }
+
+    public ImportService branch(String value) {
+        this.branch = value;
+        return this;
+    }
+
+    public void load(String fileName) {
+        importer.importFiles(branch, fileName);
+    }
+
+    public void reload() {
+        loader.purgeDatabase();
+        importer.importFiles(branch, DataImporter.ALL_FILES);
+    }
 }

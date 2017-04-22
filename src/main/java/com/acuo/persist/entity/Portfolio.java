@@ -2,6 +2,7 @@ package com.acuo.persist.entity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
@@ -12,7 +13,8 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = false, exclude = {"valuation"})
+@ToString(exclude = {"valuation"})
 public class Portfolio extends Entity<Portfolio> {
 
     @Property(name="id")
@@ -28,10 +30,10 @@ public class Portfolio extends Entity<Portfolio> {
     @Relationship(type = "IS_COMPOSED_OF")
     private Set<Asset> assets;
 
-    @Relationship(type="VALUATED")
-    private Set<Valuation> valuations;
-
     @Relationship(type="FOLLOWS")
     private Agreement agreement;
+
+    @Relationship(type = "VALUATED")
+    private Valuation valuation;
 
 }

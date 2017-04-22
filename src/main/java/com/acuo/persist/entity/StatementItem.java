@@ -5,8 +5,9 @@ import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import com.acuo.persist.neo4j.converters.LocalDateTimeConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.neo4j.ogm.annotation.NodeEntity;
-import org.neo4j.ogm.annotation.Property;
+import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.time.LocalDate;
@@ -14,8 +15,9 @@ import java.time.LocalDateTime;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false)
-public class StatementItem extends Entity {
+@EqualsAndHashCode(callSuper = false, exclude = {"statementItem"})
+@ToString(exclude = {"statementItem"})
+public class StatementItem<T extends StatementItem> extends Entity<T> {
 
     @Convert(LocalDateConverter.class)
     protected LocalDate callDate;
@@ -29,4 +31,13 @@ public class StatementItem extends Entity {
     protected Double marginAmount;
     @Convert(LocalDateTimeConverter.class)
     protected LocalDateTime notificationTime;
+
+    @Relationship(type = "FIRST")
+    private Step firstStep;
+
+    @Relationship(type = "LAST")
+    private Step lastStep;
+
+    @Relationship(type = "MATCHED_TO_EXPECTED", direction = Relationship.INCOMING)
+    private StatementItem statementItem;
 }

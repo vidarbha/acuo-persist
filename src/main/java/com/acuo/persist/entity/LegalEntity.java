@@ -32,11 +32,11 @@ public class LegalEntity extends Entity<LegalEntity> {
     @Relationship(type = "COUNTERPARTY_SIGNS")
     private Set<CounterpartSignsRelation> counterpartSignsRelations;
 
-    @Relationship(type = "DIRECTED_TO", direction = Relationship.INCOMING)
+    /*@Relationship(type = "DIRECTED_TO", direction = Relationship.INCOMING)
     private Set<MarginStatement> marginStatements;
 
     @Relationship(type = "SENT_FROM", direction = Relationship.INCOMING)
-    private Set<MarginStatement> fromMarginStatements;
+    private Set<MarginStatement> fromMarginStatements;*/
 
     @Relationship(type = "MANAGES", direction = Relationship.INCOMING)
     private Firm firm;

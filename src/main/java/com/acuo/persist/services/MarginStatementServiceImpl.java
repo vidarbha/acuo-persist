@@ -7,7 +7,6 @@ import com.acuo.persist.ids.MarginStatementId;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 
-@Transactional
 public class MarginStatementServiceImpl extends GenericService<MarginStatement> implements MarginStatementService {
 
     @Override
@@ -16,46 +15,51 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
     }
 
     @Override
+    @Transactional
     public Iterable<MarginStatement> allStatementsFor(ClientId clientId, CallStatus... statuses) {
         String query =
                 "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement) " +
                 "WITH m " +
-                "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m)<-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step) " +
+                "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m)<-[*1..2]-(mc:StatementItem)-[:LAST]->(step:Step) " +
                 "WHERE step.status IN {statuses} RETURN m, nodes(p), rels(p)";
-        return session.query(MarginStatement.class, query, ImmutableMap.of("clientId", clientId.toString(), "statuses", statuses));
+        return sessionProvider.get().query(MarginStatement.class, query, ImmutableMap.of("clientId", clientId.toString(), "statuses", statuses));
     }
 
     @Override
+    @Transactional
     public Iterable<MarginStatement> allStatementsForClient(ClientId clientId) {
         String query =
                 "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement) " +
                 "WITH m " +
                 "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-" +
-                "(m) <-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step) RETURN m, nodes(p), rels(p)";
-        return session.query(MarginStatement.class, query, ImmutableMap.of("clientId", clientId.toString()));
+                "(m) <-[*1..2]-(mc:StatementItem)-[:LAST]->(step:Step) RETURN m, nodes(p), rels(p)";
+        return sessionProvider.get().query(MarginStatement.class, query, ImmutableMap.of("clientId", clientId.toString()));
     }
 
     @Override
+    @Transactional
     public MarginStatement statementFor(MarginStatementId marginStatementId, CallStatus... statuses) {
         String query =
                 "MATCH p=(f:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-" +
                 "(m:MarginStatement {id:{marginStatementId}})<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
                 "WHERE step.status IN {statuses} " +
                 "RETURN m, nodes(p), rels(p)";
-        return session.queryForObject(MarginStatement.class, query, ImmutableMap.of("marginStatementId", marginStatementId.toString(), "statuses", statuses));
+        return sessionProvider.get().queryForObject(MarginStatement.class, query, ImmutableMap.of("marginStatementId", marginStatementId.toString(), "statuses", statuses));
     }
 
     @Override
+    @Transactional
     public Iterable<MarginStatement> allStatementsForRecon(ClientId clientId) {
         String query =
-                "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement)<-[]-(mc:MarginCall)-[:LAST]->(step:Step) where step.status in ['Unrecon']" +
+                "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement)<-[]-(mc:StatementItem)-[:LAST]->(step:Step) where step.status in ['Unrecon']" +
                 "WITH m " +
                 "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m)<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
                 "RETURN m, mc, nodes(p), rels(p)";
-        return session.query(MarginStatement.class, query, ImmutableMap.of("clientId", clientId.toString()));
+        return sessionProvider.get().query(MarginStatement.class, query, ImmutableMap.of("clientId", clientId.toString()));
     }
 
     @Override
+    @Transactional
     public Iterable<MarginStatement> allUnmatchedStatements(ClientId clientId) {
         String query =
                 "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement) " +
@@ -64,26 +68,34 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement> 
                 "(m) <-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step {status:'Unrecon'}) " +
                 "WHERE NOT exists((mc)-[:MATCHED_TO_EXPECTED]->()) " +
                 "RETURN m, nodes(p), rels(p)";
-        return session.query(MarginStatement.class, query, ImmutableMap.of("clientId", clientId.toString()));
+        return sessionProvider.get().query(MarginStatement.class, query, ImmutableMap.of("clientId", clientId.toString()));
     }
 
     @Override
+    @Transactional
     public MarginStatement statementForRecon(MarginStatementId marginStatementId) {
         String query =
                 "MATCH (m:MarginStatement {id:{marginStatementId}})<-[]-(mc:MarginCall)-[:LAST]->(step:Step {status:'Unrecon'}) " +
                 "WITH m " +
                 "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m)<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
                 "RETURN m, mc, nodes(p), rels(p)";
-        return session.queryForObject(MarginStatement.class, query, ImmutableMap.of("marginStatementId", marginStatementId.toString()));
+        return sessionProvider.get().queryForObject(MarginStatement.class, query, ImmutableMap.of("marginStatementId", marginStatementId.toString()));
     }
 
     @Override
+    @Transactional
     public MarginStatement statementOf(String callId) {
         String query =
                 "MATCH (m:MarginStatement)<-[*1..2]-(mc:MarginCall {id:{callId}}) " +
                 "WITH m " +
                 "MATCH p=(f:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m)<-[*1..2]-(mc:MarginCall) " +
                 "RETURN m, nodes(p), rels(p)";
-        return session.queryForObject(MarginStatement.class, query, ImmutableMap.of("callId", callId));
+        return sessionProvider.get().queryForObject(MarginStatement.class, query, ImmutableMap.of("callId", callId));
+    }
+
+    @Override
+    @Transactional
+    public void match(MarginStatementId fromId, MarginStatementId toId) {
+        MarginStatement from = findById(fromId.toString());
     }
 }

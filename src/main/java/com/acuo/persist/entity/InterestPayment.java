@@ -7,8 +7,8 @@ import org.neo4j.ogm.annotation.Property;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false)
-public class InterestPayment extends StatementItem {
+@EqualsAndHashCode(callSuper = true)
+public class InterestPayment extends StatementItem<InterestPayment> {
     @Property(name="id")
     private String interestPaymentId;
 }

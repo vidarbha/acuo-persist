@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 /**
@@ -16,7 +17,6 @@ import static org.junit.Assert.assertFalse;
  */
 public class TransactionTest extends AbstractPersistTest {
 
-  @Ignore
   @Test public void unitOfWorkPerTransactionIfNotStartedManually() {
     TransactionConnectionGetter transactionalObj = injector.getInstance(TransactionConnectionGetter.class);
     Session session =  transactionalObj.getConnection();
@@ -26,7 +26,6 @@ public class TransactionTest extends AbstractPersistTest {
     assertFalse("conn from first transactional call same as conn from second", session == session2);
   }
 
-  @Ignore
   @Test public void unitOfWorkSharedIfStartedManually() {
     TransactionConnectionGetter transactionalObj = injector.getInstance(TransactionConnectionGetter.class);
     getUnitOfWork().begin();
@@ -35,7 +34,7 @@ public class TransactionTest extends AbstractPersistTest {
     getUnitOfWork().end();
     assertThat(session).isNotNull();
     assertThat(session2).isNotNull();
-    assertFalse("conn from first transactional call same as conn from second", session == session2);
+    assertEquals("conn from first transactional call same as conn from second",session, session2);
   }
 
   public static class TransactionConnectionGetter {

@@ -2,13 +2,27 @@ package com.acuo.persist.services;
 
 public interface Service<T> {
 
-    Iterable<T> findAll();
+    <S extends T> S save(S entity);
 
-    T find(Long id);
+    <S extends T> Iterable<S> save(Iterable<S> entities);
 
     void delete(Long id);
 
-    T createOrUpdate(T object);
+    void delete(T entity);
+
+    void delete(Iterable<? extends T> entities);
+
+    void deleteAll();
+
+    <S extends T> S save(S entity, int depth);
+
+    <S extends T> Iterable<S> save(Iterable<S> entities, int depth);
+
+    <S extends T> S createOrUpdate(S entity);
+
+    Iterable<T> findAll();
+
+    T find(Long id);
 
     T findById(String id);
 
