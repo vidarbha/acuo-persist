@@ -5,9 +5,11 @@ import com.opengamma.strata.basics.currency.Currency;
 
 import java.util.Map;
 
-public interface CurrencyService extends Service<CurrencyEntity, String> {
+public interface CurrencyService extends Service<CurrencyEntity, Long> {
 
     Double getFXValue(Currency currency);
 
     Map<Currency, Double> getAllFX();
+
+    CurrencyEntity find(String id);
 }
