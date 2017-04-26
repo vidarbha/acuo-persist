@@ -1,5 +1,6 @@
 package com.acuo.persist.services;
 
+import com.acuo.persist.entity.StatementItem;
 import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.entity.MarginCall;
 import com.acuo.persist.entity.Next;
@@ -14,21 +15,6 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
     @Override
     public Class<MarginCall> getEntityType() {
         return MarginCall.class;
-    }
-
-    @Override
-    @Transactional
-    public void setStatus(String marginCallId, StatementStatus status) {
-        MarginCall marginCall = find(marginCallId, 1);
-        Step previousStep = marginCall.getLastStep();
-        Step lastStep = new Step();
-        Next next = new Next();
-        next.setStart(previousStep);
-        next.setEnd(lastStep);
-        previousStep.setNext(next);
-        lastStep.setStatus(status);
-        marginCall.setLastStep(lastStep);
-        save(marginCall);
     }
 
     @Override

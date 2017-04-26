@@ -6,8 +6,6 @@ import com.acuo.persist.spring.Call;
 
 public interface MarginCallService extends Service<MarginCall, String> {
 
-    void setStatus(String marginCallId, StatementStatus status);
-
     Iterable<MarginCall> allCallsFor(String clientId, StatementStatus... statuses);
 
     Iterable<MarginCall> callFor(String marginStatementId, StatementStatus... statuses);

@@ -119,7 +119,7 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
         Set<StatementItem> receviedMarginCalls = filter(marginStatement.getStatementItems(), StatementStatus.Unrecon);
         for (StatementItem marginCall : receviedMarginCalls) {
             log.debug("parent call {} and children {}", marginCall);
-            statementItemService.setStatus(marginCall, StatementStatus.Reconciled);
+            statementItemService.setStatus(marginCall.getItemId(), StatementStatus.Reconciled);
         }
         log.info("margin statement {} reconciled",marginStatement);
     }
@@ -159,5 +159,11 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
         return calls.stream()
                 .filter(mc -> status.equals(mc.getLastStep().getStatus()))
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    @Transactional
+    public void setStatus(String statementItemId, StatementStatus status) {
+        statementItemService.setStatus(statementItemId, status);
     }
 }
