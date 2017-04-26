@@ -3,6 +3,7 @@ package com.acuo.persist.entity;
 import com.acuo.persist.entity.enums.Side;
 import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.utils.GraphData;
+import com.acuo.persist.utils.IDGen;
 import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -90,7 +91,8 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
 
     String marginCallId(Side side, Agreement agreement, LocalDate valuationDate, MarginType marginType) {
         String todayFormatted = GraphData.getStatementDateFormatter().format(valuationDate);
-        return todayFormatted + "-" + agreement.getAgreementId() + "-" + marginType.name() + "-" + side ;
+        String value = todayFormatted + "-" + agreement.getAgreementId() + "-" + marginType.name() + "-" + side;
+        return IDGen.encode(value) ;
     }
 
     private Double balance(ClientSignsRelation clientSignsRelation) {

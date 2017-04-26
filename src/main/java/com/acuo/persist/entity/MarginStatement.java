@@ -4,6 +4,7 @@ import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.neo4j.converters.CurrencyConverter;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import com.acuo.persist.utils.GraphData;
+import com.acuo.persist.utils.IDGen;
 import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -118,6 +119,7 @@ public class MarginStatement extends Entity<MarginStatement> {
 
     private String marginStatementId(Agreement agreement, LocalDate date) {
         String todayFormatted = GraphData.getStatementDateFormatter().format(date);
-        return todayFormatted + "-" + agreement.getAgreementId();
+        String value = todayFormatted + "-" + agreement.getAgreementId();
+        return IDGen.encode(value);
     }
 }
