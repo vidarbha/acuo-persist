@@ -84,7 +84,7 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
                 "WITH m " +
                 "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-" +
                 "(m) <-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step {status:'Unrecon'}) " +
-                "WHERE NOT exists((mc)-[:MATCHED_TO_EXPECTED]->()) " +
+                "WHERE NOT exists((mc)-[:MATCHED_TO]->()) " +
                 "RETURN m, nodes(p), relationships(p)";
         return sessionProvider.get().query(MarginStatement.class, query, ImmutableMap.of("clientId", clientId.toString()));
     }

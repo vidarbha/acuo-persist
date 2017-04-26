@@ -2,6 +2,7 @@ package com.acuo.persist.services;
 
 import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.entity.MarginCall;
+import com.acuo.persist.ids.MarginStatementId;
 import com.acuo.persist.spring.Call;
 
 public interface MarginCallService extends Service<MarginCall, String> {
@@ -14,4 +15,10 @@ public interface MarginCallService extends Service<MarginCall, String> {
     Iterable<MarginCall> callsForExpected(String marginStatementId);
 
     Iterable<Call> notToUseYetallCallsFor(String clientId, String dateTime);
+
+    Iterable<MarginCall> allExpectedCallsFor(MarginStatementId marginStatementId)
+
+    void matchToExpected(String callId);
+
+
 }

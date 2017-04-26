@@ -54,8 +54,8 @@ public class StatementItem<T extends StatementItem> extends Entity<T> {
     @Relationship(type = "LAST")
     protected Step lastStep;
 
-    @Relationship(type = "MATCHED_TO_EXPECTED", direction = Relationship.INCOMING)
-    private StatementItem statementItem;
+    @Relationship(type = "MATCHED_TO")
+    private StatementItem matchedItem;
 
     @Relationship(type = "CHILD_OF", direction = Relationship.INCOMING)
     private Set<ChildOf> children;
