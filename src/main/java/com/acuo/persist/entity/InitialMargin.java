@@ -1,5 +1,6 @@
 package com.acuo.persist.entity;
 
+import com.acuo.persist.entity.enums.Side;
 import com.acuo.persist.entity.enums.StatementStatus;
 import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
@@ -24,9 +25,9 @@ public class InitialMargin extends MarginCall<InitialMargin> {
 
     public InitialMargin() {}
 
-    public InitialMargin(Double value, LocalDate valuationDate, LocalDate callDate, Currency currency, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
-        super(value, valuationDate, callDate, currency, statementStatus, agreement, rates);
+    public InitialMargin(Side side, Double value, LocalDate valuationDate, LocalDate callDate, Currency currency, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
+        super(side, value, valuationDate, callDate, currency, statementStatus, agreement, rates);
         this.marginType = Initial;
-        this.marginCallId = marginCallId(agreement, callDate, Initial);
+        this.marginCallId = marginCallId(side, agreement, callDate, Initial);
     }
 }

@@ -1,6 +1,7 @@
 package com.acuo.persist.entity;
 
 import com.acuo.common.converter.Converter;
+import com.acuo.persist.entity.enums.Side;
 import com.acuo.persist.entity.enums.StatementStatus;
 import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
@@ -21,10 +22,10 @@ public class VariationMargin extends MarginCall<VariationMargin> {
         super();
     }
 
-    public VariationMargin(Double amount, LocalDate valuationDate, LocalDate callDate, Currency currency, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
-        super(amount, valuationDate, callDate, currency, statementStatus, agreement, rates);
+    public VariationMargin(Side side, Double amount, LocalDate valuationDate, LocalDate callDate, Currency currency, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
+        super(side, amount, valuationDate, callDate, currency, statementStatus, agreement, rates);
         this.marginType = Variation;
-        this.marginCallId = marginCallId(agreement, callDate, Variation);
+        this.marginCallId = marginCallId(side, agreement, callDate, Variation);
     }
 
     public static Converter<com.acuo.common.model.margin.MarginCall, VariationMargin> converter = Converter.ofNullable(

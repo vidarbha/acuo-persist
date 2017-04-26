@@ -1,5 +1,6 @@
 package com.acuo.persist.entity;
 
+import com.acuo.persist.entity.enums.Side;
 import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.neo4j.converters.CurrencyConverter;
@@ -38,6 +39,7 @@ public class StatementItem<T extends StatementItem> extends Entity<T> {
     @Convert(LocalDateTimeConverter.class)
     protected LocalDateTime notificationTime;
     protected Integer parentRank;
+    protected Side side;
 
     @Relationship(type = "PART_OF")
     private MarginStatement marginStatement;

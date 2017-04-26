@@ -1,5 +1,6 @@
 package com.acuo.persist.entity;
 
+import com.acuo.persist.entity.enums.Side;
 import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.utils.GraphData;
@@ -42,11 +43,12 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
     public MarginCall() {
     }
 
-    public MarginCall(Double amount, LocalDate valuationDate, LocalDate callDate, Currency currency, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
-        this(convert(amount, currency, agreement.getCurrency(), rates), valuationDate, callDate, statementStatus, agreement);
+    public MarginCall(Side side, Double amount, LocalDate valuationDate, LocalDate callDate, Currency currency, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
+        this(side, convert(amount, currency, agreement.getCurrency(), rates), valuationDate, callDate, statementStatus, agreement);
     }
 
-    private MarginCall(Double amount, LocalDate valuationDate, LocalDate callDate, StatementStatus statementStatus, Agreement agreement) {
+    private MarginCall(Side side, Double amount, LocalDate valuationDate, LocalDate callDate, StatementStatus statementStatus, Agreement agreement) {
+        this.side = side;
         this.valuationDate = valuationDate;
         this.callDate = callDate;
         this.currency = agreement.getCurrency();
@@ -99,9 +101,9 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
         setLastStep(step);
     }
 
-    String marginCallId(Agreement agreement, LocalDate valuationDate, MarginType marginType) {
+    String marginCallId(Side side, Agreement agreement, LocalDate valuationDate, MarginType marginType) {
         String todayFormatted = GraphData.getStatementDateFormatter().format(valuationDate);
-        return todayFormatted + "-" + agreement.getAgreementId() + "-" + marginType.name();
+        return todayFormatted + "-" + agreement.getAgreementId() + "-" + marginType.name() + "-" + side ;
     }
 
     private Double balance(ClientSignsRelation clientSignsRelation) {
