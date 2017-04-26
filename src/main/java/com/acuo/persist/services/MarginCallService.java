@@ -16,7 +16,7 @@ public interface MarginCallService extends Service<MarginCall, String> {
 
     Iterable<Call> notToUseYetallCallsFor(String clientId, String dateTime);
 
-    Iterable<MarginCall> allExpectedCallsFor(MarginStatementId marginStatementId)
+    Iterable<MarginCall> allExpectedCallsFor(MarginStatementId marginStatementId);
 
     void matchToExpected(String callId);
 
