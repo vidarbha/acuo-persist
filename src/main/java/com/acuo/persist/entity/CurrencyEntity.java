@@ -15,7 +15,7 @@ import org.neo4j.ogm.annotation.Relationship;
 public class CurrencyEntity extends Entity<CurrencyEntity> {
 
     @Property(name = "id")
-    @Index(primary = true)
+    @Index(unique = true)
     private String currencyId;
 
     private String name;
