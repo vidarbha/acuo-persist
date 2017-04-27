@@ -6,6 +6,7 @@ import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.ids.MarginStatementId;
 import com.acuo.persist.spring.Call;
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 
 import java.util.Optional;
@@ -14,6 +15,9 @@ import java.util.stream.StreamSupport;
 
 
 public class MarginCallServiceImpl extends GenericService<MarginCall, String> implements MarginCallService {
+
+    @Inject
+    StatementItemService statementItemService;
 
     @Override
     public Class<MarginCall> getEntityType() {
@@ -92,6 +96,7 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
                 .findFirst();
         if (expected.isPresent()) {
             cptyCall.setMatchedItem(expected.get());
+            statementItemService.setStatus(expected.get().getItemId(), StatementStatus.MatchedToReceived);
             save(cptyCall);
         }
     }
