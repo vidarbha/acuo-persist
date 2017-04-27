@@ -17,9 +17,7 @@ import org.junit.runner.RunWith;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import static com.acuo.persist.configuration.PropertiesHelper.ACUO_CYPHER_DIR_TEMPLATE;
-import static com.acuo.persist.configuration.PropertiesHelper.ACUO_DATA_BRANCH;
-import static com.acuo.persist.configuration.PropertiesHelper.ACUO_DATA_DIR;
+import static com.acuo.persist.configuration.PropertiesHelper.*;
 import static org.junit.Assert.assertNotNull;
 
 @Ignore
@@ -49,6 +47,10 @@ public class SessionIntegrationTest {
 	private String directoryTemplate;
 
 	@Inject
+	@Named(ACUO_DATA_IMPORT_FILES)
+	private String dataImportFiles;
+
+	@Inject
     DataLoader dataLoader;
 
 	@Inject
@@ -60,8 +62,8 @@ public class SessionIntegrationTest {
 			serviceManager.startAsync().awaitHealthy();
 		}
 
-		importer = new Neo4jDataImporter(dataLoader, workingDirectory, dataBranch, workingDirectory, directoryTemplate);
-		importer.importFiles("develop", DataImporter.ALL_FILES);
+		importer = new Neo4jDataImporter(dataLoader, workingDirectory, dataBranch, dataImportFiles, workingDirectory, directoryTemplate);
+		importer.importFiles("develop", importer.filesToImport());
 	}
 
 	@Test

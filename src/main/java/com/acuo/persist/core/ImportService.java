@@ -29,6 +29,6 @@ public class ImportService {
 
     public void reload() {
         loader.purgeDatabase();
-        importer.importFiles(branch, DataImporter.ALL_FILES);
+        importer.importFiles(branch, importer.filesToImport());
     }
 }

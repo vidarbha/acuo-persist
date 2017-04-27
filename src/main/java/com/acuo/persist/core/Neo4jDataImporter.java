@@ -3,11 +3,8 @@ package com.acuo.persist.core;
 import com.acuo.common.util.ArgChecker;
 import com.acuo.persist.configuration.PropertiesHelper;
 import com.acuo.persist.utils.GraphData;
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
 import com.google.inject.Singleton;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,13 +12,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 @Singleton
 public class Neo4jDataImporter implements DataImporter {
@@ -34,6 +31,7 @@ public class Neo4jDataImporter implements DataImporter {
     private final String dataBranch;
     private final String dataDirPath;
     private final String directoryTemplate;
+    private final String dataImportFiles;
     private Map<String, String> substitutions = new HashMap<>();
 
     @Inject
@@ -41,12 +39,14 @@ public class Neo4jDataImporter implements DataImporter {
                              @Named(PropertiesHelper.ACUO_DATA_DIR) String dataDir,
                              @Named(PropertiesHelper.ACUO_DATA_BRANCH) String dataBranch,
                              @Named(PropertiesHelper.ACUO_DATA_IMPORT_LINK) String dataImportLink,
+                             @Named(PropertiesHelper.ACUO_DATA_IMPORT_FILES) String dataImportFiles,
                              @Named(PropertiesHelper.ACUO_CYPHER_DIR_TEMPLATE) String directoryTemplate) {
         this.loader = loader;
         this.workingDirPath = dataDir;
         this.dataBranch = dataBranch;
         this.dataDirPath = GraphData.getDataLink(dataImportLink);
         this.directoryTemplate = directoryTemplate;
+        this.dataImportFiles = dataImportFiles;
         substitutions.put("%workingDirPath%", workingDirPath);
         substitutions.put("%dataImportLink%", dataDirPath);
         LOG.info("data importer created with working [{}] branch [{}] data [{}] template [{}]", workingDirPath,
@@ -61,6 +61,15 @@ public class Neo4jDataImporter implements DataImporter {
             branch = dataBranch;
         final String value = branch;
         Arrays.asList(fileNames).stream().forEach(f -> importFile(value, f));
+    }
+
+    @Override
+    public String[] filesToImport() {
+        return Pattern.compile(",")
+                .splitAsStream(dataImportFiles)
+                .filter(Objects::nonNull)
+                .map(s -> s.trim())
+                .toArray(value -> new String[value]);
     }
 
     private void importFile(String branch, String fileName) {
