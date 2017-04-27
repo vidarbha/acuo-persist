@@ -26,7 +26,7 @@ public class StatementItemServiceImpl extends GenericService<StatementItem, Stri
     @Override
     @Transactional
     public void setStatus(String statementItemId, StatementStatus status) {
-        StatementItem item = find(statementItemId, 1);
+        StatementItem item = find(statementItemId, 2);
         Step firstStep = item.getFirstStep();
         Step previousStep = item.getLastStep();
         if (firstStep == null || previousStep == null) {
@@ -34,7 +34,7 @@ public class StatementItemServiceImpl extends GenericService<StatementItem, Stri
             step.setStatus(status);
             item.setFirstStep(step);
             item.setLastStep(step);
-            save(item);
+            save(item, 2);
         } else if (!status.equals(previousStep.getStatus())) {
             Step lastStep = new Step();
             Next next = new Next();
@@ -43,7 +43,7 @@ public class StatementItemServiceImpl extends GenericService<StatementItem, Stri
             previousStep.setNext(next);
             lastStep.setStatus(status);
             item.setLastStep(lastStep);
-            save(item);
+            save(item, 2);
         }
     }
 }
