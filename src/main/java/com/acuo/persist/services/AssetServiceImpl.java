@@ -4,44 +4,37 @@ import com.acuo.persist.entity.Asset;
 import com.acuo.persist.ids.ClientId;
 import com.google.common.collect.ImmutableMap;
 
-public class AssetServiceImpl extends GenericService<Asset> implements AssetService{
+public class AssetServiceImpl extends GenericService<Asset, String> implements AssetService {
 
     private static String ELIGIBLE_ASSET_WITH_ACCT_AND_TRANSFER_INFO =
-            "MATCH path=(client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:HAS]->(:TradingAccount)" +
-            "-[:ACCESSES]->(ca:CustodianAccount)-[holds:HOLDS]->(a:Asset)-[:IS_AVAILABLE_FOR]->(agreement:Agreement) " +
-            "WHERE (entity)-[:CLIENT_SIGNS]->(agreement) " +
-            "WITH a, entity, path " +
-            "OPTIONAL MATCH transfer=(a:Asset)<-[:OF]-(:AssetTransfer)-[:FROM|TO]->(:CustodianAccount)<-[:HAS]-(entity) " +
-            "RETURN a, nodes(path), relationships(path), nodes(transfer), relationships(transfer)";
+            "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:CLIENT_SIGNS]->(agreement:Agreement)-[:IS_COMPOSED_OF]->(rule:Rule)-[:APPLIES_TO]->(asset:Asset) " +
+            "WITH asset, client, rule " +
+            "MATCH h=(:Custodian)-[:MANAGES]->(ca:CustodianAccount)-[holds:HOLDS]->(asset) " +
+            "MATCH v=(asset)-[:VALUATED]->(:AssetValuation)-[:VALUE]->(:AssetValue) " +
+            "OPTIONAL MATCH t=(asset)<-[:OF]-(:AssetTransfer)-[:FROM|TO]->(:CustodianAccount)<-[:HAS]-(client) " +
+            "RETURN asset, " +
+            "nodes(h), relationships(h), " +
+            "nodes(v), relationships(v), " +
+            "nodes(t), relationships(t)";
 
     private static String ELIGIBLE_ASSET_BY_CLIENT_AND_CALLID =
-            "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:HAS]->(:TradingAccount)" +
-            "-[:ACCESSES]->(ca:CustodianAccount)-[holds:HOLDS]->(asset:Asset)-[is:IS_AVAILABLE_FOR]->(agreement:Agreement)" +
-            "<-[:STEMS_FROM]-(ms:MarginStatement)<-[*1..2]-(marginCall:MarginCall {id:{callId}}), " +
-            "(entity)-[:CLIENT_SIGNS]-(agreement), " +
-            "(ms)-[:DIRECTED_TO]->(entity) " +
-            "WHERE marginCall.marginType IN is.marginType " +
+            "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:CLIENT_SIGNS]->(agreement:Agreement)-[:IS_COMPOSED_OF]->(rule:Rule)-[:APPLIES_TO]->(asset:Asset) " +
+            "WITH asset, client, agreement, entity, rule " +
+            "MATCH (agreement)<-[:STEMS_FROM]-(ms:MarginStatement)<-[*1..2]-(marginCall:MarginCall {id:{callId}}),(ms)-[:DIRECTED_TO]->(entity) " +
+            "WHERE marginCall.marginType IN rule.marginType " +
             "AND NOT (asset)-[:EXCLUDED]->(marginCall) " +
-            "WITH DISTINCT asset, ca, is " +
-            "MATCH path=(Custodian)-[MANAGES]->(ca)-[holds]->(asset)-[is]-() " +
-            "RETURN asset, nodes(path), relationships(path)";
-
-    private static String RESERVED_ASSET_BY_CLIENT_ID =
-            "MATCH path=(client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:HAS]->(:TradingAccount)" +
-            "-[:ACCESSES]->(ca:CustodianAccount)-[holds:HOLDS]->(asset:Asset)-[:IS_AVAILABLE_FOR]->(agreement:Agreement) " +
-            "WHERE (entity)-[:CLIENT_SIGNS]->(agreement) " +
-            "AND holds.reservedQuantity>0 " +
-            "RETURN asset, nodes(path), relationships(path)";
+            "WITH DISTINCT asset, rule " +
+            "MATCH h=(:Custodian)-[:MANAGES]->(ca:CustodianAccount)-[:HOLDS]->(asset) " +
+            "MATCH v=(asset)-[:VALUATED]->(:AssetValuation)-[:VALUE]->(:AssetValue) " +
+            "MATCH r=(rule)-[:APPLIES_TO]->(asset) " +
+            "RETURN asset, " +
+            "nodes(h), relationships(h), " +
+            "nodes(v), relationships(v), " +
+            "nodes(r), relationships(r)";
 
     @Override
     public Iterable<Asset> findEligibleAssetByClientId(ClientId clientId) {
         String query = ELIGIBLE_ASSET_WITH_ACCT_AND_TRANSFER_INFO;
-        return sessionProvider.get().query(getEntityType(), query, ImmutableMap.of("clientId",clientId.toString()));
-    }
-
-    @Override
-    public Iterable<Asset> findReservedAssetByClientId(ClientId clientId) {
-        String query = RESERVED_ASSET_BY_CLIENT_ID;
         return sessionProvider.get().query(getEntityType(), query, ImmutableMap.of("clientId",clientId.toString()));
     }
 

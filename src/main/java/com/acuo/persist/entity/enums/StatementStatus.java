@@ -1,5 +1,5 @@
-package com.acuo.persist.entity;
+package com.acuo.persist.entity.enums;
 
-public enum CallStatus {
+public enum StatementStatus {
     Unrecon, Expected, Reconciled, Pledged, WaitDispute, ActionDispute, PartialDispute,MatchedToReceived;
 }

@@ -1,12 +1,15 @@
 package com.acuo.persist.services;
 
-import com.acuo.persist.entity.Currency;
+import com.acuo.persist.entity.CurrencyEntity;
+import com.opengamma.strata.basics.currency.Currency;
 
 import java.util.Map;
 
-public interface CurrencyService extends Service<Currency> {
+public interface CurrencyService extends Service<CurrencyEntity, Long> {
 
-    public Double getFXValue(String currencyId);
+    Double getFXValue(Currency currency);
 
-    public Map<String, Double> getAllFX();
+    Map<Currency, Double> getAllFX();
+
+    CurrencyEntity find(String id);
 }

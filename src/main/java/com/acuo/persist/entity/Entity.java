@@ -18,9 +18,7 @@ public abstract class Entity<T extends Entity> {
 
         T entity = (T) o;
 
-        if (!id.equals(entity.getId())) return false;
-
-        return true;
+        return id.equals(entity.getId());
     }
 
     @Override

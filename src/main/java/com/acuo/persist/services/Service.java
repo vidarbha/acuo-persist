@@ -1,12 +1,14 @@
 package com.acuo.persist.services;
 
-public interface Service<T> {
+import java.io.Serializable;
+
+public interface Service<T, ID extends Serializable> {
 
     <S extends T> S save(S entity);
 
     <S extends T> Iterable<S> save(Iterable<S> entities);
 
-    void delete(Long id);
+    void delete(ID id);
 
     void delete(T entity);
 
@@ -22,12 +24,9 @@ public interface Service<T> {
 
     Iterable<T> findAll();
 
-    T find(Long id);
+    Iterable<T> findAll(int depth);
 
-    T findById(String id);
+    T find(ID id);
 
-    T find(Long id, int depth);
-
-    T findById(String id, int depth);
-
+    T find(ID id, int depth);
 }

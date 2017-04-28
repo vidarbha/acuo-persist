@@ -1,11 +1,16 @@
 package com.acuo.persist.entity;
 
+import com.acuo.persist.neo4j.converters.LocalDateTimeConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
+import org.neo4j.ogm.annotation.typeconversion.Convert;
+
+import java.time.LocalDateTime;
 
 @NodeEntity
 @Data
@@ -14,6 +19,7 @@ import org.neo4j.ogm.annotation.Relationship;
 public class AssetTransfer extends Entity<AssetTransfer> {
 
     @Property(name = "id")
+    @Index(primary = true)
     private String assertTransferId;
 
     private Double quantities;
@@ -21,6 +27,11 @@ public class AssetTransfer extends Entity<AssetTransfer> {
     private AssetTransferStatus status;
     private AssetTransferStatus subStatus;
     private String deliveryTime;
+
+    @Convert(LocalDateTimeConverter.class)
+    private LocalDateTime pledgeTime;
+
+    private Double transferValue;
 
     @Relationship(type = "OF", direction = Relationship.OUTGOING)
     private Asset of;

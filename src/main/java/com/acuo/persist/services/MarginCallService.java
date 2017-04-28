@@ -1,16 +1,16 @@
 package com.acuo.persist.services;
 
-import com.acuo.persist.entity.CallStatus;
+import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.entity.MarginCall;
 import com.acuo.persist.spring.Call;
 
-public interface MarginCallService extends Service<MarginCall>  {
+public interface MarginCallService extends Service<MarginCall, String> {
 
-    void setStatus(String marginCallId, CallStatus status);
+    void setStatus(String marginCallId, StatementStatus status);
 
-    Iterable<MarginCall> allCallsFor(String clientId, CallStatus... statuses);
+    Iterable<MarginCall> allCallsFor(String clientId, StatementStatus... statuses);
 
-    Iterable<MarginCall> callFor(String marginStatementId, CallStatus... statuses);
+    Iterable<MarginCall> callFor(String marginStatementId, StatementStatus... statuses);
 
     @Deprecated
     Iterable<MarginCall> callsForExpected(String marginStatementId);

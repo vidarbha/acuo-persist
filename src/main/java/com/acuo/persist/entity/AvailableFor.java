@@ -13,7 +13,7 @@ import java.util.Set;
 
 @RelationshipEntity(type = "IS_AVAILABLE_FOR")
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = false, exclude = {"asset","agreement"})
 @ToString(exclude = {"asset","agreement"})
 public class AvailableFor extends Entity<AvailableFor> {
 

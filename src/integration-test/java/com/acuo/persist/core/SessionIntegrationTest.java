@@ -5,7 +5,7 @@ import com.acuo.common.util.GuiceJUnitRunner;
 import com.acuo.persist.entity.Client;
 import com.acuo.persist.modules.ConfigurationIntegrationTestModule;
 import com.acuo.persist.modules.Neo4jIntegrationTestModule;
-import com.acuo.persist.modules.RepositoryModule;
+import com.acuo.persist.modules.RepositoryTestModule;
 import com.acuo.persist.services.ClientService;
 import com.google.common.util.concurrent.ServiceManager;
 import org.junit.After;
@@ -26,7 +26,7 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(GuiceJUnitRunner.class)
 @GuiceJUnitRunner.GuiceModules({
 		ConfigurationIntegrationTestModule.class,
-		RepositoryModule.class,
+		RepositoryTestModule.class,
 		ServiceManagerModule.class,
 		Neo4jIntegrationTestModule.class})
 public class SessionIntegrationTest {
@@ -66,7 +66,7 @@ public class SessionIntegrationTest {
 
 	@Test
 	public void testFindByClientId() {
-		Client client = clientService.findById("999");
+		Client client = clientService.find("999");
 		assertNotNull(client.getFirmId());
 	}
 

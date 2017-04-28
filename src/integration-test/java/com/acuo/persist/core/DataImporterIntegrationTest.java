@@ -30,7 +30,7 @@ import static org.junit.Assert.assertNotNull;
         ConfigurationIntegrationTestModule.class,
         Neo4jPersistModule.class,
         DataLoaderModule.class,
-        RepositoryModule.class,
+        RepositoryTestModule.class,
         ServiceManagerModule.class,
         Neo4jIntegrationTestModule.class})
 public class DataImporterIntegrationTest {

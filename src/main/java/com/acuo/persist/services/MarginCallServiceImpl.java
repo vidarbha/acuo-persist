@@ -1,6 +1,6 @@
 package com.acuo.persist.services;
 
-import com.acuo.persist.entity.CallStatus;
+import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.entity.MarginCall;
 import com.acuo.persist.entity.Next;
 import com.acuo.persist.entity.Step;
@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 
 
-public class MarginCallServiceImpl extends GenericService<MarginCall> implements MarginCallService {
+public class MarginCallServiceImpl extends GenericService<MarginCall, String> implements MarginCallService {
 
     @Override
     public Class<MarginCall> getEntityType() {
@@ -18,8 +18,8 @@ public class MarginCallServiceImpl extends GenericService<MarginCall> implements
 
     @Override
     @Transactional
-    public void setStatus(String marginCallId, CallStatus status) {
-        MarginCall marginCall = findById(marginCallId);
+    public void setStatus(String marginCallId, StatementStatus status) {
+        MarginCall marginCall = find(marginCallId, 1);
         Step previousStep = marginCall.getLastStep();
         Step lastStep = new Step();
         Next next = new Next();
@@ -33,22 +33,22 @@ public class MarginCallServiceImpl extends GenericService<MarginCall> implements
 
     @Override
     @Transactional
-    public Iterable<MarginCall> allCallsFor(String clientId, CallStatus... statuses) {
+    public Iterable<MarginCall> allCallsFor(String clientId, StatementStatus... statuses) {
         String query =
                 "MATCH p=(:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[r:CLIENT_SIGNS]->(a:Agreement)<-[:STEMS_FROM]-" +
                         "(m:MarginStatement)<-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step) " +
                         "WHERE step.status IN {statuses} " +
-                        "RETURN mc, nodes(p), rels(p)";
+                        "RETURN mc, nodes(p), relationships(p)";
         return sessionProvider.get().query(MarginCall.class, query, ImmutableMap.of("clientId", clientId, "statuses", statuses));
     }
 
     @Override
     @Transactional
-    public Iterable<MarginCall> callFor(String marginStatementId, CallStatus... statuses) {
+    public Iterable<MarginCall> callFor(String marginStatementId, StatementStatus... statuses) {
         String query =
                 "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement {id:{msId}})<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
                 "WHERE step.status IN {statuses} " +
-                "RETURN mc, nodes(p), rels(p)";
+                "RETURN mc, nodes(p), relationships(p)";
         return sessionProvider.get().query(MarginCall.class, query, ImmutableMap.of("msId", marginStatementId, "statuses", statuses));
     }
 

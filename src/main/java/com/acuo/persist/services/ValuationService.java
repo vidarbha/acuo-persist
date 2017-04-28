@@ -1,11 +1,28 @@
 package com.acuo.persist.services;
 
+import com.acuo.persist.entity.AssetValuation;
+import com.acuo.persist.entity.MarginValuation;
+import com.acuo.persist.entity.TradeValuation;
 import com.acuo.persist.entity.Valuation;
+import com.acuo.persist.ids.AssetId;
 import com.acuo.persist.ids.PortfolioId;
+import com.acuo.persist.ids.TradeId;
 
-public interface ValuationService extends Service<Valuation>{
+public interface ValuationService extends Service<Valuation, String> {
 
-    Iterable<Valuation> allTradeValuationFor(PortfolioId portfolioId);
+    TradeValuation getTradeValuationFor(TradeId tradeId);
 
-    Iterable<Valuation> allMarginValuationFor(PortfolioId portfolioId);
+    TradeValuation getOrCreateTradeValuationFor(TradeId tradeId);
+
+    TradeValuation getTradeValuationFor(PortfolioId portfolioId);
+
+    TradeValuation getOrCreateTradeValuationFor(PortfolioId portfolioId);
+
+    MarginValuation getMarginValuationFor(PortfolioId portfolioId);
+
+    MarginValuation getOrCreateMarginValuationFor(PortfolioId portfolioId);
+
+    AssetValuation getAssetValuationFor(AssetId assetId);
+
+    AssetValuation getOrCreateAssetValuationFor(AssetId assetId);
 }

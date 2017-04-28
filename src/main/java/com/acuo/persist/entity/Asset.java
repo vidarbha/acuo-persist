@@ -6,6 +6,7 @@ import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
@@ -16,11 +17,12 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"holds", "earmarkedMarginCall", "transfer", "valuation"})
-@ToString(exclude = {"holds", "earmarkedMarginCall", "transfer", "valuation"})
+@EqualsAndHashCode(callSuper = false, exclude = {"holds", "transfer", "valuation"})
+@ToString(exclude = {"holds", "transfer", "valuation"})
 public class Asset extends Entity<Asset> {
 
     @Property(name = "id")
+    @Index(primary = true)
     private String assetId;
     private String idType;
     private String name;
@@ -49,15 +51,17 @@ public class Asset extends Entity<Asset> {
     @Relationship(type = "HOLDS", direction = Relationship.INCOMING)
     private Holds holds;
 
-    @Relationship(type = "EXCLUDED")
-    private MarginCall earmarkedMarginCall;
-
-    @Relationship(type = "IS_AVAILABLE_FOR")
-    private AvailableFor availableFor;
+    /*@Relationship(type = "IS_AVAILABLE_FOR")
+    private AvailableFor availableFor;*/
+    @Relationship(type = "APPLIES_TO", direction = Relationship.INCOMING)
+    private Set<Rule> rules;
 
     @Relationship(type = "OF", direction = Relationship.INCOMING)
     private AssetTransfer transfer;
 
     @Relationship(type = "VALUATED")
-    private Valuation valuation;
+    private AssetValuation valuation;
+
+    @Relationship(type = "PRICING_SOURCE")
+    private PricingSource pricingSource;
 }

@@ -18,7 +18,7 @@ apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/ja
 group = 'com.acuo.collateral'
 
 ext.versions += [
-        common  : '0.4.0-SNAPSHOT'
+        common  : '0.5.0'
 ]
 
 configurations {
@@ -38,6 +38,8 @@ dependencies {
     )*/
 
     testCompile(
-            "com.acuo.collateral:acuo-common:${versions.common}:tests"
+            "com.acuo.collateral:acuo-common:${versions.common}:tests",
+            "com.vmlens:concurrent-junit:1.0.0",
+            "com.googlecode.junit-toolbox:junit-toolbox:2.2"
     )
 }

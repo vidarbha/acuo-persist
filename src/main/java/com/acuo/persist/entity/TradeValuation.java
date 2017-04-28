@@ -2,17 +2,20 @@ package com.acuo.persist.entity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
+import java.util.Set;
+
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false)
-public class TradeValuation extends Valuation<TradeValuation> {
+@ToString(callSuper = true, exclude = {"values"})
+@EqualsAndHashCode(callSuper = true, exclude = {"values"})
+public class TradeValuation extends Valuation {
 
-    @Relationship(type = "VALUATED", direction = Relationship.INCOMING)
-    private Trade trade;
-
-    @Relationship(type = "VALUATED", direction = Relationship.INCOMING)
-    private Portfolio portfolio;
+    @Relationship(type = "VALUE")
+    private Set<TradeValueRelation> values;
 }
+
+

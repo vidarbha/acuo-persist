@@ -7,6 +7,7 @@ import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
@@ -18,11 +19,12 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"clientSignsRelation", "counterpartSignsRelation", "marginStatements", "marginCalls"})
-@ToString(exclude = {"clientSignsRelation", "counterpartSignsRelation", "marginStatements", "marginCalls"})
+@EqualsAndHashCode(callSuper = false, exclude = {"clientSignsRelation", "counterpartSignsRelation"})
+@ToString(exclude = {"clientSignsRelation", "counterpartSignsRelation"})
 public class Agreement extends Entity<Agreement> {
 
     @Property(name="id")
+    @Index(primary = true)
     private String agreementId;
 
     private String ampId;
@@ -61,8 +63,7 @@ public class Agreement extends Entity<Agreement> {
     @Relationship(type = "COUNTERPARTY_SIGNS", direction = Relationship.INCOMING)
     private CounterpartSignsRelation counterpartSignsRelation;
 
-    /*@Relationship(type = "STEMS_FROM", direction = Relationship.INCOMING)
-    private  Set<MarginStatement> marginStatements;*/
-
+    @Relationship(type = "IS_COMPOSED_OF")
+    private Set<Rule> rules;
 
 }

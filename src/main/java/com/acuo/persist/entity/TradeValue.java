@@ -1,7 +1,7 @@
 package com.acuo.persist.entity;
 
 import com.acuo.persist.neo4j.converters.CurrencyConverter;
-import com.opengamma.strata.basics.currency.*;
+import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -15,7 +15,5 @@ public class TradeValue extends Value<TradeValue>{
     private Double pv;
 
     @Convert(CurrencyConverter.class)
-    private com.opengamma.strata.basics.currency.Currency currency;
-
-    private String source;
+    private Currency currency;
 }

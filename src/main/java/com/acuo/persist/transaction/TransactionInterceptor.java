@@ -2,6 +2,7 @@ package com.acuo.persist.transaction;
 
 import com.acuo.persist.core.Neo4jPersistService;
 import com.google.inject.persist.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.neo4j.ogm.session.Session;
@@ -15,6 +16,7 @@ import java.sql.SQLException;
  *
  * @author cgdecker@gmail.com (Colin Decker)
  */
+@Slf4j
 public class TransactionInterceptor implements MethodInterceptor {
 
     @Inject
@@ -80,10 +82,15 @@ public class TransactionInterceptor implements MethodInterceptor {
     private static Exception rollbackOrCommit(Transaction transaction, Exception e,
                                               MethodInvocation invocation) {
         Transactional metadata = getTransactionalAnnotation(invocation);
-        if (shouldRollback(e, metadata))
-            transaction.rollback();
-        else
-            transaction.commit();
+        try {
+            if (shouldRollback(e, metadata))
+                transaction.rollback();
+            else
+                transaction.commit();
+        } catch (Exception exp) {
+            log.error("fail to rollback or commit, invocation {}, exception {}, cause {}",
+                    invocation.getMethod(), e.getMessage(), exp.getMessage());
+        }
         return e;
     }
 

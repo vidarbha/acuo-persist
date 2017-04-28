@@ -16,8 +16,8 @@ import java.util.TreeSet;
 @EqualsAndHashCode(callSuper = false)
 public class TradingAccount extends Entity<TradingAccount> {
 
-    @Index(unique = true)
     @Property(name="id")
+    @Index(primary = true)
     private String accountId;
 
     private String name;
