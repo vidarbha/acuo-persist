@@ -5,6 +5,8 @@ import com.acuo.persist.entity.MarginCall;
 import com.acuo.persist.ids.MarginStatementId;
 import com.acuo.persist.spring.Call;
 
+import java.util.List;
+
 public interface MarginCallService extends Service<MarginCall, String> {
 
     Iterable<MarginCall> allCallsFor(String clientId, StatementStatus... statuses);
@@ -20,5 +22,6 @@ public interface MarginCallService extends Service<MarginCall, String> {
 
     void matchToExpected(String callId);
 
+    List<com.acuo.common.model.margin.MarginCall> getDisputeMarginCall(String marginStatementId);
 
 }
