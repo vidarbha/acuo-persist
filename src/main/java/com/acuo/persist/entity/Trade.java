@@ -56,6 +56,9 @@ public abstract class Trade<T extends Trade> extends Entity implements Comparabl
     @Relationship(type = "BELONGS_TO")
     private Portfolio portfolio;
 
+    @Relationship(type = "PRICING_SOURCE")
+    private PricingSource pricingSource;
+
     @Override
     public int compareTo(T o) {
         return this.getTradeId().compareTo(o.getTradeId());
