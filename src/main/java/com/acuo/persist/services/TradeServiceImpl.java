@@ -1,12 +1,14 @@
 package com.acuo.persist.services;
 
 import com.acuo.common.typeref.TypeReference;
+import com.acuo.persist.entity.IRS;
 import com.acuo.persist.entity.Trade;
 import com.acuo.persist.ids.ClientId;
 import com.acuo.persist.ids.PortfolioId;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.neo4j.ogm.cypher.query.SortOrder;
 
 import java.util.Collections;
 import java.util.List;
@@ -51,12 +53,11 @@ public class TradeServiceImpl<T extends Trade> extends GenericService<T, String>
 
     @Override
     @Transactional
-    public Iterable<T> findAllIRS() {
+    public Iterable<IRS> findAllIRS() {
         if (log.isDebugEnabled()) {
             log.debug("findAllIRS");
         }
-        String query =  "MATCH (n:IRS {tradeType:'Bilateral'}) RETURN n";
-        return sessionProvider.get().query(getEntityType(), query, Collections.emptyMap());
+        return sessionProvider.get().loadAll(IRS.class, new SortOrder().add("tradeType"),1);
     }
 
     @Transactional
