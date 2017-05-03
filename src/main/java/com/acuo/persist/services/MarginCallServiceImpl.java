@@ -10,6 +10,7 @@ import com.acuo.persist.spring.Call;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
+import com.opengamma.strata.basics.currency.*;
 import org.apache.commons.collections.ArrayStack;
 import org.neo4j.ogm.model.Result;
 
@@ -133,6 +134,25 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
         dispute.setComments((String)map.get("d.comments"));
         dispute.setMtm((Double)map.get("d.MtM"));
         marginCall.setExposure((Double)map.get("d.exposure"));
+        return marginCall;
+    }
+
+    @Override
+    @Transactional
+    public com.acuo.common.model.margin.MarginCall getPledgeMarginCall(String marginCallId)
+    {
+        com.acuo.common.model.margin.MarginCall marginCall = new com.acuo.common.model.margin.MarginCall();
+        String query = "MATCH (mc:MarginCall {id:{id}})<-[:GENERATED_BY]-(at:AssetTransfer)-[:OF]->(a:Asset) " +
+                "MATCH (ca:CustodianAccount)<-[:FROM]-(at) " +
+                "RETURN mc.ampId, a.id, a.idType, a.currency, at.quantity, at.value";
+
+        Result result = sessionProvider.get().query(query, ImmutableMap.of("id", marginCallId));
+        Map<String, Object> map = result.iterator().next();
+        if(map != null)
+        {
+            marginCall.setAmpId((String)map.get("mc.ampId"));
+            marginCall.setCurrency(com.opengamma.strata.basics.currency.Currency.of((String)map.get("a.currency")));
+        }
         return marginCall;
     }
 }
