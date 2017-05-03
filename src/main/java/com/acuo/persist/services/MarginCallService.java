@@ -24,4 +24,6 @@ public interface MarginCallService extends Service<MarginCall, String> {
 
     List<com.acuo.common.model.margin.MarginCall> getDisputeMarginCall(String marginStatementId);
 
+    com.acuo.common.model.margin.MarginCall getPledgeMarginCall(String marginCallId);
+
 }
