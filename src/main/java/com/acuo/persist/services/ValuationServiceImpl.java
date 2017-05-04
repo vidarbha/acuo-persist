@@ -2,7 +2,7 @@ package com.acuo.persist.services;
 
 import com.acuo.persist.entity.AssetValuation;
 import com.acuo.persist.entity.MarginValuation;
-import com.acuo.persist.entity.Portfolio;
+import com.acuo.persist.entity.Trade;
 import com.acuo.persist.entity.TradeValuation;
 import com.acuo.persist.entity.Valuation;
 import com.acuo.persist.ids.AssetId;
@@ -14,49 +14,43 @@ import com.google.inject.persist.Transactional;
 
 public class ValuationServiceImpl extends GenericService<Valuation, String> implements ValuationService {
 
-    @Inject
-    PortfolioService portfolioService;
+    private final PortfolioService portfolioService;
+    private final AssetService assetService;
+    private final TradeService<Trade> tradeService;
 
     @Inject
-    AssetService assetService;
+    public ValuationServiceImpl(PortfolioService portfolioService,
+                                AssetService assetService,
+                                TradeService<Trade> tradeService) {
+        this.portfolioService = portfolioService;
+        this.assetService = assetService;
+        this.tradeService = tradeService;
+    }
 
     @Override
     public Class<Valuation> getEntityType() {
         return Valuation.class;
     }
 
+
     @Override
     @Transactional
     public TradeValuation getTradeValuationFor(TradeId tradeId) {
-        final Portfolio portfolio = portfolioService.findBy(tradeId);
-        return getTradeValuationFor(portfolio.getPortfolioId());
-    }
-
-    @Override
-    @Transactional
-    public TradeValuation getOrCreateTradeValuationFor(TradeId tradeId) {
-        final Portfolio portfolio = portfolioService.findBy(tradeId);
-        return getOrCreateTradeValuationFor(portfolio.getPortfolioId());
-    }
-
-    @Override
-    @Transactional
-    public TradeValuation getTradeValuationFor(PortfolioId portfolioId) {
         String query =
-                "MATCH p=()<-[*0..1]-(n:TradeValuation)<-[:VALUATED]-(:Portfolio {id:{id}}) " +
+                "MATCH p=()<-[*0..1]-(n:TradeValuation)<-[:VALUATED]-(:Trade {id:{id}}) " +
                         "RETURN p, nodes(p), relationships(p)";
-        final String pId = portfolioId.toString();
-        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", pId);
+        final String id = tradeId.toString();
+        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", id);
         return sessionProvider.get().queryForObject(TradeValuation.class, query, parameters);
     }
 
     @Override
     @Transactional
-    public TradeValuation getOrCreateTradeValuationFor(PortfolioId portfolioId) {
-        TradeValuation valuation = getTradeValuationFor(portfolioId);
+    public TradeValuation getOrCreateTradeValuationFor(TradeId tradeId) {
+        TradeValuation valuation = getTradeValuationFor(tradeId);
         if (valuation == null) {
             valuation = new TradeValuation();
-            valuation.setPortfolio(portfolioService.find(portfolioId));
+            valuation.setTrade(tradeService.find(tradeId));
             valuation = createOrUpdate(valuation);
         }
         return valuation;

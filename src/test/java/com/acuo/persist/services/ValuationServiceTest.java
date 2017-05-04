@@ -2,6 +2,9 @@ package com.acuo.persist.services;
 
 import com.acuo.common.util.GuiceJUnitRunner;
 import com.acuo.persist.core.ImportService;
+import com.acuo.persist.entity.MarginValuation;
+import com.acuo.persist.entity.MarginValue;
+import com.acuo.persist.entity.MarginValueRelation;
 import com.acuo.persist.entity.TradeValuation;
 import com.acuo.persist.entity.TradeValue;
 import com.acuo.persist.entity.TradeValueRelation;
@@ -44,28 +47,28 @@ public class ValuationServiceTest {
     @Test
     public void testValuationService() {
 
-        TradeValuation valuation = valuationService.getOrCreateTradeValuationFor(PortfolioId.fromString("p2"));
+        MarginValuation valuation = valuationService.getOrCreateMarginValuationFor(PortfolioId.fromString("p2"));
 
-        TradeValue newValue = createValue(Currency.USD, 1.0d, "Markit");
-        TradeValueRelation valueRelation = new TradeValueRelation();
+        MarginValue newValue = createValue(Currency.USD, 1.0d, "Markit");
+        MarginValueRelation valueRelation = new MarginValueRelation();
         valueRelation.setValuation(valuation);
         valueRelation.setDateTime(LocalDate.now());
         valueRelation.setValue(newValue);
         newValue.setValuation(valueRelation);
 
-        TradeValue value = valueService.save(newValue);
+        MarginValue value = valueService.save(newValue);
 
-        valuation = valuationService.getTradeValuationFor(PortfolioId.fromString("p2"));
+        valuation = valuationService.getMarginValuationFor(PortfolioId.fromString("p2"));
 
-        Set<TradeValueRelation> values = valuation.getValues();
+        Set<MarginValueRelation> values = valuation.getValues();
         assertThat(values).isNotEmpty();
     }
 
-    private TradeValue createValue(Currency currency, Double pv, String source) {
-        TradeValue newValue = new TradeValue();
+    private MarginValue createValue(Currency currency, Double amount, String source) {
+        MarginValue newValue = new MarginValue();
         newValue.setSource(source);
         newValue.setCurrency(currency);
-        newValue.setPv(pv);
+        newValue.setAmount(amount);
         return newValue;
     }
 }

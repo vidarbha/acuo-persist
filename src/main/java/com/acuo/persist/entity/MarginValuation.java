@@ -8,6 +8,8 @@ import org.neo4j.ogm.annotation.Relationship;
 
 import java.util.Set;
 
+import static org.neo4j.ogm.annotation.Relationship.INCOMING;
+
 @NodeEntity
 @Data
 @ToString(callSuper = true, exclude = {"values"})
@@ -16,4 +18,7 @@ public class MarginValuation extends Valuation {
 
     @Relationship(type = "VALUE")
     private Set<MarginValueRelation> values;
+
+    @Relationship(type = "VALUATED", direction = INCOMING)
+    private Portfolio portfolio;
 }

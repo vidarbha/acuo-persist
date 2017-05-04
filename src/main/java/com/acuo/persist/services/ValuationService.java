@@ -14,10 +14,6 @@ public interface ValuationService extends Service<Valuation, String> {
 
     TradeValuation getOrCreateTradeValuationFor(TradeId tradeId);
 
-    TradeValuation getTradeValuationFor(PortfolioId portfolioId);
-
-    TradeValuation getOrCreateTradeValuationFor(PortfolioId portfolioId);
-
     MarginValuation getMarginValuationFor(PortfolioId portfolioId);
 
     MarginValuation getOrCreateMarginValuationFor(PortfolioId portfolioId);

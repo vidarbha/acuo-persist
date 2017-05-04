@@ -9,13 +9,9 @@ import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.time.LocalDate;
 
-@RelationshipEntity(type="VALUE")
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"valuation"})
-public abstract class ValueRelation extends Entity<ValueRelation>{
-
-    @StartNode
-    private Valuation valuation;
+@EqualsAndHashCode(callSuper = false)
+abstract class ValueRelation extends Entity<ValueRelation>{
 
     @Convert(LocalDateConverter.class)
     private LocalDate dateTime;

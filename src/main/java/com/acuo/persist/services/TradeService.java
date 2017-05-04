@@ -4,8 +4,9 @@ import com.acuo.persist.entity.IRS;
 import com.acuo.persist.entity.Trade;
 import com.acuo.persist.ids.ClientId;
 import com.acuo.persist.ids.PortfolioId;
+import com.acuo.persist.ids.TradeId;
 
-public interface TradeService<T extends Trade> extends Service<T, String> {
+public interface TradeService<T extends Trade> extends Service<T, TradeId> {
 
     Iterable<T> findBilateralTradesByClientId(ClientId clientId);
 

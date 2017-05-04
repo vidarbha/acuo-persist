@@ -8,6 +8,8 @@ import org.neo4j.ogm.annotation.Relationship;
 
 import java.util.Set;
 
+import static org.neo4j.ogm.annotation.Relationship.INCOMING;
+
 @NodeEntity
 @Data
 @ToString(callSuper = true, exclude = {"values"})
@@ -16,6 +18,9 @@ public class TradeValuation extends Valuation {
 
     @Relationship(type = "VALUE")
     private Set<TradeValueRelation> values;
+
+    @Relationship(type = "VALUATED", direction = INCOMING)
+    private Trade trade;
 }
 
 
