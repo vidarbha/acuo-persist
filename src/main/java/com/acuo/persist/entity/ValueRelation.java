@@ -11,7 +11,7 @@ import java.time.LocalDate;
 
 @RelationshipEntity(type="VALUE")
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = false, exclude = {"valuation"})
 public abstract class ValueRelation extends Entity<ValueRelation>{
 
     @StartNode

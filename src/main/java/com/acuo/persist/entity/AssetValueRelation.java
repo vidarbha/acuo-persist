@@ -7,7 +7,7 @@ import org.neo4j.ogm.annotation.RelationshipEntity;
 
 @RelationshipEntity(type="VALUE")
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true, exclude = {"value"})
 public class AssetValueRelation extends ValueRelation {
 
     @EndNode
