@@ -10,7 +10,7 @@ public class AssetServiceImpl extends GenericService<Asset, String> implements A
             "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:CLIENT_SIGNS]->(agreement:Agreement)-[:IS_COMPOSED_OF]->(rule:Rule)-[:APPLIES_TO]->(asset:Asset) " +
             "WITH asset, client, rule " +
             "MATCH h=(:Custodian)-[:MANAGES]->(ca:CustodianAccount)-[holds:HOLDS]->(asset) " +
-            "MATCH v=(asset)-[:VALUATED]->(:AssetValuation)-[:VALUE]->(:AssetValue) " +
+            "MATCH v=(asset)<-[:VALUATED]-(:AssetValuation)-[:VALUE]->(:AssetValue) " +
             "OPTIONAL MATCH t=(asset)<-[:OF]-(:AssetTransfer)-[:FROM|TO]->(:CustodianAccount)<-[:HAS]-(client) " +
             "RETURN asset, " +
             "nodes(h), relationships(h), " +
@@ -25,7 +25,7 @@ public class AssetServiceImpl extends GenericService<Asset, String> implements A
             "AND NOT (asset)-[:EXCLUDED]->(marginCall) " +
             "WITH DISTINCT asset, rule " +
             "MATCH h=(:Custodian)-[:MANAGES]->(ca:CustodianAccount)-[:HOLDS]->(asset) " +
-            "MATCH v=(asset)-[:VALUATED]->(:AssetValuation)-[:VALUE]->(:AssetValue) " +
+            "MATCH v=(asset)<-[:VALUATED]-(:AssetValuation)-[:VALUE]->(:AssetValue) " +
             "MATCH r=(rule)-[:APPLIES_TO]->(asset) " +
             "RETURN asset, " +
             "nodes(h), relationships(h), " +
