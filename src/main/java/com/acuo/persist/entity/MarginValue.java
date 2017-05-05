@@ -9,12 +9,12 @@ import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
+import static org.neo4j.ogm.annotation.Relationship.*;
 import static org.neo4j.ogm.annotation.Relationship.INCOMING;
 
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-@ToString(exclude = {"valuation"})
 public class MarginValue  extends Value<MarginValue> {
 
     private Double amount;
@@ -23,5 +23,6 @@ public class MarginValue  extends Value<MarginValue> {
     private Currency currency;
 
     @Relationship(type = "VALUE", direction = INCOMING)
-    private MarginValueRelation valuation;
+    private MarginValuation valuation;
+
 }

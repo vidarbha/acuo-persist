@@ -16,9 +16,9 @@ import static org.neo4j.ogm.annotation.Relationship.INCOMING;
 @EqualsAndHashCode(callSuper = true, exclude = {"values"})
 public class MarginValuation extends Valuation {
 
-    @Relationship(type = "VALUE")
-    private Set<MarginValueRelation> values;
-
-    @Relationship(type = "VALUATED", direction = INCOMING)
+    @Relationship(type = "VALUATED")
     private Portfolio portfolio;
+
+    @Relationship(type = "VALUE")
+    private Set<MarginValue> values;
 }

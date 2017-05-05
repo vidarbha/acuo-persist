@@ -16,11 +16,11 @@ import static org.neo4j.ogm.annotation.Relationship.INCOMING;
 @EqualsAndHashCode(callSuper = true, exclude = {"values"})
 public class TradeValuation extends Valuation {
 
-    @Relationship(type = "VALUE")
-    private Set<TradeValueRelation> values;
-
-    @Relationship(type = "VALUATED", direction = INCOMING)
+    @Relationship(type = "VALUATED")
     private Trade trade;
+
+    @Relationship(type = "VALUE")
+    private Set<TradeValue> values;
 }
 
 

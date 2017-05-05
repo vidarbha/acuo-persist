@@ -5,19 +5,16 @@ import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.time.LocalDate;
-
-import static org.neo4j.ogm.annotation.Relationship.INCOMING;
+import java.util.Set;
 
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-@ToString(exclude = {"valuation"})
 public class AssetValue extends Value<AssetValue> {
 
     private Double yield;
@@ -37,6 +34,6 @@ public class AssetValue extends Value<AssetValue> {
 
     private Double coupon;
 
-    @Relationship(type = "VALUE", direction = INCOMING)
-    private AssetValueRelation valuation;
+    @Relationship(type = "VALUE", direction = Relationship.INCOMING)
+    private AssetValuation valuation;
 }

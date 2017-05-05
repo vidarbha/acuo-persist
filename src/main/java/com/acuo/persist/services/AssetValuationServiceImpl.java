@@ -2,12 +2,12 @@ package com.acuo.persist.services;
 
 import com.acuo.persist.entity.AssetValuation;
 import com.acuo.persist.entity.AssetValue;
-import com.acuo.persist.entity.AssetValueRelation;
 import com.acuo.persist.ids.AssetId;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -37,8 +37,7 @@ public class AssetValuationServiceImpl implements AssetValuationService {
 
         deleteLatestValue(assetValuation);
 
-        final LocalDate valuationDateTime = value.getValuationDateTime();
-        createValueRelation(assetValuation, valuationDateTime, value);
+        value.setValuation(assetValuation);
 
         return valueService.save(value, 1);
     }
@@ -60,14 +59,6 @@ public class AssetValuationServiceImpl implements AssetValuationService {
         return assetValue;
     }
 
-    private void createValueRelation(AssetValuation assetValuation, LocalDate valuationDateTime, AssetValue assetValue) {
-        AssetValueRelation valueRelation = new AssetValueRelation();
-        valueRelation.setValuation(assetValuation);
-        valueRelation.setDateTime(valuationDateTime);
-        valueRelation.setValue(assetValue);
-        assetValue.setValuation(valueRelation);
-    }
-
     private AssetValue createAssetValue(com.acuo.common.model.results.AssetValuation valuation, LocalDate valuationDateTime) {
         AssetValue assetValue = new AssetValue();
         assetValue.setCoupon(valuation.getCoupon());
@@ -82,13 +73,9 @@ public class AssetValuationServiceImpl implements AssetValuationService {
     }
 
     private void deleteLatestValue(AssetValuation assetValuation) {
-        final Set<AssetValueRelation> values = assetValuation.getValues();
+        final Set<AssetValue> values = assetValuation.getValues();
         if (values == null) return;
-        final List<AssetValue> assetValues = values
-                .stream()
-                .map(AssetValueRelation::getValue)
-                .collect(toList());
-        valueService.delete(assetValues);
+        valueService.delete(new ArrayList(values));
         assetValuation.setValues(null);
     }
 }
