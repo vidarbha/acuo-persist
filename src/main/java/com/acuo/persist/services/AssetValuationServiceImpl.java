@@ -48,14 +48,17 @@ public class AssetValuationServiceImpl implements AssetValuationService {
 
     public AssetValue persist(com.acuo.common.model.results.AssetValuation valuation) {
         final AssetId assetId = AssetId.fromString(valuation.getAssetId());
-        log.info("inserting asset valuation for asset id [{}]", assetId);
-
+        if (log.isDebugEnabled()) {
+            log.debug("inserting asset valuation for asset id [{}]", assetId);
+        }
         final LocalDate valuationDateTime = valuation.getValuationDateTime();
         AssetValue assetValue = createAssetValue(valuation, valuationDateTime);
 
         assetValue = persist(assetId, assetValue);
 
-        log.info("valuation inserted in the db with timestamp set to {}", assetValue.getValuationDateTime());
+        if (log.isDebugEnabled()) {
+            log.debug("valuation inserted in the db with timestamp set to {}", assetValue.getValuationDateTime());
+        }
         return assetValue;
     }
 
