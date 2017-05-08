@@ -133,7 +133,9 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
     @Override
     @Transactional
     public MarginStatement getMarginStatement(Agreement agreement, LocalDate callDate, StatementDirection direction) {
-        String query = "MATCH p=(a:Agreement {id:{agreementId}})<-[:STEMS_FROM]-(m:MarginStatement {date:{date}, direction:{direction}}) " +
+        String query = "MATCH p=(firm:Firm)-[:MANAGES]-(l1:LegalEntity)-[:CLIENT_SIGNS|COUNTERPARTY_SIGNS]-" +
+                "(a:Agreement {id:{agreementId}})<-[:STEMS_FROM]-(m:MarginStatement {date:{date}, direction:{direction}})" +
+                "-[:SENT_FROM|DIRECTED_TO]->(l2:LegalEntity)" +
                 "RETURN m, nodes(p), relationships(p)";
         String dateStr = new LocalDateConverter().toGraphProperty(callDate);
         String agreementId = agreement.getAgreementId();
