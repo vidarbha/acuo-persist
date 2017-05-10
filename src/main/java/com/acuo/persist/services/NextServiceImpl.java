@@ -20,6 +20,7 @@ public class NextServiceImpl extends GenericService<Next, String> implements Nex
         next.setTime(LocalDateTime.now());
         next.setStart(previous);
         next.setEnd(last);
+        previous.setNext(next);
         return save(next);
     }
 }

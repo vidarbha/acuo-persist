@@ -1,9 +1,8 @@
 package com.acuo.persist.services;
 
-import com.acuo.persist.entity.Next;
-import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.entity.StatementItem;
 import com.acuo.persist.entity.Step;
+import com.acuo.persist.entity.enums.StatementStatus;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 
@@ -27,22 +26,17 @@ public class StatementItemServiceImpl extends GenericService<StatementItem, Stri
     @Transactional
     public void setStatus(String statementItemId, StatementStatus status) {
         StatementItem item = find(statementItemId, 2);
-        Step firstStep = item.getFirstStep();
-        Step previousStep = item.getLastStep();
-        if (firstStep == null || previousStep == null) {
-            Step step = new Step();
-            step.setStatus(status);
+        Step first = item.getFirstStep();
+        Step previous = item.getLastStep();
+        if (first == null || previous == null) {
+            Step step = stepService.create(status);
             item.setFirstStep(step);
             item.setLastStep(step);
             save(item, 2);
-        } else if (!status.equals(previousStep.getStatus())) {
-            Step lastStep = new Step();
-            Next next = new Next();
-            next.setStart(previousStep);
-            next.setEnd(lastStep);
-            previousStep.setNext(next);
-            lastStep.setStatus(status);
-            item.setLastStep(lastStep);
+        } else if (!status.equals(previous.getStatus())) {
+            Step last = stepService.create(status);
+            nextService.createNext(previous, last);
+            item.setLastStep(last);
             save(item, 2);
         }
     }
