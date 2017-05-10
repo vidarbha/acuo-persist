@@ -33,12 +33,24 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
     private Double roundedDeliverAmount;
     private Integer belowMTA;
 
+    private Double fxRate;
+    private Long tradeValued;
+    private Long tradeCount;
 
     public MarginCall() {
     }
 
-    public MarginCall(Side side, Double amount, LocalDate valuationDate, LocalDate callDate, Currency currency, Agreement agreement, Map<Currency, Double> rates) {
+    public MarginCall(Side side,
+                      Double amount,
+                      LocalDate valuationDate,
+                      LocalDate callDate,
+                      Currency currency,
+                      Agreement agreement,
+                      Map<Currency, Double> rates,
+                      Long tradeCount) {
         this(side, convert(amount, currency, agreement.getCurrency(), rates), valuationDate, callDate, agreement);
+        this.fxRate = getRate(currency, agreement.getCurrency(), rates);
+        this.tradeCount = this.tradeValued = tradeCount;
     }
 
     private MarginCall(Side side, Double amount, LocalDate valuationDate, LocalDate callDate, Agreement agreement) {
@@ -105,9 +117,14 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
 
     private static Double convert(Double value, Currency from, Currency to, Map<Currency, Double> rates) {
         if (from.equals(to)) return value;
+        double rate = getRate(from, to, rates);
+        return value * rate;
+    }
+
+    private static double getRate(Currency from, Currency to, Map<Currency, Double> rates) {
         double fromRate = (!from.equals(USD)) ? rates.get(from) : 1;
         double toRate = (!to.equals(USD)) ? rates.get(to) : 1;
-        return value * toRate / fromRate;
+        return toRate / fromRate;
     }
 
     private int sign(double d) {

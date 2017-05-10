@@ -24,8 +24,15 @@ public class InitialMargin extends MarginCall<InitialMargin> {
 
     public InitialMargin() {}
 
-    public InitialMargin(Side side, Double value, LocalDate valuationDate, LocalDate callDate, Currency currency, Agreement agreement, Map<Currency, Double> rates) {
-        super(side, value, valuationDate, callDate, currency, agreement, rates);
+    public InitialMargin(Side side,
+                         Double value,
+                         LocalDate valuationDate,
+                         LocalDate callDate,
+                         Currency currency,
+                         Agreement agreement,
+                         Map<Currency, Double> rates,
+                         Long tradeCount) {
+        super(side, value, valuationDate, callDate, currency, agreement, rates, tradeCount);
         this.marginType = Initial;
         this.itemId = marginCallId(side, agreement, callDate, Initial);
     }
