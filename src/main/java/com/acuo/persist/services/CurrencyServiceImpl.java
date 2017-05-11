@@ -51,4 +51,17 @@ public class CurrencyServiceImpl extends GenericService<CurrencyEntity, Long> im
         else
             return null;
     }
+
+    @Transactional
+    @Override
+    public CurrencyEntity getOrCreate(Currency currency) {
+        CurrencyEntity currencyEntity = find(currency.getCode());
+        if (currencyEntity == null) {
+            currencyEntity = new CurrencyEntity();
+            currencyEntity.setCurrencyId(currency.getCode());
+            currencyEntity.setName(currency.getCode());
+            currencyEntity = save(currencyEntity);
+        }
+        return currencyEntity;
+    }
 }
