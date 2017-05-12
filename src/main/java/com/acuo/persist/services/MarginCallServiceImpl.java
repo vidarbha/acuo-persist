@@ -10,11 +10,14 @@ import com.acuo.persist.spring.Call;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
-import com.opengamma.strata.basics.currency.*;
-import org.apache.commons.collections.ArrayStack;
 import org.neo4j.ogm.model.Result;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.stream.StreamSupport;
 
@@ -142,9 +145,10 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
     public com.acuo.common.model.margin.MarginCall getPledgeMarginCall(String marginCallId)
     {
         com.acuo.common.model.margin.MarginCall marginCall = new com.acuo.common.model.margin.MarginCall();
-        String query = "MATCH (mc:MarginCall {id:{id}})<-[:GENERATED_BY]-(at:AssetTransfer)-[:OF]->(a:Asset) " +
+        String query = String.format(
+                "MATCH (mc:MarginCall {id:{id}})<-[:GENERATED_BY]-(at:AssetTransfer)-[:OF]->(a:Asset) " +
                 "MATCH (ca:CustodianAccount)<-[:FROM]-(at) " +
-                "RETURN mc.ampId, a.id, a.idType, a.currency, at.quantity, at.value";
+                "RETURN mc.ampId, a.id, a.idType, a.currency, at.quantity, at.value");
 
         Result result = sessionProvider.get().query(query, ImmutableMap.of("id", marginCallId));
         Map<String, Object> map = result.iterator().next();

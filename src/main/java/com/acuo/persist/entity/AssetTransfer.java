@@ -33,16 +33,16 @@ public class AssetTransfer extends Entity<AssetTransfer> {
 
     private Double transferValue;
 
-    @Relationship(type = "OF", direction = Relationship.OUTGOING)
+    @Relationship(type = "OF")
     private Asset of;
 
-    @Relationship(type = "FROM", direction = Relationship.OUTGOING)
+    @Relationship(type = "FROM")
     private CustodianAccount from;
 
-    @Relationship(type = "TO", direction = Relationship.OUTGOING)
+    @Relationship(type = "TO")
     private CustodianAccount to;
 
-    @Relationship(type = "GENERATED_BY", direction = Relationship.INCOMING)
+    @Relationship(type = "GENERATED_BY")
     private MarginCall generatedBy;
 
 }

@@ -12,8 +12,7 @@ public class AssetTransferServiceImpl extends GenericService<AssetTransfer, Stri
         return AssetTransfer.class;
     }
 
-    public Result getPledgedAssets()
-    {
+    public Result getPledgedAssets() {
         String query = "MATCH (assets:Asset)<-[:OF]-(at:AssetTransfer)-[:GENERATED_BY]->(:MarginCall)-[:PART_OF]->(:MarginStatement)-[:STEMS_FROM]->(a:Agreement) " +
                 "WHERE at.status = 'Departed' " +
                 "MATCH (l1:LegalEntity)-[:CLIENT_SIGNS]->(a)<-[:COUNTERPARTY_SIGNS]-(l2:LegalEntity) " +
