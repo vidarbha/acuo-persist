@@ -168,4 +168,13 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
     public void setStatus(String statementItemId, StatementStatus status) {
         statementItemService.setStatus(statementItemId, status);
     }
+
+    @Override
+    @Transactional
+    public int getCountForMenu(String status)
+    {
+        String query = "MATCH (ms:MarginStatement )<-[:PART_OF]-(s:StatementItem)-[:LAST]->(step:Step {status:{status}}) " +
+                "RETURN count(distinct(ms)) AS count;";
+        return (Integer) sessionProvider.get().query(query, ImmutableMap.of("status", status)).iterator().next().get("count");
+    }
 }
