@@ -18,9 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
-import static com.acuo.persist.configuration.PropertiesHelper.ACUO_CYPHER_DIR_TEMPLATE;
-import static com.acuo.persist.configuration.PropertiesHelper.ACUO_DATA_BRANCH;
-import static com.acuo.persist.configuration.PropertiesHelper.ACUO_DATA_DIR;
+import static com.acuo.persist.configuration.PropertiesHelper.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -57,6 +55,10 @@ public class DataImporterIntegrationTest {
     private String directoryTemplate;
 
     @Inject
+    @Named(ACUO_DATA_IMPORT_FILES)
+    private String dataImportFiles;
+
+    @Inject
     DataLoader dataLoader;
 
     @Inject
@@ -67,7 +69,7 @@ public class DataImporterIntegrationTest {
         if (!serviceManager.isHealthy()) {
             serviceManager.startAsync().awaitHealthy();
         }
-        importer = new Neo4jDataImporter(dataLoader, workingDirectory, dataBranch, workingDirectory, directoryTemplate);
+        importer = new Neo4jDataImporter(dataLoader, workingDirectory, dataBranch, dataImportFiles, workingDirectory, directoryTemplate);
         executor = new EmbeddedCypherExecutor(serverProvider.get().getGraphDatabaseService());
     }
 

@@ -22,6 +22,7 @@ public class PropertiesHelper {
     public static final String ACUO_DATA_DIR = "acuo.data.dir";
     public static final String ACUO_DATA_BRANCH = "acuo.data.branch";
     public static final String ACUO_DATA_IMPORT_LINK = "acuo.data.import.link";
+    public static final String ACUO_DATA_IMPORT_FILES = "acuo.data.import.files";
     public static final String ACUO_CYPHER_DIR_TEMPLATE = "acuo.cypher.dir.template";
 
     public static final String NEO4J_OGM_URL = "neo4j.ogm.url";

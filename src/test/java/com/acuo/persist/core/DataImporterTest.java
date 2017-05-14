@@ -6,6 +6,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static com.acuo.common.TestHelper.matchesArgRegex;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.verify;
 
@@ -20,7 +21,7 @@ public class DataImporterTest {
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 
-		importer = new Neo4jDataImporter(loader, "graph-data", "develop","", "%s/cypher/%s.load");
+		importer = new Neo4jDataImporter(loader, "graph-data", "develop", "","file1, file2", "%s/cypher/%s.load");
 	}
 
 	@Test
@@ -30,5 +31,11 @@ public class DataImporterTest {
 		importer.importFiles(null,"clients");
 
 		verify(loader).loadData(argThat(matchesArgRegex(query)));
+	}
+
+	@Test
+	public void testGettingFilesToImport() {
+		final String[] values = importer.filesToImport();
+		assertThat(values).isNotNull().hasSize(2);
 	}
 }

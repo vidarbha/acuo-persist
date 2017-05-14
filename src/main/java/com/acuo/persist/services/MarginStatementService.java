@@ -32,4 +32,6 @@ public interface MarginStatementService extends Service<MarginStatement, String>
     MarginStatement getMarginStatement(Agreement agreement, LocalDate callDate, StatementDirection direction);
 
     MarginStatement getOrCreateMarginStatement(Agreement agreement, LocalDate callDate, StatementDirection direction);
+
+    void setStatus(String statementItemId, StatementStatus status);
 }

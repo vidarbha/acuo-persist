@@ -1,15 +1,14 @@
 package com.acuo.persist.entity;
 
+import com.acuo.persist.entity.enums.Side;
 import com.acuo.persist.entity.enums.StatementDirection;
-import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.utils.GraphData;
+import com.acuo.persist.utils.IDGen;
 import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
-import org.neo4j.ogm.annotation.Property;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -22,10 +21,6 @@ import static com.opengamma.strata.basics.currency.Currency.USD;
 @EqualsAndHashCode(callSuper = false)
 @ToString
 public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> {
-
-    @Property(name = "id")
-    @Index(primary = true)
-    protected String marginCallId;
 
     private Double excessAmount;
     private Double balanceAmount;
@@ -42,17 +37,17 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
     public MarginCall() {
     }
 
-    public MarginCall(Double amount, LocalDate valuationDate, LocalDate callDate, Currency currency, StatementStatus statementStatus, Agreement agreement, Map<Currency, Double> rates) {
-        this(convert(amount, currency, agreement.getCurrency(), rates), valuationDate, callDate, statementStatus, agreement);
+    public MarginCall(Side side, Double amount, LocalDate valuationDate, LocalDate callDate, Currency currency, Agreement agreement, Map<Currency, Double> rates) {
+        this(side, convert(amount, currency, agreement.getCurrency(), rates), valuationDate, callDate, agreement);
     }
 
-    private MarginCall(Double amount, LocalDate valuationDate, LocalDate callDate, StatementStatus statementStatus, Agreement agreement) {
+    private MarginCall(Side side, Double amount, LocalDate valuationDate, LocalDate callDate, Agreement agreement) {
+        this.side = side;
         this.valuationDate = valuationDate;
         this.callDate = callDate;
         this.currency = agreement.getCurrency();
         this.parentRank = 0;
         this.notificationTime = callDate.atTime(agreement.getNotificationTime());
-        this.status = statementStatus;
 
         this.balanceAmount = balance(agreement.getClientSignsRelation());
         this.pendingCollateral = pendingCollateral(agreement.getClientSignsRelation());
@@ -92,16 +87,12 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
             }
         }
         this.marginAmount = deliverAmount + returnAmount;
-
-        Step step = new Step();
-        step.setStatus(statementStatus);
-        setFirstStep(step);
-        setLastStep(step);
     }
 
-    String marginCallId(Agreement agreement, LocalDate valuationDate, MarginType marginType) {
+    String marginCallId(Side side, Agreement agreement, LocalDate valuationDate, MarginType marginType) {
         String todayFormatted = GraphData.getStatementDateFormatter().format(valuationDate);
-        return todayFormatted + "-" + agreement.getAgreementId() + "-" + marginType.name();
+        String value = todayFormatted + "-" + agreement.getAgreementId() + "-" + marginType.name() + "-" + side;
+        return IDGen.encode(value) ;
     }
 
     private Double balance(ClientSignsRelation clientSignsRelation) {

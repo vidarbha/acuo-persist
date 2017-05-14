@@ -7,7 +7,7 @@ import com.acuo.persist.entity.Step;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 
-public class StatementItemServiceImpl extends GenericService<StatementItem, Long> implements StatementItemService {
+public class StatementItemServiceImpl extends GenericService<StatementItem, String> implements StatementItemService {
 
     private final NextService nextService;
     private final StepService stepService;
@@ -25,14 +25,25 @@ public class StatementItemServiceImpl extends GenericService<StatementItem, Long
 
     @Override
     @Transactional
-    public void setStatus(StatementItem statementItem, StatementStatus status) {
-        statementItem = find(statementItem.getId());
-        Step previous = statementItem.getLastStep();
-        Step last = stepService.create();
-        Next next = nextService.createNext(previous, last);
-        previous.setNext(next);
-        last.setStatus(status);
-        statementItem.setLastStep(last);
-        save(statementItem, 1);
+    public void setStatus(String statementItemId, StatementStatus status) {
+        StatementItem item = find(statementItemId, 2);
+        Step firstStep = item.getFirstStep();
+        Step previousStep = item.getLastStep();
+        if (firstStep == null || previousStep == null) {
+            Step step = new Step();
+            step.setStatus(status);
+            item.setFirstStep(step);
+            item.setLastStep(step);
+            save(item, 2);
+        } else if (!status.equals(previousStep.getStatus())) {
+            Step lastStep = new Step();
+            Next next = new Next();
+            next.setStart(previousStep);
+            next.setEnd(lastStep);
+            previousStep.setNext(next);
+            lastStep.setStatus(status);
+            item.setLastStep(lastStep);
+            save(item, 2);
+        }
     }
 }
