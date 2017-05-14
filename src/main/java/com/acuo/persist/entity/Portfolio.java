@@ -1,10 +1,8 @@
 package com.acuo.persist.entity;
 
 import com.acuo.persist.ids.PortfolioId;
-import com.acuo.persist.neo4j.converters.TypedStringConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
@@ -13,12 +11,11 @@ import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.util.Set;
 
-import static com.acuo.persist.neo4j.converters.TypedStringConverter.*;
+import static com.acuo.persist.neo4j.converters.TypedStringConverter.PortfolioIdConverter;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"valuations"})
-@ToString(exclude = {"valuations"})
+@EqualsAndHashCode(callSuper = false)
 public class Portfolio extends Entity<Portfolio> {
 
     @Property(name="id")
