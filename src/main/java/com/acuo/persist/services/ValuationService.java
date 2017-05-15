@@ -1,5 +1,6 @@
 package com.acuo.persist.services;
 
+import com.acuo.common.model.margin.Types;
 import com.acuo.persist.entity.AssetValuation;
 import com.acuo.persist.entity.MarginValuation;
 import com.acuo.persist.entity.TradeValuation;
@@ -14,9 +15,9 @@ public interface ValuationService extends Service<Valuation, String> {
 
     TradeValuation getOrCreateTradeValuationFor(TradeId tradeId);
 
-    MarginValuation getMarginValuationFor(PortfolioId portfolioId);
+    MarginValuation getMarginValuationFor(PortfolioId portfolioId, Types.CallType callType);
 
-    MarginValuation getOrCreateMarginValuationFor(PortfolioId portfolioId);
+    MarginValuation getOrCreateMarginValuationFor(PortfolioId portfolioId, Types.CallType callType);
 
     AssetValuation getAssetValuationFor(AssetId assetId);
 

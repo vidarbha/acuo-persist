@@ -147,15 +147,19 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
         com.acuo.common.model.margin.MarginCall marginCall = new com.acuo.common.model.margin.MarginCall();
         String query = String.format(
                 "MATCH (mc:MarginCall {id:{id}})<-[:GENERATED_BY]-(at:AssetTransfer)-[:OF]->(a:Asset) " +
-                "MATCH (ca:CustodianAccount)<-[:FROM]-(at) " +
-                "RETURN mc.ampId, a.id, a.idType, a.currency, at.quantity, at.value");
+                        "MATCH (mc)-[PART_OF]->(:MarginStatement)-[:STEMS_FROM]->(:Agreement)-[IS_COMPOSED_OF]->(r:Rule)-[:APPLIES_TO]->(a) " +
+                        "MATCH (ca:CustodianAccount)<-[:FROM]-(at) " +
+                        "RETURN mc.ampId, a.id, a.idType, a.currency, at.quantities, at.value, r.haircut + r.FXHaircut as haircut");
 
         Result result = sessionProvider.get().query(query, ImmutableMap.of("id", marginCallId));
         Map<String, Object> map = result.iterator().next();
+        //// TODO: 2017/5/15 0015   check if Custodian account ca is owned by the client or the counterpart. If it's owned by the client, then deliveryType is 'deliver', otherwise it's 'return'
+
         if(map != null)
         {
             marginCall.setAmpId((String)map.get("mc.ampId"));
             marginCall.setCurrency(com.opengamma.strata.basics.currency.Currency.of((String)map.get("a.currency")));
+
         }
         return marginCall;
     }
