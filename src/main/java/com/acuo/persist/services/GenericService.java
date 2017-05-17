@@ -27,7 +27,7 @@ public abstract class GenericService<T, ID extends Serializable> implements Serv
         if (log.isDebugEnabled()) {
             log.debug("save {}",entity);
         }
-        sessionProvider.get().save(entity);
+        getSession().save(entity);
         return entity;
     }
 
@@ -38,7 +38,7 @@ public abstract class GenericService<T, ID extends Serializable> implements Serv
         if (log.isDebugEnabled()) {
             log.debug("save {}",entities);
         }
-        sessionProvider.get().save(entities);
+        getSession().save(entities);
         return entities;
     }
 
@@ -48,7 +48,7 @@ public abstract class GenericService<T, ID extends Serializable> implements Serv
         if (log.isDebugEnabled()) {
             log.debug("delete {}", id);
         }
-        sessionProvider.get().delete(sessionProvider.get().load(getEntityType(), id));
+        getSession().delete(getSession().load(getEntityType(), id));
     }
 
     @Override
@@ -57,7 +57,7 @@ public abstract class GenericService<T, ID extends Serializable> implements Serv
         if (log.isDebugEnabled()) {
             log.debug("delete {}", entity);
         }
-        sessionProvider.get().delete(entity);
+        getSession().delete(entity);
     }
 
     @Override
@@ -67,12 +67,12 @@ public abstract class GenericService<T, ID extends Serializable> implements Serv
         if (log.isDebugEnabled()) {
             log.debug("delete {}", entities);
         }
-        sessionProvider.get().delete(entities);
+        getSession().delete(entities);
     }
 
     @Override
     public void deleteAll() {
-        sessionProvider.get().deleteAll(getEntityType());
+        getSession().deleteAll(getEntityType());
     }
 
     @Override
@@ -81,7 +81,7 @@ public abstract class GenericService<T, ID extends Serializable> implements Serv
         if (log.isDebugEnabled()) {
             log.debug("save {} depth {}", entity, depth);
         }
-        sessionProvider.get().save(entity, depth);
+        getSession().save(entity, depth);
         return entity;
     }
 
@@ -92,7 +92,7 @@ public abstract class GenericService<T, ID extends Serializable> implements Serv
         if (log.isDebugEnabled()) {
             log.debug("save {} depth {}", entities, depth);
         }
-        sessionProvider.get().save(entities, depth);
+        getSession().save(entities, depth);
         return entities;
     }
 
@@ -102,7 +102,7 @@ public abstract class GenericService<T, ID extends Serializable> implements Serv
         if (log.isDebugEnabled()) {
             log.debug("createOrUpdate {}", entity);
         }
-        sessionProvider.get().save(entity);
+        getSession().save(entity);
         return entity;
     }
 
@@ -116,7 +116,7 @@ public abstract class GenericService<T, ID extends Serializable> implements Serv
         if (log.isDebugEnabled()) {
             log.debug("findAll depth [{}]", depth);
         }
-        return sessionProvider.get().loadAll(getEntityType(), depth);
+        return getSession().loadAll(getEntityType(), depth);
     }
 
     @Override
@@ -125,7 +125,7 @@ public abstract class GenericService<T, ID extends Serializable> implements Serv
         if (log.isDebugEnabled()) {
             log.debug("find {}", id);
         }
-        return sessionProvider.get().load(getEntityType(), id, DEPTH_ENTITY);
+        return getSession().load(getEntityType(), id, DEPTH_ENTITY);
     }
 
     @Override
@@ -134,6 +134,14 @@ public abstract class GenericService<T, ID extends Serializable> implements Serv
         if (log.isDebugEnabled()) {
             log.debug("find {} depth {}", id, depth);
         }
-        return sessionProvider.get().load(getEntityType(), id, depth);
+        return getSession().load(getEntityType(), id, depth);
+    }
+
+    private Session getSession() {
+        final Session session = sessionProvider.get();
+        if (log.isDebugEnabled()) {
+            log.debug("session {}", session.hashCode());
+        }
+        return session;
     }
 }
