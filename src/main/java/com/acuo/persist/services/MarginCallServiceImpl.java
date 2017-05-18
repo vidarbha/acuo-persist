@@ -12,12 +12,7 @@ import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 import org.neo4j.ogm.model.Result;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.stream.StreamSupport;
 
@@ -133,10 +128,12 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
         marginCall.setDispute(dispute);
         Set<Types.DisputeReasonCode> disputeReasonCodeSet = new HashSet<>();
         dispute.setDisputeReasonCodes(disputeReasonCodeSet);
-        disputeReasonCodeSet.add(Types.DisputeReasonCode.valueOf((map.get("d.disputeReasonCodes").toString())));
+        String[] codes = (String[])map.get("d.disputeReasonCodes");
+        Arrays.stream(codes).forEach(s -> disputeReasonCodeSet.add(Types.DisputeReasonCode.valueOf(s)));
+        //disputeReasonCodeSet.add(Types.DisputeReasonCode.valueOf((map.get("d.disputeReasonCodes").toString())));
         dispute.setComments((String)map.get("d.comments"));
-        dispute.setMtm(((Long)map.get("d.mtm")).doubleValue());
-        marginCall.setExposure((Long)map.get("d.balance"));
+        dispute.setMtm(((Double)map.get("d.mtm")).doubleValue());
+        marginCall.setExposure((Double)map.get("d.balance"));
         return marginCall;
     }
 
