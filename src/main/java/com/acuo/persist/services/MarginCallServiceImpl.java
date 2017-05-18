@@ -115,9 +115,9 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
     {
         List<com.acuo.common.model.margin.MarginCall> marginCalls = new ArrayList<>();
         String query = "MATCH (ms:MarginStatement {id:{id}})<-[:ON]-(d:Dispute) " +
-                "WHERE d.AgreedAmount = 0  " +
+                "WHERE d.agreedAmount = 0  " +
                 "MATCH (mc:MarginCall)-[:PART_OF]->(ms) " +
-                "RETURN mc.ampId, d.AgreedAmount, d.disputeReasonCode, d.comments, d.MtM, d.exposure";
+                "RETURN mc.ampId, d.agreedAmount, d.disputeReasonCodes, d.comments, d.mtm, d.balance";
 
         Result result = sessionProvider.get().query(query, ImmutableMap.of("id", marginStatementId));
         result.forEach(map -> marginCalls.add(buildDisputeMarginCall(map)));
@@ -128,15 +128,15 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
     {
         com.acuo.common.model.margin.MarginCall marginCall = new com.acuo.common.model.margin.MarginCall();
         marginCall.setAmpId((String)map.get("mc.ampId"));
-        marginCall.setAgreedAmount((Double)map.get("d.AgreedAmount"));
+        marginCall.setAgreedAmount((Double)map.get("d.agreedAmount"));
         Dispute dispute = new Dispute();
         marginCall.setDispute(dispute);
         Set<Types.DisputeReasonCode> disputeReasonCodeSet = new HashSet<>();
         dispute.setDisputeReasonCodes(disputeReasonCodeSet);
-        disputeReasonCodeSet.add(Types.DisputeReasonCode.valueOf((String)map.get("d.disputeReasonCode")));
+        disputeReasonCodeSet.add(Types.DisputeReasonCode.valueOf((String)map.get("d.disputeReasonCodes")));
         dispute.setComments((String)map.get("d.comments"));
-        dispute.setMtm((Double)map.get("d.MtM"));
-        marginCall.setExposure((Double)map.get("d.exposure"));
+        dispute.setMtm((Double)map.get("d.mtm"));
+        marginCall.setExposure((Double)map.get("d.balance"));
         return marginCall;
     }
 
