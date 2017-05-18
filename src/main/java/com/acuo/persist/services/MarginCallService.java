@@ -26,6 +26,6 @@ public interface MarginCallService extends Service<MarginCall, String> {
 
     com.acuo.common.model.margin.MarginCall getPledgeMarginCall(String marginCallId);
 
-
+    MarginCall findByAmpId(String ampId);
 
 }

@@ -160,4 +160,12 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
         }
         return marginCall;
     }
+
+    @Override
+    @Transactional
+    public MarginCall findByAmpId(String ampId)
+    {
+        String query =  "MATCH (mc:MarginCall {ampId:{id}}) RETURN mc;";
+        return sessionProvider.get().queryForObject(MarginCall.class, query, ImmutableMap.of("id", ampId));
+    }
 }
