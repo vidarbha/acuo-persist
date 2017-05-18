@@ -128,15 +128,15 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
     {
         com.acuo.common.model.margin.MarginCall marginCall = new com.acuo.common.model.margin.MarginCall();
         marginCall.setAmpId((String)map.get("mc.ampId"));
-        marginCall.setAgreedAmount((Double)map.get("d.agreedAmount"));
+        marginCall.setAgreedAmount((Long)map.get("d.agreedAmount"));
         Dispute dispute = new Dispute();
         marginCall.setDispute(dispute);
         Set<Types.DisputeReasonCode> disputeReasonCodeSet = new HashSet<>();
         dispute.setDisputeReasonCodes(disputeReasonCodeSet);
-        disputeReasonCodeSet.add(Types.DisputeReasonCode.valueOf((String)map.get("d.disputeReasonCodes")));
+        disputeReasonCodeSet.add(Types.DisputeReasonCode.valueOf((map.get("d.disputeReasonCodes").toString())));
         dispute.setComments((String)map.get("d.comments"));
-        dispute.setMtm((Double)map.get("d.mtm"));
-        marginCall.setExposure((Double)map.get("d.balance"));
+        dispute.setMtm(((Long)map.get("d.mtm")).doubleValue());
+        marginCall.setExposure((Long)map.get("d.balance"));
         return marginCall;
     }
 
