@@ -12,4 +12,6 @@ public interface CurrencyService extends Service<CurrencyEntity, Long> {
     Map<Currency, Double> getAllFX();
 
     CurrencyEntity find(String id);
+
+    CurrencyEntity getOrCreate(Currency currency);
 }

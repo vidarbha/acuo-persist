@@ -1,5 +1,6 @@
 package com.acuo.persist.entity;
 
+import com.acuo.common.model.margin.Types;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -14,6 +15,11 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true, exclude = {"values"})
 public class MarginValuation extends Valuation {
 
+    private Types.CallType callType;
+
+    @Relationship(type = "VALUATED")
+    private Portfolio portfolio;
+
     @Relationship(type = "VALUE")
-    private Set<MarginValueRelation> values;
+    private Set<MarginValue> values;
 }

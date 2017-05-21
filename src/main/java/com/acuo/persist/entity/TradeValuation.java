@@ -8,14 +8,19 @@ import org.neo4j.ogm.annotation.Relationship;
 
 import java.util.Set;
 
+import static org.neo4j.ogm.annotation.Relationship.INCOMING;
+
 @NodeEntity
 @Data
 @ToString(callSuper = true, exclude = {"values"})
 @EqualsAndHashCode(callSuper = true, exclude = {"values"})
 public class TradeValuation extends Valuation {
 
+    @Relationship(type = "VALUATED")
+    private Trade trade;
+
     @Relationship(type = "VALUE")
-    private Set<TradeValueRelation> values;
+    private Set<TradeValue> values;
 }
 
 

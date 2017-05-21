@@ -6,9 +6,11 @@ import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @NodeEntity
 @Data
@@ -31,4 +33,7 @@ public class AssetValue extends Value<AssetValue> {
     private Currency reportCurrency;
 
     private Double coupon;
+
+    @Relationship(type = "VALUE", direction = Relationship.INCOMING)
+    private AssetValuation valuation;
 }

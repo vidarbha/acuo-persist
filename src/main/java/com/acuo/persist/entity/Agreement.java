@@ -47,6 +47,8 @@ public class Agreement extends Entity<Agreement> {
 
     private Double tolerance;
 
+    private Double threshold;
+
     private String interestTransfer;
 
     private String interestPaymentNetting;

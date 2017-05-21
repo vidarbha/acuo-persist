@@ -1,19 +1,21 @@
 package com.acuo.persist.entity;
 
+import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.NodeEntity;
-import org.neo4j.ogm.annotation.Relationship;
+import org.neo4j.ogm.annotation.typeconversion.Convert;
 
-import static org.neo4j.ogm.annotation.Relationship.INCOMING;
+import java.time.LocalDate;
 
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
 public abstract class Value<T extends Value> extends Entity<T> {
 
-    @Relationship(type = "VALUE", direction = INCOMING)
-    private ValueRelation valuation;
-
     private String source;
+
+    @Convert(LocalDateConverter.class)
+    private LocalDate dateTime;
+
 }

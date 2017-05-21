@@ -17,8 +17,8 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"holds", "transfer", "valuation"})
-@ToString(exclude = {"holds", "transfer", "valuation"})
+@EqualsAndHashCode(callSuper = false, exclude = {"holds", "transfer"})
+@ToString(exclude = {"holds", "transfer"})
 public class Asset extends Entity<Asset> {
 
     @Property(name = "id")
@@ -51,16 +51,11 @@ public class Asset extends Entity<Asset> {
     @Relationship(type = "HOLDS", direction = Relationship.INCOMING)
     private Holds holds;
 
-    /*@Relationship(type = "IS_AVAILABLE_FOR")
-    private AvailableFor availableFor;*/
     @Relationship(type = "APPLIES_TO", direction = Relationship.INCOMING)
     private Set<Rule> rules;
 
     @Relationship(type = "OF", direction = Relationship.INCOMING)
     private AssetTransfer transfer;
-
-    @Relationship(type = "VALUATED")
-    private AssetValuation valuation;
 
     @Relationship(type = "PRICING_SOURCE")
     private PricingSource pricingSource;

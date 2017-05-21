@@ -1,19 +1,29 @@
 package com.acuo.persist.services;
 
+import com.acuo.common.model.margin.Types;
 import com.acuo.common.util.GuiceJUnitRunner;
 import com.acuo.persist.core.ImportService;
+import com.acuo.persist.entity.AssetValuation;
+import com.acuo.persist.entity.AssetValue;
+import com.acuo.persist.entity.IRS;
+import com.acuo.persist.entity.MarginValuation;
+import com.acuo.persist.entity.MarginValue;
 import com.acuo.persist.entity.TradeValuation;
 import com.acuo.persist.entity.TradeValue;
-import com.acuo.persist.entity.TradeValueRelation;
+import com.acuo.persist.ids.AssetId;
 import com.acuo.persist.ids.PortfolioId;
-import com.acuo.persist.modules.*;
+import com.acuo.persist.ids.TradeId;
+import com.acuo.persist.modules.ConfigurationTestModule;
+import com.acuo.persist.modules.DataImporterModule;
+import com.acuo.persist.modules.DataLoaderModule;
+import com.acuo.persist.modules.Neo4jPersistModule;
+import com.acuo.persist.modules.RepositoryModule;
 import com.opengamma.strata.basics.currency.Currency;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
-import java.time.LocalDate;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,36 +46,94 @@ public class ValuationServiceTest {
     @Inject
     ValueService valueService;
 
+    @Inject
+    TradeService<IRS> tradeService;
+
     @Before
     public void setUp() {
         importService.reload();
     }
 
     @Test
-    public void testValuationService() {
+    public void testMarginValuationService() {
 
-        TradeValuation valuation = valuationService.getOrCreateTradeValuationFor(PortfolioId.fromString("p2"));
+        MarginValuation valuation = valuationService.getOrCreateMarginValuationFor(PortfolioId.fromString("p2"), Types.CallType.Variation);
 
-        TradeValue newValue = createValue(Currency.USD, 1.0d, "Markit");
-        TradeValueRelation valueRelation = new TradeValueRelation();
-        valueRelation.setValuation(valuation);
-        valueRelation.setDateTime(LocalDate.now());
-        valueRelation.setValue(newValue);
-        newValue.setValuation(valueRelation);
+        MarginValue newValue = createMarginValue(Currency.USD, 1.0d, "Markit");
+        newValue.setValuation(valuation);
 
-        TradeValue value = valueService.save(newValue);
+        MarginValue value = valueService.save(newValue);
 
-        valuation = valuationService.getTradeValuationFor(PortfolioId.fromString("p2"));
+        assertThat(value).isNotNull();
 
-        Set<TradeValueRelation> values = valuation.getValues();
+        valuation = valuationService.getMarginValuationFor(PortfolioId.fromString("p2"), Types.CallType.Variation);
+
+        Set<MarginValue> values = valuation.getValues();
         assertThat(values).isNotEmpty();
     }
 
-    private TradeValue createValue(Currency currency, Double pv, String source) {
-        TradeValue newValue = new TradeValue();
+    @Test
+    public void testAssetValuationService() {
+
+        AssetValuation valuation = valuationService.getOrCreateAssetValuationFor(AssetId.fromString("USD"));
+
+        AssetValue newValue = createAssetValue(Currency.USD, 1.0d, "DataScope");
+        newValue.setValuation(valuation);
+
+        AssetValue value = valueService.save(newValue);
+
+        assertThat(value).isNotNull();
+
+        valuation = valuationService.getAssetValuationFor(AssetId.fromString("USD"));
+
+        Set<AssetValue> values = valuation.getValues();
+        assertThat(values).isNotEmpty();
+    }
+
+    @Test
+    public void testTradeValuationService() {
+
+        TradeId t1 = TradeId.fromString("t1");
+        IRS entity = new IRS();
+        entity.setTradeId(t1);
+        tradeService.save(entity);
+        TradeValuation valuation = valuationService.getOrCreateTradeValuationFor(t1);
+
+        TradeValue newValue = createTradeValue(Currency.USD, 1.0d, "DataScope");
+        newValue.setValuation(valuation);
+
+        TradeValue value = valueService.save(newValue);
+
+        assertThat(value).isNotNull();
+
+        valuation = valuationService.getTradeValuationFor(t1);
+
+        Set<TradeValue> values = valuation.getValues();
+        assertThat(values).isNotEmpty();
+    }
+
+    private MarginValue createMarginValue(Currency currency, Double amount, String source) {
+        MarginValue newValue = new MarginValue();
         newValue.setSource(source);
         newValue.setCurrency(currency);
-        newValue.setPv(pv);
+        newValue.setAmount(amount);
+        return newValue;
+    }
+
+    private AssetValue createAssetValue(Currency currency, Double amount, String source) {
+        AssetValue newValue = new AssetValue();
+        newValue.setSource(source);
+        newValue.setCoupon(amount);
+        newValue.setNominalCurrency(currency);
+        newValue.setReportCurrency(currency);
+        return newValue;
+    }
+
+    private TradeValue createTradeValue(Currency currency, Double amount, String source) {
+        TradeValue newValue = new TradeValue();
+        newValue.setSource(source);
+        newValue.setPv(amount);
+        newValue.setCurrency(currency);
         return newValue;
     }
 }

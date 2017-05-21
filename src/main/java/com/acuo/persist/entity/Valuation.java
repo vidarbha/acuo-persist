@@ -16,6 +16,5 @@ import static org.neo4j.ogm.annotation.Relationship.*;
 @EqualsAndHashCode(callSuper = false)
 public abstract class Valuation extends Entity<Valuation> {
 
-    @Relationship(type = "VALUATED", direction = INCOMING)
-    private Portfolio portfolio;
+
 }

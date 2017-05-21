@@ -1,6 +1,7 @@
 package com.acuo.persist.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
@@ -10,6 +11,7 @@ import static com.acuo.common.model.margin.Types.DisputeReasonCode;
 
 @NodeEntity
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class Dispute extends Entity<Dispute> {
 
     @Relationship(type = "ON")

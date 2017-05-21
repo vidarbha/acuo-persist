@@ -1,7 +1,9 @@
 package com.acuo.persist.entity;
 
+import com.acuo.persist.ids.TradeId;
 import com.acuo.persist.neo4j.converters.CurrencyConverter;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
+import com.acuo.persist.neo4j.converters.TypedStringConverter;
 import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,6 +15,9 @@ import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.time.LocalDate;
+import java.util.Set;
+
+import static com.acuo.persist.neo4j.converters.TypedStringConverter.*;
 
 @NodeEntity
 @Data
@@ -22,7 +27,8 @@ public abstract class Trade<T extends Trade> extends Entity implements Comparabl
 
     @Property(name="id")
     @Index(primary = true)
-    protected String tradeId;
+    @Convert(TradeIdConverter.class)
+    protected TradeId tradeId;
 
     private String underlyingAssetId;
 
