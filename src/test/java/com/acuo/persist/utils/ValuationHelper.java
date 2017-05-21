@@ -8,6 +8,7 @@ import com.opengamma.strata.basics.currency.Currency;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
@@ -37,7 +38,7 @@ public class ValuationHelper {
                     assetValuation.setYield(0.0d);
                     assetValuation.setCleanMarketValue(1.0d);
                     assetValuation.setNotional(1.0d);
-                    assetValuation.setValuationDateTime(LocalDate.now());
+                    assetValuation.setValuationDateTime(LocalDateTime.now());
                     assetValuation.setPriceQuotationType("TEST");
                     assetValuation.setSource("UNIT TEST");
                     assetValuation.setNominalCurrency(Currency.USD);

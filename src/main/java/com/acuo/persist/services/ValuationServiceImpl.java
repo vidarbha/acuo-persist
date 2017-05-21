@@ -1,5 +1,6 @@
 package com.acuo.persist.services;
 
+import com.acuo.common.model.margin.Types;
 import com.acuo.persist.entity.AssetValuation;
 import com.acuo.persist.entity.MarginValuation;
 import com.acuo.persist.entity.Trade;
@@ -58,22 +59,24 @@ public class ValuationServiceImpl extends GenericService<Valuation, String> impl
 
     @Override
     @Transactional
-    public MarginValuation getMarginValuationFor(PortfolioId portfolioId) {
+    public MarginValuation getMarginValuationFor(PortfolioId portfolioId, Types.CallType callType) {
         String query =
-                "MATCH p=(value:MarginValue)<-[:VALUE]-(valuation:MarginValuation)-[:VALUATED]->(portfolio:Portfolio {id:{id}})-[*0..1]-(n) " +
-                        "RETURN p, nodes(p), relationships(p)";
+                "MATCH p=(value:MarginValue)<-[:VALUE]-(valuation:MarginValuation {callType: {callType}})" +
+                "-[:VALUATED]->(portfolio:Portfolio {id:{id}})-[:BELONGS_TO|FOLLOWS|PART_OF]-(n) " +
+                "RETURN p, nodes(p), relationships(p)";
         final String pId = portfolioId.toString();
-        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", pId);
+        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", pId, "callType", callType.name());
        return sessionProvider.get().queryForObject(MarginValuation.class, query, parameters);
     }
 
     @Override
     @Transactional
-    public MarginValuation getOrCreateMarginValuationFor(PortfolioId portfolioId) {
-        MarginValuation valuation = getMarginValuationFor(portfolioId);
+    public MarginValuation getOrCreateMarginValuationFor(PortfolioId portfolioId, Types.CallType callType) {
+        MarginValuation valuation = getMarginValuationFor(portfolioId, callType);
         if (valuation == null) {
             valuation = new MarginValuation();
             valuation.setPortfolio(portfolioService.find(portfolioId));
+            valuation.setCallType(callType);
             valuation = createOrUpdate(valuation);
         }
         return valuation;

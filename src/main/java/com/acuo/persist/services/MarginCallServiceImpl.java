@@ -12,12 +12,7 @@ import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 import org.neo4j.ogm.model.Result;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.stream.StreamSupport;
 
@@ -115,9 +110,9 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
     {
         List<com.acuo.common.model.margin.MarginCall> marginCalls = new ArrayList<>();
         String query = "MATCH (ms:MarginStatement {id:{id}})<-[:ON]-(d:Dispute) " +
-                "WHERE d.AgreedAmount = 0  " +
+                "WHERE d.agreedAmount = 0  " +
                 "MATCH (mc:MarginCall)-[:PART_OF]->(ms) " +
-                "RETURN mc.ampId, d.AgreedAmount, d.disputeReasonCode, d.comments, d.MtM, d.exposure";
+                "RETURN mc.ampId, d.agreedAmount, d.disputeReasonCodes, d.comments, d.mtm, d.balance";
 
         Result result = sessionProvider.get().query(query, ImmutableMap.of("id", marginStatementId));
         result.forEach(map -> marginCalls.add(buildDisputeMarginCall(map)));
@@ -128,15 +123,17 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
     {
         com.acuo.common.model.margin.MarginCall marginCall = new com.acuo.common.model.margin.MarginCall();
         marginCall.setAmpId((String)map.get("mc.ampId"));
-        marginCall.setAgreedAmount((Double)map.get("d.AgreedAmount"));
+        marginCall.setAgreedAmount((Long)map.get("d.agreedAmount"));
         Dispute dispute = new Dispute();
         marginCall.setDispute(dispute);
         Set<Types.DisputeReasonCode> disputeReasonCodeSet = new HashSet<>();
         dispute.setDisputeReasonCodes(disputeReasonCodeSet);
-        disputeReasonCodeSet.add(Types.DisputeReasonCode.valueOf((String)map.get("d.disputeReasonCode")));
+        String[] codes = (String[])map.get("d.disputeReasonCodes");
+        Arrays.stream(codes).forEach(s -> disputeReasonCodeSet.add(Types.DisputeReasonCode.valueOf(s)));
+        //disputeReasonCodeSet.add(Types.DisputeReasonCode.valueOf((map.get("d.disputeReasonCodes").toString())));
         dispute.setComments((String)map.get("d.comments"));
-        dispute.setMtm((Double)map.get("d.MtM"));
-        marginCall.setExposure((Double)map.get("d.exposure"));
+        dispute.setMtm(((Double)map.get("d.mtm")).doubleValue());
+        marginCall.setExposure((Double)map.get("d.balance"));
         return marginCall;
     }
 
@@ -147,16 +144,32 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
         com.acuo.common.model.margin.MarginCall marginCall = new com.acuo.common.model.margin.MarginCall();
         String query = String.format(
                 "MATCH (mc:MarginCall {id:{id}})<-[:GENERATED_BY]-(at:AssetTransfer)-[:OF]->(a:Asset) " +
-                "MATCH (ca:CustodianAccount)<-[:FROM]-(at) " +
-                "RETURN mc.ampId, a.id, a.idType, a.currency, at.quantity, at.value");
+                        "MATCH (mc)-[PART_OF]->(:MarginStatement)-[:STEMS_FROM]->(:Agreement)-[IS_COMPOSED_OF]->(r:Rule)-[:APPLIES_TO]->(a) " +
+                        "MATCH (ca:CustodianAccount)<-[:FROM]-(at) " +
+                        "RETURN mc.ampId, a.id, a.idType, a.currency, at.quantities, at.value, r.haircut + r.FXHaircut as haircut");
 
         Result result = sessionProvider.get().query(query, ImmutableMap.of("id", marginCallId));
         Map<String, Object> map = result.iterator().next();
+        //// TODO: 2017/5/15 0015   check if Custodian account ca is owned by the client or the counterpart. If it's owned by the client, then deliveryType is 'deliver', otherwise it's 'return'
+
         if(map != null)
         {
             marginCall.setAmpId((String)map.get("mc.ampId"));
             marginCall.setCurrency(com.opengamma.strata.basics.currency.Currency.of((String)map.get("a.currency")));
+
         }
         return marginCall;
+    }
+
+    @Override
+    @Transactional
+    public MarginCall findByAmpId(String ampId)
+    {
+        String query =  "MATCH (mc:MarginCall {ampId:{id}}) RETURN mc;";
+        Iterator<MarginCall>  result = sessionProvider.get().query(MarginCall.class, query, ImmutableMap.of("id", ampId)).iterator();
+        if(result.hasNext())
+            return result.next();
+        else
+            return null;
     }
 }
