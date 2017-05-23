@@ -83,8 +83,8 @@ public class FXRateServiceImpl extends GenericService<FXRate, Long> implements F
         final long twentyFourHours = LocalDateTime.now().minusHours(24).toEpochSecond(ZoneOffset.UTC);
         String query =
                 "MATCH (fxRate:FXRate)<-[:OF]-(value:FXValue) " +
-                        "WHERE ID(fxRate)={id} AND value.from < {time}" +
-                        "RETURN value ORDER BY value.from DESC LIMIT 1";
+                "WHERE ID(fxRate)={id} AND value.from < {time} " +
+                "RETURN value";
         final ImmutableMap<String, Long> parameters = ImmutableMap.of("id", fxRate.getId(), "time", twentyFourHours);
         final Iterable<FXValue> fxValues = sessionProvider.get().query(FXValue.class, query, parameters);
         fxValueService.delete(fxValues);
