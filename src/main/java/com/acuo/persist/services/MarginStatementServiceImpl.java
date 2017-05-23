@@ -14,6 +14,8 @@ import com.google.inject.persist.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -174,7 +176,22 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
     public Long getCountForMenu(String status)
     {
         String query = "MATCH (ms:MarginStatement )<-[:PART_OF]-(s:StatementItem)-[:LAST]->(step:Step {status:{status}}) " +
-                "RETURN count(distinct(ms)) AS count;";
-        return (Long) sessionProvider.get().query(query, ImmutableMap.of("status", status)).iterator().next().get("count");
+                "RETURN ms;";
+        long count = 0;
+        Iterator<MarginStatement> marginStatements = sessionProvider.get().query(MarginStatement.class, query, ImmutableMap.of("status", status)).iterator();
+        LocalDateTime max = LocalDateTime.now().plusHours(36);
+        LocalDateTime min = LocalDateTime.now().minusHours(36);
+        while(marginStatements.hasNext())
+        {
+            MarginStatement marginStatement = marginStatements.next();
+            marginStatement = this.find(marginStatement.getStatementId());
+            LocalDateTime localDateTime = LocalDateTime.of(marginStatement.getDate(), marginStatement.getAgreement().getNotificationTime());
+            if(localDateTime.isAfter(min) && localDateTime.isBefore(max))
+                count ++;
+        }
+        return count;
+        //return (Long) sessionProvider.get().query(query, ImmutableMap.of("status", status)).iterator().next().get("count");
     }
+
+
 }
