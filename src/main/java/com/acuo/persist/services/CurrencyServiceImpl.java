@@ -49,7 +49,8 @@ public class CurrencyServiceImpl extends GenericService<CurrencyEntity, Long> im
         values.put(Currency.USD, 1d);
         String query =
                 "MATCH (from:Currency)<-[:FROM]-(fxRate:FXRate)-[:TO]->(to:Currency) " +
-                "RETURN fxRate.value as rate, from.id as from, to.id as to";
+                "MATCH (fxRate)-[:LAST]->(fxValue:FXValue) " +
+                "RETURN fxValue.value as rate, from.id as from, to.id as to";
         Result result = sessionProvider.get().query(query, Collections.emptyMap());
         result.forEach(map -> {
             final Double rate = (Double) map.get("rate");

@@ -67,6 +67,8 @@ public class FXRateServiceImpl extends GenericService<FXRate, Long> implements F
         fxValue.setRate(fxRate);
         fxValue.setPrevious(latestValueOf(fxRate));
         fxValueService.save(fxValue);
+        fxRate.setLast(fxValue);
+        save(fxRate);
     }
 
     @Override
