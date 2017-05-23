@@ -58,11 +58,13 @@ public class FXRateServiceImpl extends GenericService<FXRate, Long> implements F
     @Override
     @Transactional
     public void addValue(FXRate fxRate, Double value, LocalDateTime updated){
+        cleanup(fxRate);
         FXValue fxValue = new FXValue();
         fxValue.setFrom(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
         fxValue.setLastUpdate(updated);
         fxValue.setValue(value);
         fxValue.setRate(fxRate);
+        fxValue.setPrevious(latestValueOf(fxRate));
         fxValueService.save(fxValue);
     }
 
@@ -75,5 +77,16 @@ public class FXRateServiceImpl extends GenericService<FXRate, Long> implements F
                 "RETURN value ORDER BY value.from DESC LIMIT 1";
         final ImmutableMap<String, Long> parameters = ImmutableMap.of("id", fxRate.getId());
         return sessionProvider.get().queryForObject(FXValue.class, query, parameters);
+    }
+
+    private void cleanup(FXRate fxRate) {
+        final long twentyFourHours = LocalDateTime.now().minusHours(24).toEpochSecond(ZoneOffset.UTC);
+        String query =
+                "MATCH (fxRate:FXRate)<-[:OF]-(value:FXValue) " +
+                        "WHERE ID(fxRate)={id} AND value.from < {time}" +
+                        "RETURN value ORDER BY value.from DESC LIMIT 1";
+        final ImmutableMap<String, Long> parameters = ImmutableMap.of("id", fxRate.getId(), "time", twentyFourHours);
+        final Iterable<FXValue> fxValues = sessionProvider.get().query(FXValue.class, query, parameters);
+        fxValueService.delete(fxValues);
     }
 }
