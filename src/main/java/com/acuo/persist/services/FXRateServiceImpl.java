@@ -4,6 +4,7 @@ import com.acuo.persist.entity.CurrencyEntity;
 import com.acuo.persist.entity.FXRate;
 import com.acuo.persist.entity.FXValue;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 import com.opengamma.strata.basics.currency.Currency;
@@ -87,6 +88,7 @@ public class FXRateServiceImpl extends GenericService<FXRate, Long> implements F
                 "RETURN value";
         final ImmutableMap<String, Long> parameters = ImmutableMap.of("id", fxRate.getId(), "time", twentyFourHours);
         final Iterable<FXValue> fxValues = sessionProvider.get().query(FXValue.class, query, parameters);
-        fxValueService.delete(fxValues);
+        if (!Iterables.isEmpty(fxValues))
+            fxValueService.delete(fxValues);
     }
 }
