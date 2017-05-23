@@ -3,7 +3,9 @@ package com.acuo.persist.services;
 import com.acuo.common.util.ArgChecker;
 import com.acuo.persist.entity.CurrencyEntity;
 import com.acuo.persist.entity.FXRate;
+import com.acuo.persist.entity.FXValue;
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 import com.opengamma.strata.basics.currency.Currency;
 import org.neo4j.ogm.model.Result;
@@ -13,6 +15,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CurrencyServiceImpl extends GenericService<CurrencyEntity, Long> implements CurrencyService {
+
+    private final FXRateService fxRateService;
+
+    @Inject
+    public CurrencyServiceImpl(FXRateService fxRateService) {
+        this.fxRateService = fxRateService;
+    }
 
     @Override
     public Class<CurrencyEntity> getEntityType() {
@@ -28,7 +37,8 @@ public class CurrencyServiceImpl extends GenericService<CurrencyEntity, Long> im
                 "RETURN p, nodes(p), relationships(p)";
         final FXRate fxRate = sessionProvider.get().queryForObject(FXRate.class, query, ImmutableMap.of("id", currency.getCode()));
         final Currency base = Currency.of(fxRate.getFrom().getCurrencyId());
-        final Double rate = fxRate.getValue();
+        final FXValue fxValue = fxRateService.latestValueOf(fxRate);
+        final Double rate = fxValue.getValue();
         return Currency.USD.equals(base) ? 1 / rate : rate;
     }
 
