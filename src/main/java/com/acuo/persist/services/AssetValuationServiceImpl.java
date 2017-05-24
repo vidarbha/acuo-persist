@@ -67,8 +67,8 @@ public class AssetValuationServiceImpl implements AssetValuationService {
         AssetValue assetValue = new AssetValue();
         assetValue.setCoupon(valuation.getCoupon());
         assetValue.setNominalCurrency(valuation.getNominalCurrency());
-        final Double division = divide(valuation.getCleanMarketValue(), valuation.getNotional());
-        assetValue.setUnitValue(division);
+        //final Double division = divide(valuation.getCleanMarketValue(), valuation.getNotional());
+        assetValue.setUnitValue(valuation.getCleanMarketValue());
         assetValue.setPriceQuotationType(valuation.getPriceQuotationType());
         assetValue.setReportCurrency(valuation.getReportCurrency());
         assetValue.setValuationDateTime(valuationDateTime);
