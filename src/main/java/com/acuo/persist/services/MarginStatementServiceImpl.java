@@ -5,6 +5,7 @@ import com.acuo.persist.entity.MarginStatement;
 import com.acuo.persist.entity.StatementItem;
 import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.entity.enums.StatementStatus;
+import com.acuo.persist.entity.enums.Status;
 import com.acuo.persist.ids.ClientId;
 import com.acuo.persist.ids.MarginStatementId;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
@@ -186,7 +187,7 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
             MarginStatement marginStatement = marginStatements.next();
             marginStatement = this.find(marginStatement.getStatementId());
             LocalDateTime localDateTime = LocalDateTime.of(marginStatement.getDate(), marginStatement.getAgreement().getNotificationTime());
-            if(localDateTime.isAfter(min) && localDateTime.isBefore(max))
+            if(localDateTime.isAfter(min) && localDateTime.isBefore(max) || status.equalsIgnoreCase(StatementStatus.Reconciled.name()))
                 count ++;
         }
         return count;
