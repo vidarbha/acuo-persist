@@ -5,10 +5,15 @@ import com.acuo.persist.entity.FXValue;
 import com.opengamma.strata.basics.currency.Currency;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 public interface FXRateService extends Service<FXRate, Long> {
 
     FXRate get(Currency base, Currency counter);
+
+    Double getFXValue(Currency currency);
+
+    Map<Currency, Double> getAllFX();
 
     FXRate getOrCreate(Currency base, Currency counter);
 
