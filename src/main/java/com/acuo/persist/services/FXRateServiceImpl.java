@@ -34,8 +34,8 @@ public class FXRateServiceImpl extends GenericService<FXRate, Long> implements F
     @Transactional
     public FXRate get(Currency base, Currency counter){
         String query =
-                "MATCH p=(ccy1:Currency {id:{ccy1}})--(fxRate:FXRate)--(ccy2:Currency {id:{ccy2}}) " +
-                "MATCH (fxRate)<-[:OF]-(value:FXValue) " +
+                "MATCH (ccy1:Currency {id:{ccy1}})--(fxRate:FXRate)--(ccy2:Currency {id:{ccy2}}) " +
+                "MATCH p=(fxRate)-[*0..1]-()" +
                 "RETURN p, nodes(p), relationships(p)";
         final ImmutableMap<String, String> parameters = ImmutableMap.of("ccy1", base.getCode(), "ccy2", counter.getCode());
         return sessionProvider.get().queryForObject(FXRate.class, query, parameters);
@@ -65,21 +65,11 @@ public class FXRateServiceImpl extends GenericService<FXRate, Long> implements F
         fxValue.setLastUpdate(updated);
         fxValue.setValue(value);
         fxValue.setRate(fxRate);
-        fxValue.setPrevious(latestValueOf(fxRate));
-        fxValueService.save(fxValue);
+        FXValue previous = fxRate.getLast();
+        fxValue.setPrevious(previous);
+        fxValue = fxValueService.save(fxValue, 2);
         fxRate.setLast(fxValue);
         save(fxRate);
-    }
-
-    @Override
-    @Transactional
-    public FXValue latestValueOf(FXRate fxRate) {
-        String query =
-                "MATCH (fxRate:FXRate)<-[:OF]-(value:FXValue) " +
-                "WHERE ID(fxRate)={id} " +
-                "RETURN value ORDER BY value.from DESC LIMIT 1";
-        final ImmutableMap<String, Long> parameters = ImmutableMap.of("id", fxRate.getId());
-        return sessionProvider.get().queryForObject(FXValue.class, query, parameters);
     }
 
     private void cleanup(FXRate fxRate) {

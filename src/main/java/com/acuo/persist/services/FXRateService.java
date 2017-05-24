@@ -13,6 +13,4 @@ public interface FXRateService extends Service<FXRate, Long> {
     FXRate getOrCreate(Currency base, Currency counter);
 
     void addValue(FXRate fxRate, Double value, LocalDateTime updated);
-
-    FXValue latestValueOf(FXRate fxRate);
 }

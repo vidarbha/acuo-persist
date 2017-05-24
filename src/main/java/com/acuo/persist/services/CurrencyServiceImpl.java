@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CurrencyServiceImpl extends GenericService<CurrencyEntity, Long> implements CurrencyService {
+public class CurrencyServiceImpl extends GenericService<CurrencyEntity, String> implements CurrencyService {
 
     private final FXRateService fxRateService;
 
@@ -37,7 +37,7 @@ public class CurrencyServiceImpl extends GenericService<CurrencyEntity, Long> im
                 "RETURN p, nodes(p), relationships(p)";
         final FXRate fxRate = sessionProvider.get().queryForObject(FXRate.class, query, ImmutableMap.of("id", currency.getCode()));
         final Currency base = Currency.of(fxRate.getFrom().getCurrencyId());
-        final FXValue fxValue = fxRateService.latestValueOf(fxRate);
+        final FXValue fxValue = fxRate.getLast();
         final Double rate = fxValue.getValue();
         return Currency.USD.equals(base) ? 1 / rate : rate;
     }
@@ -62,18 +62,6 @@ public class CurrencyServiceImpl extends GenericService<CurrencyEntity, Long> im
                 values.put(from, rate);
         });
         return values;
-    }
-
-    @Transactional
-    @Override
-    public CurrencyEntity find(String id) {
-        ArgChecker.notNull(id, "id");
-        String query = "MATCH (i:Currency {id: {id} }) return i";
-        CurrencyEntity entity = sessionProvider.get().queryForObject(CurrencyEntity.class, query, ImmutableMap.of("id",id));
-        if(entity != null)
-            return find(entity.getId(), 1);
-        else
-            return null;
     }
 
     @Transactional
