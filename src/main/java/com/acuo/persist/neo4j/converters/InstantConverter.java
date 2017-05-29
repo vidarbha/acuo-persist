@@ -8,11 +8,11 @@ public class InstantConverter implements AttributeConverter<Instant, Long> {
 
     @Override
     public Long toGraphProperty(Instant value) {
-        return value.getEpochSecond();
+        return value.toEpochMilli();
     }
 
     @Override
     public Instant toEntityAttribute(Long value) {
-        return Instant.ofEpochSecond(value);
+        return Instant.ofEpochMilli(value);
     }
 }
