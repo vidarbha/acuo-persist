@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -56,7 +57,8 @@ public class AssetValuationServiceImpl implements AssetValuationService {
         assetValue = persist(assetId, assetValue);
 
         if (log.isDebugEnabled()) {
-            log.debug("valuation inserted in the db with timestamp set to {}", assetValue.getDateTime());
+            log.debug("valuation inserted in the db with valuation date set to {} and timestamp to {}",
+                    assetValue.getValuationDate(), assetValue.getTimestamp());
         }
         return assetValue;
     }
@@ -68,7 +70,8 @@ public class AssetValuationServiceImpl implements AssetValuationService {
         assetValue.setUnitValue(valuation.getCleanMarketValue());
         assetValue.setPriceQuotationType(valuation.getPriceQuotationType());
         assetValue.setReportCurrency(valuation.getReportCurrency());
-        assetValue.setDateTime(valuationDateTime);
+        assetValue.setValuationDate(valuationDateTime.toLocalDate());
+        assetValue.setTimestamp(valuationDateTime.toInstant(ZoneOffset.UTC));
         assetValue.setYield(valuation.getYield());
         return assetValue;
     }
