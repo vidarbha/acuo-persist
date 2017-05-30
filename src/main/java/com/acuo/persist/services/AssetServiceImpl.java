@@ -20,7 +20,7 @@ public class AssetServiceImpl extends GenericService<Asset, String> implements A
     private static String ELIGIBLE_ASSET_BY_CLIENT_AND_CALLID =
             "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:CLIENT_SIGNS]->(agreement:Agreement)-[:IS_COMPOSED_OF]->(rule:Rule)-[:APPLIES_TO]->(asset:Asset) " +
             "WITH asset, client, agreement, entity, rule " +
-            "MATCH (agreement)<-[:STEMS_FROM]-(ms:MarginStatement)<-[*1..2]-(marginCall:MarginCall {id:{callId}}),(ms)-[:DIRECTED_TO]->(entity) " +
+            "MATCH (agreement)<-[:STEMS_FROM]-(ms:MarginStatement)<-[*1..2]-(marginCall:MarginCall {id:{callId}}),(ms)-[:SENT_FROM|DIRECTED_TO]->(entity) " +
             "WHERE marginCall.marginType IN rule.marginType " +
             "AND NOT (asset)-[:EXCLUDED]->(marginCall) " +
             "WITH DISTINCT asset, rule " +
