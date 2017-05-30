@@ -5,7 +5,6 @@ import com.acuo.persist.entity.MarginStatement;
 import com.acuo.persist.entity.StatementItem;
 import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.entity.enums.StatementStatus;
-import com.acuo.persist.entity.enums.Status;
 import com.acuo.persist.ids.ClientId;
 import com.acuo.persist.ids.MarginStatementId;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
@@ -72,7 +71,8 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
     @Transactional
     public Iterable<MarginStatement> allStatementsForRecon(ClientId clientId) {
         String query =
-                "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement)<-[]-(mc:StatementItem)-[:LAST]->(step:Step) where step.status in ['Unrecon']" +
+                "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement)<-[]-(mc:StatementItem)-[:LAST]->(step:Step) " +
+                "WHERE step.status in ['Unrecon','Expected']" +
                 "WITH m " +
                 "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m)<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
                 "RETURN m, mc, nodes(p), relationships(p)";
@@ -86,8 +86,9 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
                 "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement) " +
                 "WITH m " +
                 "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-" +
-                "(m) <-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step {status:'Unrecon'}) " +
+                "(m) <-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step) " +
                 "WHERE NOT exists((mc)-[:MATCHED_TO]->()) " +
+                "AND step.status in ['Unrecon','Expected'] " +
                 "RETURN m, nodes(p), relationships(p)";
         return sessionProvider.get().query(MarginStatement.class, query, ImmutableMap.of("clientId", clientId.toString()));
     }
