@@ -55,7 +55,7 @@ public class Asset extends Entity<Asset> {
     private Set<Rule> rules;
 
     @Relationship(type = "OF", direction = Relationship.INCOMING)
-    private AssetTransfer transfer;
+    private Set<AssetTransfer> transfers;
 
     @Relationship(type = "PRICING_SOURCE")
     private PricingSource pricingSource;
