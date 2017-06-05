@@ -6,6 +6,8 @@ import com.acuo.persist.ids.ClientId;
 import com.acuo.persist.ids.PortfolioId;
 import com.acuo.persist.ids.TradeId;
 
+import java.util.List;
+
 public interface TradeService<T extends Trade> extends Service<T, TradeId> {
 
     Iterable<T> findBilateralTradesByClientId(ClientId clientId);
@@ -15,4 +17,6 @@ public interface TradeService<T extends Trade> extends Service<T, TradeId> {
     Iterable<IRS> findAllIRS();
 
     <S extends T> Iterable<S> createOrUpdate(Iterable<S> trades);
+
+    Iterable<T> findAllTradeByIds(List<TradeId> ids);
 }

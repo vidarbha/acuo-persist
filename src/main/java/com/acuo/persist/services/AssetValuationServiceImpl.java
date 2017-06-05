@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -51,7 +52,7 @@ public class AssetValuationServiceImpl implements AssetValuationService {
         if (log.isDebugEnabled()) {
             log.debug("inserting asset valuation for asset id [{}]", assetId);
         }
-        final LocalDate valuationDateTime = valuation.getValuationDateTime();
+        final LocalDateTime valuationDateTime = valuation.getValuationDateTime();
         AssetValue assetValue = createAssetValue(valuation, valuationDateTime);
 
         assetValue = persist(assetId, assetValue);
@@ -62,7 +63,7 @@ public class AssetValuationServiceImpl implements AssetValuationService {
         return assetValue;
     }
 
-    private AssetValue createAssetValue(com.acuo.common.model.results.AssetValuation valuation, LocalDate valuationDateTime) {
+    private AssetValue createAssetValue(com.acuo.common.model.results.AssetValuation valuation, LocalDateTime valuationDateTime) {
         AssetValue assetValue = new AssetValue();
         assetValue.setCoupon(valuation.getCoupon());
         assetValue.setNominalCurrency(valuation.getNominalCurrency());
