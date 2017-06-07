@@ -15,7 +15,9 @@ public class ConfigurationTestModule extends AbstractModule {
 		Injector injector = Guice.createInjector(new AbstractModule() {
 			@Override
 			protected void configure() {
-				bind(Configuration.class).toInstance(Configuration.builder(AppId.of("persist")).with(Environment.TEST).build());
+				bind(Configuration.class).toInstance(Configuration.builder(AppId.of("persist"))
+						.with(Environment.TEST)
+						.build());
 			}
 		});
 		install(injector.getInstance(PropertiesModule.class));
