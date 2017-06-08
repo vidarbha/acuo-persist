@@ -33,12 +33,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MarginStatementServiceImplTest {
 
     @Inject
-    private
-    ImportService importService = null;
+    private ImportService importService = null;
 
     @Inject
-    private
-    MarginStatementService marginStatementService = null;
+    private MarginStatementService marginStatementService = null;
 
     private ClientId client999 = ClientId.fromString("999");
 

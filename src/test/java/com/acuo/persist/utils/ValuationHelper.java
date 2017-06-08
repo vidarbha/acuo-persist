@@ -7,7 +7,6 @@ import com.acuo.persist.services.AssetValuationService;
 import com.opengamma.strata.basics.currency.Currency;
 
 import javax.inject.Inject;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.StreamSupport;
@@ -26,7 +25,19 @@ public class ValuationHelper {
     }
 
     public void createDummyAssetValues() {
-        assetValuations().forEach(assetValuation -> assetValuationService.persist(assetValuation));
+        assetValuations().forEach(assetValuationService::persist);
+    }
+
+    public void createAssetValue(Currency currency) {
+        AssetValuation valuation = new AssetValuation();
+        valuation.setAssetId(currency.getCode());
+        valuation.setNotional(1d);
+        valuation.setCleanMarketValue(1d);
+        valuation.setNominalCurrency(currency);
+        valuation.setReportCurrency(currency);
+        valuation.setSource("Reuters");
+        valuation.setValuationDateTime(LocalDateTime.now());
+        assetValuationService.persist(valuation);
     }
 
     private List<AssetValuation> assetValuations() {

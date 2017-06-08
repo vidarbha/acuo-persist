@@ -17,8 +17,8 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"holds", "transfer"})
-@ToString(exclude = {"holds", "transfer"})
+@EqualsAndHashCode(callSuper = false, exclude = {"holds", "transfers"})
+@ToString(exclude = {"holds", "transfers"})
 public class Asset extends Entity<Asset> {
 
     @Property(name = "id")

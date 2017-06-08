@@ -73,13 +73,13 @@ public class AssetValuationServiceImpl implements AssetValuationService {
         assetValue.setValuationDate(valuationDateTime.toLocalDate());
         assetValue.setTimestamp(valuationDateTime.toInstant(ZoneOffset.UTC));
         assetValue.setYield(valuation.getYield());
-        return assetValue;
+        return valueService.save(assetValue);
     }
 
     private void deleteLatestValue(AssetValuation assetValuation) {
         final Set<AssetValue> values = assetValuation.getValues();
         if (values == null) return;
-        valueService.delete(new ArrayList(values));
+        valueService.delete(new ArrayList<>(values));
         assetValuation.setValues(null);
     }
 }
