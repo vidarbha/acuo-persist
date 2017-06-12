@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import java.time.Instant;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -117,6 +118,7 @@ public class ValuationServiceTest {
         newValue.setSource(source);
         newValue.setCurrency(currency);
         newValue.setAmount(amount);
+        newValue.setTimestamp(Instant.now());
         return newValue;
     }
 
@@ -126,6 +128,7 @@ public class ValuationServiceTest {
         newValue.setCoupon(amount);
         newValue.setNominalCurrency(currency);
         newValue.setReportCurrency(currency);
+        newValue.setTimestamp(Instant.now());
         return newValue;
     }
 
@@ -134,6 +137,7 @@ public class ValuationServiceTest {
         newValue.setSource(source);
         newValue.setPv(amount);
         newValue.setCurrency(currency);
+        newValue.setTimestamp(Instant.now());
         return newValue;
     }
 }

@@ -44,6 +44,8 @@ public class Asset extends Entity<Asset> {
     private Double timeToMaturityDays;
     private Double timeToMaturityYears;
     private String rating;
+    @Convert(LocalDateConverter.class)
+    private LocalDate settlementTime;
 
     @Relationship(type = "IS_IN")
     private AssetCategory assetCategory;
@@ -55,7 +57,7 @@ public class Asset extends Entity<Asset> {
     private Set<Rule> rules;
 
     @Relationship(type = "OF", direction = Relationship.INCOMING)
-    private AssetTransfer transfer;
+    private Set<AssetTransfer> transfers;
 
     @Relationship(type = "PRICING_SOURCE")
     private PricingSource pricingSource;

@@ -14,6 +14,8 @@ import com.google.inject.persist.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -69,7 +71,8 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
     @Transactional
     public Iterable<MarginStatement> allStatementsForRecon(ClientId clientId) {
         String query =
-                "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement)<-[]-(mc:StatementItem)-[:LAST]->(step:Step) where step.status in ['Unrecon']" +
+                "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement)<-[]-(mc:StatementItem)-[:LAST]->(step:Step) " +
+                "WHERE step.status in ['Unrecon','Expected']" +
                 "WITH m " +
                 "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m)<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
                 "RETURN m, mc, nodes(p), relationships(p)";
@@ -83,8 +86,9 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
                 "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement) " +
                 "WITH m " +
                 "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-" +
-                "(m) <-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step {status:'Unrecon'}) " +
+                "(m) <-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step) " +
                 "WHERE NOT exists((mc)-[:MATCHED_TO]->()) " +
+                "AND step.status in ['Unrecon','Expected'] " +
                 "RETURN m, nodes(p), relationships(p)";
         return sessionProvider.get().query(MarginStatement.class, query, ImmutableMap.of("clientId", clientId.toString()));
     }
@@ -174,7 +178,22 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
     public Long getCountForMenu(String status)
     {
         String query = "MATCH (ms:MarginStatement )<-[:PART_OF]-(s:StatementItem)-[:LAST]->(step:Step {status:{status}}) " +
-                "RETURN count(distinct(ms)) AS count;";
-        return (Long) sessionProvider.get().query(query, ImmutableMap.of("status", status)).iterator().next().get("count");
+                "RETURN ms;";
+        long count = 0;
+        Iterator<MarginStatement> marginStatements = sessionProvider.get().query(MarginStatement.class, query, ImmutableMap.of("status", status)).iterator();
+        LocalDateTime max = LocalDateTime.now().plusHours(36);
+        LocalDateTime min = LocalDateTime.now().minusHours(36);
+        while(marginStatements.hasNext())
+        {
+            MarginStatement marginStatement = marginStatements.next();
+            marginStatement = this.find(marginStatement.getStatementId());
+            LocalDateTime localDateTime = LocalDateTime.of(marginStatement.getDate(), marginStatement.getAgreement().getNotificationTime());
+            if(localDateTime.isAfter(min) && localDateTime.isBefore(max) || status.equalsIgnoreCase(StatementStatus.Reconciled.name()))
+                count ++;
+        }
+        return count;
+        //return (Long) sessionProvider.get().query(query, ImmutableMap.of("status", status)).iterator().next().get("count");
     }
+
+
 }

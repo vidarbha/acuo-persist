@@ -12,7 +12,7 @@ import org.neo4j.ogm.annotation.Property;
 public class CurrencyEntity extends Entity<CurrencyEntity> {
 
     @Property(name = "id")
-    @Index(unique = true)
+    @Index(primary = true)
     private String currencyId;
 
     private String name;

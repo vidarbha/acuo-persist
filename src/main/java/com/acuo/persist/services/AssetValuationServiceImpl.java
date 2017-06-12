@@ -6,14 +6,13 @@ import com.acuo.persist.ids.AssetId;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static com.acuo.common.util.ArithmeticUtils.divide;
 import static java.util.stream.Collectors.toList;
 
 @Slf4j
@@ -58,7 +57,8 @@ public class AssetValuationServiceImpl implements AssetValuationService {
         assetValue = persist(assetId, assetValue);
 
         if (log.isDebugEnabled()) {
-            log.debug("valuation inserted in the db with timestamp set to {}", assetValue.getValuationDateTime());
+            log.debug("valuation inserted in the db with valuation date set to {} and timestamp to {}",
+                    assetValue.getValuationDate(), assetValue.getTimestamp());
         }
         return assetValue;
     }
@@ -67,11 +67,11 @@ public class AssetValuationServiceImpl implements AssetValuationService {
         AssetValue assetValue = new AssetValue();
         assetValue.setCoupon(valuation.getCoupon());
         assetValue.setNominalCurrency(valuation.getNominalCurrency());
-        final Double division = divide(valuation.getCleanMarketValue(), valuation.getNotional());
-        assetValue.setUnitValue(division);
+        assetValue.setUnitValue(valuation.getCleanMarketValue());
         assetValue.setPriceQuotationType(valuation.getPriceQuotationType());
         assetValue.setReportCurrency(valuation.getReportCurrency());
-        assetValue.setValuationDateTime(valuationDateTime);
+        assetValue.setValuationDate(valuationDateTime.toLocalDate());
+        assetValue.setTimestamp(valuationDateTime.toInstant(ZoneOffset.UTC));
         assetValue.setYield(valuation.getYield());
         return assetValue;
     }

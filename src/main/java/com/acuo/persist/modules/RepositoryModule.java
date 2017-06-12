@@ -23,6 +23,8 @@ import com.acuo.persist.services.DisputeService;
 import com.acuo.persist.services.DisputeServiceImpl;
 import com.acuo.persist.services.FXRateService;
 import com.acuo.persist.services.FXRateServiceImpl;
+import com.acuo.persist.services.FXValueService;
+import com.acuo.persist.services.FXValueServiceImpl;
 import com.acuo.persist.services.LegalEntityService;
 import com.acuo.persist.services.LegalEntityServiceImpl;
 import com.acuo.persist.services.MarginCallService;
@@ -75,6 +77,7 @@ public class RepositoryModule extends AbstractModule {
         bind(StepService.class).to(StepServiceImpl.class);
         bind(NextService.class).to(NextServiceImpl.class);
         bind(FXRateService.class).to(FXRateServiceImpl.class);
+        bind(FXValueService.class).to(FXValueServiceImpl.class);
     }
 
 }
