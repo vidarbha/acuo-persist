@@ -3,21 +3,20 @@ package com.acuo.persist.services;
 import com.acuo.persist.entity.Asset;
 import com.acuo.persist.ids.ClientId;
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.persist.Transactional;
 
 public class AssetServiceImpl extends GenericService<Asset, String> implements AssetService {
 
-    private static String ELIGIBLE_ASSET_WITH_ACCT_AND_TRANSFER_INFO =
+    private final static String AVAILABLE_ASSET =
             "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:CLIENT_SIGNS]->(agreement:Agreement)-[:IS_COMPOSED_OF]->(rule:Rule)-[:APPLIES_TO]->(asset:Asset) " +
             "WITH asset, client, rule " +
             "MATCH h=(:Custodian)-[:MANAGES]->(ca:CustodianAccount)-[holds:HOLDS]->(asset) " +
             "MATCH v=(asset)<-[:VALUATED]-(:AssetValuation)-[:VALUE]->(:AssetValue) " +
-            "OPTIONAL MATCH t=(asset)<-[:OF]-(:AssetTransfer)-[:FROM|TO]->(:CustodianAccount)<-[:HAS]-(client) " +
             "RETURN asset, " +
             "nodes(h), relationships(h), " +
-            "nodes(v), relationships(v), " +
-            "nodes(t), relationships(t)";
+            "nodes(v), relationships(v)";
 
-    private static String ELIGIBLE_ASSET_BY_CLIENT_AND_CALLID =
+    private final static String ELIGIBLE_ASSET_BY_CLIENT_AND_CALLID =
             "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:CLIENT_SIGNS]->(agreement:Agreement)-[:IS_COMPOSED_OF]->(rule:Rule)-[:APPLIES_TO]->(asset:Asset) " +
             "WITH asset, client, agreement, entity, rule " +
             "MATCH (agreement)<-[:STEMS_FROM]-(ms:MarginStatement)<-[*1..2]-(marginCall:MarginCall {id:{callId}}),(ms)-[:SENT_FROM|DIRECTED_TO]->(entity) " +
@@ -33,15 +32,18 @@ public class AssetServiceImpl extends GenericService<Asset, String> implements A
             "nodes(r), relationships(r)";
 
     @Override
-    public Iterable<Asset> findEligibleAssetByClientId(ClientId clientId) {
-        String query = ELIGIBLE_ASSET_WITH_ACCT_AND_TRANSFER_INFO;
-        return sessionProvider.get().query(getEntityType(), query, ImmutableMap.of("clientId",clientId.toString()));
+    @Transactional
+    public Iterable<Asset> findAvailableAssetByClientId(ClientId clientId) {
+        final ImmutableMap<String, String> parameters = ImmutableMap.of("clientId", clientId.toString());
+        return sessionProvider.get().query(getEntityType(), AVAILABLE_ASSET, parameters);
     }
 
     @Override
+    @Transactional
     public Iterable<Asset> findAvailableAssetByClientIdAndCallId(ClientId clientId, String callId) {
-        String query = ELIGIBLE_ASSET_BY_CLIENT_AND_CALLID;
-        return sessionProvider.get().query(getEntityType(), query, ImmutableMap.of("clientId",clientId.toString(), "callId", callId));
+        final ImmutableMap<String, String> parameters = ImmutableMap.of("clientId", clientId.toString(),
+                "callId", callId);
+        return sessionProvider.get().query(getEntityType(), ELIGIBLE_ASSET_BY_CLIENT_AND_CALLID, parameters);
     }
 
     @Override

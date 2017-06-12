@@ -17,8 +17,8 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"holds", "transfer"})
-@ToString(exclude = {"holds", "transfer"})
+@EqualsAndHashCode(callSuper = false, exclude = {"holds", "transfers"})
+@ToString(exclude = {"holds", "transfers"})
 public class Asset extends Entity<Asset> {
 
     @Property(name = "id")
@@ -44,6 +44,7 @@ public class Asset extends Entity<Asset> {
     private Double timeToMaturityDays;
     private Double timeToMaturityYears;
     private String rating;
+    private String settlementTime;
 
     @Relationship(type = "IS_IN")
     private AssetCategory assetCategory;

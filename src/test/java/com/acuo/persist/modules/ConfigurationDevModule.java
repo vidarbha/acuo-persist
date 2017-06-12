@@ -8,7 +8,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-public class ConfigurationTestModule extends AbstractModule {
+public class ConfigurationDevModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
@@ -16,7 +16,7 @@ public class ConfigurationTestModule extends AbstractModule {
 			@Override
 			protected void configure() {
 				bind(Configuration.class).toInstance(Configuration.builder(AppId.of("persist"))
-						.with(Environment.TEST)
+						.with(Environment.DEVELOPMENT)
 						.build());
 			}
 		});
