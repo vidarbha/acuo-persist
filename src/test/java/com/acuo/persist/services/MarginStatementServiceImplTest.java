@@ -2,12 +2,14 @@ package com.acuo.persist.services;
 
 import com.acuo.common.util.GuiceJUnitRunner;
 import com.acuo.persist.core.ImportService;
+import com.acuo.persist.entity.Agreement;
 import com.acuo.persist.entity.MarginStatement;
 import com.acuo.persist.entity.StatementItem;
 import com.acuo.persist.entity.Step;
 import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.ids.ClientId;
 import com.acuo.persist.ids.MarginStatementId;
+import com.acuo.persist.ids.PortfolioId;
 import com.acuo.persist.modules.ConfigurationTestModule;
 import com.acuo.persist.modules.DataImporterModule;
 import com.acuo.persist.modules.DataLoaderModule;
@@ -20,7 +22,10 @@ import org.junit.runner.RunWith;
 import org.neo4j.helpers.collection.Iterables;
 
 import javax.inject.Inject;
+import java.time.LocalDate;
 
+import static com.acuo.persist.entity.enums.StatementDirection.IN;
+import static com.acuo.persist.entity.enums.StatementDirection.OUT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(GuiceJUnitRunner.class)
@@ -37,6 +42,9 @@ public class MarginStatementServiceImplTest {
 
     @Inject
     private MarginStatementService marginStatementService = null;
+
+    @Inject
+    private AgreementService agreementService = null;
 
     private ClientId client999 = ClientId.fromString("999");
 
@@ -127,19 +135,36 @@ public class MarginStatementServiceImplTest {
     @Test
     @Ignore
     public void testMatch(){
-
     }
 
     @Test
-    @Ignore
     public void testGetMarginStatement(){
-
+        Agreement agreement = agreementService.agreementFor(PortfolioId.fromString("p2"));
+        LocalDate callDate = LocalDate.of(2017, 1, 13);
+        MarginStatement marginStatement = marginStatementService.getMarginStatement(agreement, callDate, OUT);
+        assertThat(marginStatement).isNotNull()
+                .satisfies(statement -> {
+                    assertThat(statement).extracting("direction").containsOnly(OUT);
+                    assertThat(statement).extracting("date").containsOnly(callDate);
+                    assertThat(statement).extracting("agreement").isNotEmpty().doesNotContainNull();
+                    assertThat(statement).extracting("directedTo").isNotEmpty().doesNotContainNull();
+                    assertThat(statement).extracting("sentFrom").isNotEmpty().doesNotContainNull();
+                });
     }
 
     @Test
-    @Ignore
     public void testGetOrCreateMarginStatement(){
-
+        Agreement agreement = agreementService.agreementFor(PortfolioId.fromString("p2"));
+        LocalDate callDate = LocalDate.of(2017, 1, 13);
+        MarginStatement marginStatement = marginStatementService.getOrCreateMarginStatement(agreement, callDate, IN);
+        assertThat(marginStatement).isNotNull()
+                .satisfies(statement -> {
+                    assertThat(statement).extracting("direction").containsOnly(IN);
+                    assertThat(statement).extracting("date").containsOnly(callDate);
+                    assertThat(statement).extracting("agreement").isNotEmpty().doesNotContainNull();
+                    assertThat(statement).extracting("directedTo").isNotEmpty().doesNotContainNull();
+                    assertThat(statement).extracting("sentFrom").isNotEmpty().doesNotContainNull();
+                });
     }
 
     @Test
