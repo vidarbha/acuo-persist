@@ -21,6 +21,9 @@ import java.util.stream.StreamSupport;
 
 import static java.util.Arrays.asList;
 
+import static com.acuo.persist.entity.enums.StatementStatus.*;
+import static java.util.Arrays.asList;
+
 @Slf4j
 public class MarginStatementServiceImpl extends GenericService<MarginStatement, String> implements MarginStatementService {
 
@@ -74,7 +77,7 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
     public Iterable<MarginStatement> allStatementsForRecon(ClientId clientId) {
         String query =
                 "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement)<-[]-(mc:StatementItem)-[:LAST]->(step:Step) " +
-                "WHERE step.status in ['Unrecon','Expected']" +
+                "WHERE step.status in ['Unrecon','Expected','MatchedToReceived']" +
                 "WITH m, mc " +
                 "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m)<-[]-(mc)-[:LAST]->(step:Step) " +
                 "RETURN m, mc, nodes(p), relationships(p)";
@@ -122,10 +125,10 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
     public void reconcile(MarginStatementId marginStatementId, Double amount) {
         log.info("reconciling all items for margin statement [{}]", marginStatementId);
         MarginStatement marginStatement = find(marginStatementId.toString(), 2);
-        Set<StatementItem> receviedMarginCalls = filter(marginStatement.getStatementItems(), StatementStatus.Unrecon);
+        Set<StatementItem> receviedMarginCalls = filter(marginStatement.getStatementItems(), Unrecon, MatchedToReceived);
         for (StatementItem marginCall : receviedMarginCalls) {
             log.debug("parent call {} and children {}", marginCall);
-            statementItemService.setStatus(marginCall.getItemId(), StatementStatus.Reconciled);
+            statementItemService.setStatus(marginCall.getItemId(), Reconciled);
         }
         log.info("margin statement {} reconciled",marginStatement);
     }
@@ -163,9 +166,9 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
         return marginStatement;
     }
 
-    private Set<StatementItem> filter(Set<StatementItem> calls, StatementStatus status) {
+    private Set<StatementItem> filter(Set<StatementItem> calls, StatementStatus... statuses) {
         return calls.stream()
-                .filter(mc -> status.equals(mc.getLastStep().getStatus()))
+                .filter(mc -> asList(statuses).contains(mc.getLastStep().getStatus()))
                 .collect(Collectors.toSet());
     }
 
