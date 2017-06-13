@@ -35,5 +35,5 @@ public interface MarginStatementService extends Service<MarginStatement, String>
 
     void setStatus(String statementItemId, StatementStatus status);
 
-    Long getCountForMenu(String status);
+    Long count(StatementStatus status, StatementDirection... directions);
 }

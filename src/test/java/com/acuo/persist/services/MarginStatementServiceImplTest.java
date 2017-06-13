@@ -6,6 +6,9 @@ import com.acuo.persist.entity.Agreement;
 import com.acuo.persist.entity.MarginStatement;
 import com.acuo.persist.entity.StatementItem;
 import com.acuo.persist.entity.Step;
+import com.acuo.persist.entity.VariationMargin;
+import com.acuo.persist.entity.enums.Side;
+import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.ids.ClientId;
 import com.acuo.persist.ids.MarginStatementId;
@@ -15,6 +18,7 @@ import com.acuo.persist.modules.DataImporterModule;
 import com.acuo.persist.modules.DataLoaderModule;
 import com.acuo.persist.modules.Neo4jPersistModule;
 import com.acuo.persist.modules.RepositoryModule;
+import com.opengamma.strata.basics.currency.Currency;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -24,6 +28,7 @@ import org.neo4j.helpers.collection.Iterables;
 import javax.inject.Inject;
 import java.time.LocalDate;
 
+import static com.acuo.persist.entity.enums.StatementDirection.*;
 import static com.acuo.persist.entity.enums.StatementDirection.IN;
 import static com.acuo.persist.entity.enums.StatementDirection.OUT;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,6 +50,12 @@ public class MarginStatementServiceImplTest {
 
     @Inject
     private AgreementService agreementService = null;
+
+    @Inject
+    private StatementItemService statementItemService = null;
+
+    @Inject
+    private CurrencyService currencyService = null;
 
     private ClientId client999 = ClientId.fromString("999");
 
@@ -174,8 +185,21 @@ public class MarginStatementServiceImplTest {
     }
 
     @Test
-    @Ignore
-    public void testGetCountForMenu(){
-
+    public void testCount(){
+        LocalDate now = LocalDate.now();
+        Agreement agreement = agreementService.find("a1");
+        MarginStatement marginStatement = marginStatementService.getOrCreateMarginStatement(agreement, now, OUT);
+        VariationMargin margin = new VariationMargin(Side.Client,
+                100.0d, now, now, Currency.USD, agreement, currencyService.getAllFX(), 0L);
+        margin = statementItemService.save(margin);
+        margin.setMarginStatement(marginStatement);
+        marginStatementService.setStatus(margin.getItemId(), StatementStatus.Reconciled);
+        statementItemService.save(margin);
+        Long count = marginStatementService.count(StatementStatus.Reconciled);
+        assertThat(count).isNotNull().isEqualTo(1);
+        count = marginStatementService.count(StatementStatus.Reconciled, IN);
+        assertThat(count).isNotNull().isEqualTo(0);
+        count = marginStatementService.count(StatementStatus.Unrecon);
+        assertThat(count).isNotNull().isEqualTo(0);
     }
 }

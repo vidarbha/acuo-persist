@@ -15,9 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import static java.util.Arrays.asList;
 
 @Slf4j
 public class MarginStatementServiceImpl extends GenericService<MarginStatement, String> implements MarginStatementService {
@@ -131,7 +133,7 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
     @Override
     @Transactional
     public void match(MarginStatementId fromId, MarginStatementId toId) {
-        MarginStatement from = find(fromId.toString());
+        //MarginStatement from = find(fromId.toString());
     }
 
     @Override
@@ -175,25 +177,23 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
 
     @Override
     @Transactional
-    public Long getCountForMenu(String status)
-    {
-        String query = "MATCH (ms:MarginStatement )<-[:PART_OF]-(s:StatementItem)-[:LAST]->(step:Step {status:{status}}) " +
-                "RETURN ms;";
-        long count = 0;
-        Iterator<MarginStatement> marginStatements = sessionProvider.get().query(MarginStatement.class, query, ImmutableMap.of("status", status)).iterator();
-        LocalDateTime max = LocalDateTime.now().plusHours(36);
-        LocalDateTime min = LocalDateTime.now().minusHours(36);
-        while(marginStatements.hasNext())
-        {
-            MarginStatement marginStatement = marginStatements.next();
-            marginStatement = this.find(marginStatement.getStatementId());
-            LocalDateTime localDateTime = LocalDateTime.of(marginStatement.getDate(), marginStatement.getAgreement().getNotificationTime());
-            if(localDateTime.isAfter(min) && localDateTime.isBefore(max) || status.equalsIgnoreCase(StatementStatus.Reconciled.name()))
-                count ++;
-        }
-        return count;
-        //return (Long) sessionProvider.get().query(query, ImmutableMap.of("status", status)).iterator().next().get("count");
+    public Long count(StatementStatus status, StatementDirection... directions) {
+        String query =
+                "MATCH p=(agreement:Agreement)<-[:STEMS_FROM]-(ms:MarginStatement)<-[:PART_OF]-(s:StatementItem)" +
+                "-[:LAST]->(step:Step) " +
+                "WHERE step.status = {status} " +
+                "AND ms.direction in {directions} " +
+                "RETURN ms, nodes(p), relationships(p)";
+        if(directions == null || directions.length == 0) directions = StatementDirection.values();
+        ImmutableMap<String, Object> parameters = ImmutableMap.of("status", status.name(), "directions", asList(directions));
+        Iterable<MarginStatement> marginStatements = sessionProvider.get().query(MarginStatement.class, query, parameters);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime max = now.plusHours(36);
+        LocalDateTime min = now.minusHours(36);
+        return StreamSupport.stream(marginStatements.spliterator(), true)
+                .filter(marginStatement -> {
+                    LocalDateTime localDateTime = LocalDateTime.of(marginStatement.getDate(), marginStatement.getAgreement().getNotificationTime());
+                    return localDateTime.isAfter(min) && localDateTime.isBefore(max);
+                }).count();
     }
-
-
 }
