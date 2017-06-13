@@ -19,6 +19,9 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.acuo.persist.entity.enums.StatementStatus.*;
+import static java.util.Arrays.asList;
+
 @Slf4j
 public class MarginStatementServiceImpl extends GenericService<MarginStatement, String> implements MarginStatementService {
 
@@ -120,10 +123,10 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
     public void reconcile(MarginStatementId marginStatementId, Double amount) {
         log.info("reconciling all items for margin statement [{}]", marginStatementId);
         MarginStatement marginStatement = find(marginStatementId.toString(), 2);
-        Set<StatementItem> receviedMarginCalls = filter(marginStatement.getStatementItems(), StatementStatus.Unrecon);
+        Set<StatementItem> receviedMarginCalls = filter(marginStatement.getStatementItems(), Unrecon, MatchedToReceived);
         for (StatementItem marginCall : receviedMarginCalls) {
             log.debug("parent call {} and children {}", marginCall);
-            statementItemService.setStatus(marginCall.getItemId(), StatementStatus.Reconciled);
+            statementItemService.setStatus(marginCall.getItemId(), Reconciled);
         }
         log.info("margin statement {} reconciled",marginStatement);
     }
@@ -161,9 +164,9 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
         return marginStatement;
     }
 
-    private Set<StatementItem> filter(Set<StatementItem> calls, StatementStatus status) {
+    private Set<StatementItem> filter(Set<StatementItem> calls, StatementStatus... statuses) {
         return calls.stream()
-                .filter(mc -> status.equals(mc.getLastStep().getStatus()))
+                .filter(mc -> asList(statuses).contains(mc.getLastStep().getStatus()))
                 .collect(Collectors.toSet());
     }
 
@@ -188,7 +191,7 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
             MarginStatement marginStatement = marginStatements.next();
             marginStatement = this.find(marginStatement.getStatementId());
             LocalDateTime localDateTime = LocalDateTime.of(marginStatement.getDate(), marginStatement.getAgreement().getNotificationTime());
-            if(localDateTime.isAfter(min) && localDateTime.isBefore(max) || status.equalsIgnoreCase(StatementStatus.Reconciled.name()))
+            if(localDateTime.isAfter(min) && localDateTime.isBefore(max) || status.equalsIgnoreCase(Reconciled.name()))
                 count ++;
         }
         return count;
