@@ -123,10 +123,15 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
     public void reconcile(MarginStatementId marginStatementId, Double amount) {
         log.info("reconciling all items for margin statement [{}]", marginStatementId);
         MarginStatement marginStatement = find(marginStatementId.toString(), 2);
-        Set<StatementItem> receviedMarginCalls = filter(marginStatement.getStatementItems(), Unrecon, MatchedToReceived);
-        for (StatementItem marginCall : receviedMarginCalls) {
-            log.debug("parent call {} and children {}", marginCall);
-            statementItemService.setStatus(marginCall.getItemId(), Reconciled);
+        Set<StatementItem> calls = filter(marginStatement.getStatementItems(), Unrecon, MatchedToReceived);
+        for (StatementItem call : calls) {
+            log.debug("parent call {} and children {}", call);
+            if (Unrecon.equals(call.getLastStep().getStatus())) {
+                statementItemService.setStatus(call.getItemId(), Reconciled);
+            }
+            if(MatchedToReceived.equals(call.getLastStep().getStatus())) {
+                statementItemService.setStatus(call.getItemId(), Closed);
+            }
         }
         log.info("margin statement {} reconciled",marginStatement);
     }
