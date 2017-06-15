@@ -18,7 +18,7 @@ import static com.opengamma.strata.basics.currency.Currency.USD;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 @ToString
 public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> {
 

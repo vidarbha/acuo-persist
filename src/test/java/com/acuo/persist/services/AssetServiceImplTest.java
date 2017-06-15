@@ -65,5 +65,10 @@ public class AssetServiceImplTest {
         assertThat(available).isNotNull();
     }
 
-
+    @Test
+    public void findAsset() {
+        final Asset usd = assetService.find("USD");
+        assertThat(usd).isNotNull();
+        assertThat(usd.getRules()).hasSize(44);
+    }
 }

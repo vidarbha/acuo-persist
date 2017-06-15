@@ -5,13 +5,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.Labels;
 import org.neo4j.ogm.annotation.NodeEntity;
-import org.neo4j.ogm.annotation.Property;
 
 import java.util.List;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public class Counterpart extends Firm {
 
     @Labels

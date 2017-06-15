@@ -2,7 +2,7 @@ package com.acuo.persist.services;
 
 import com.acuo.persist.entity.Asset;
 import com.acuo.persist.entity.AssetTransfer;
-import com.acuo.persist.entity.AssetTransferStatus;
+import com.acuo.persist.entity.enums.AssetTransferStatus;
 import com.acuo.persist.entity.CustodianAccount;
 import com.acuo.persist.entity.Holds;
 import com.acuo.persist.entity.LegalEntity;
@@ -16,7 +16,7 @@ import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.Collections;
 
-import static com.acuo.persist.entity.AssetTransferStatus.*;
+import static com.acuo.persist.entity.enums.AssetTransferStatus.*;
 
 public class AssetTransferServiceImpl extends GenericService<AssetTransfer, String> implements AssetTransferService {
 

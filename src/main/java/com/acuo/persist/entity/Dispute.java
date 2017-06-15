@@ -11,7 +11,7 @@ import static com.acuo.common.model.margin.Types.DisputeReasonCode;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public class Dispute extends Entity<Dispute> {
 
     @Relationship(type = "ON")
