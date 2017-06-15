@@ -19,7 +19,6 @@ import static com.opengamma.strata.basics.currency.Currency.USD;
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = false)
-@ToString
 public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> {
 
     private Double excessAmount;
@@ -134,5 +133,25 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
             return -1;
         else
             return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "MarginCall{" +
+                "excessAmount=" + excessAmount +
+                ", balanceAmount=" + balanceAmount +
+                ", deliverAmount=" + deliverAmount +
+                ", returnAmount=" + returnAmount +
+                ", pendingCollateral=" + pendingCollateral +
+                ", exposure=" + exposure +
+                ", IMRole='" + IMRole + '\'' +
+                ", roundedReturnAmount=" + roundedReturnAmount +
+                ", roundedDeliverAmount=" + roundedDeliverAmount +
+                ", belowMTA=" + belowMTA +
+                ", fxRate=" + fxRate +
+                ", tradeValued=" + tradeValued +
+                ", tradeCount=" + tradeCount +
+                super.toString() +
+                "}";
     }
 }
