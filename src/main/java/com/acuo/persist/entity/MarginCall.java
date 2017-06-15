@@ -35,6 +35,7 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
     private Double fxRate;
     private Long tradeValued;
     private Long tradeCount;
+    private String ampId;
 
     public MarginCall() {
     }
@@ -151,6 +152,7 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
                 ", fxRate=" + fxRate +
                 ", tradeValued=" + tradeValued +
                 ", tradeCount=" + tradeCount +
+                ", ampId=" + ampId +
                 super.toString() +
                 "}";
     }
