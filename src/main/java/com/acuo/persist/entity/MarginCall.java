@@ -2,6 +2,7 @@ package com.acuo.persist.entity;
 
 import com.acuo.persist.entity.enums.Side;
 import com.acuo.persist.entity.enums.StatementDirection;
+import com.acuo.persist.neo4j.converters.LocalDateTimeConverter;
 import com.acuo.persist.utils.GraphData;
 import com.acuo.persist.utils.IDGen;
 import com.opengamma.strata.basics.currency.Currency;
@@ -9,8 +10,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import static com.acuo.common.model.margin.Types.MarginType;
@@ -37,6 +40,9 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
     private Long tradeValued;
     private Long tradeCount;
     private String ampId;
+
+    @Convert(LocalDateTimeConverter.class)
+    protected LocalDateTime modifiedDate;
 
     public MarginCall() {
     }
