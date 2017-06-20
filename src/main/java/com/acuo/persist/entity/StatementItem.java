@@ -23,8 +23,8 @@ import static com.acuo.common.model.margin.Types.MarginType;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"marginStatement", "children"})
-@ToString(exclude = {"marginStatement", "children"})
+@EqualsAndHashCode(callSuper = false, exclude = {"marginStatement", "matchedItem", "children"})
+@ToString(exclude = {"marginStatement", "matchedItem", "children"})
 public class StatementItem<T extends StatementItem> extends Entity<T> {
 
     @Property(name = "id")
