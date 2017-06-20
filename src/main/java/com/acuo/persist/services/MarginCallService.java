@@ -21,7 +21,7 @@ public interface MarginCallService extends Service<MarginCall, String> {
 
     Iterable<MarginCall> allExpectedCallsFor(MarginStatementId marginStatementId);
 
-    void matchToExpected(String callId);
+    MarginCall matchToExpected(String callId);
 
     List<com.acuo.common.model.margin.MarginCall> getDisputeMarginCall(String marginStatementId);
 

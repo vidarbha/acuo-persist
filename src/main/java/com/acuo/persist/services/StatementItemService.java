@@ -5,5 +5,5 @@ import com.acuo.persist.entity.StatementItem;
 
 public interface StatementItemService extends Service<StatementItem, String> {
 
-    void  setStatus(String statementItemId, StatementStatus status);
+    <T extends StatementItem> T setStatus(String statementItemId, StatementStatus status);
 }

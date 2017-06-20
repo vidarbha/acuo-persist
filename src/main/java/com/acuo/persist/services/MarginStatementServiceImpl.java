@@ -175,10 +175,14 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * @deprecated  {@link StatementItemService#setStatus(String, StatementStatus)}
+     */
+    @Deprecated
     @Override
     @Transactional
-    public void setStatus(String statementItemId, StatementStatus status) {
-        statementItemService.setStatus(statementItemId, status);
+    public <T extends StatementItem> T setStatus(String statementItemId, StatementStatus status) {
+        return statementItemService.setStatus(statementItemId, status);
     }
 
     @Override

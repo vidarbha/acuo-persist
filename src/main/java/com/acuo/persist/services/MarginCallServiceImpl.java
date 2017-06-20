@@ -90,23 +90,24 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
 
     @Override
     @Transactional
-    public void matchToExpected(String callId) {
+    public MarginCall matchToExpected(String callId) {
         MarginCall cptyCall = find(callId, 1);
         StatementItem matchedItem = cptyCall.getMatchedItem();
-        if (matchedItem != null) {
-            return;
-        }
-        final MarginStatementId marginStatementId = MarginStatementId.fromString(cptyCall.getMarginStatement().getStatementId());
-        final Iterable<MarginCall> marginCalls = allExpectedCallsFor(marginStatementId);
+        if (matchedItem == null) {
+            final MarginStatementId marginStatementId = MarginStatementId.fromString(cptyCall.getMarginStatement().getStatementId());
+            final Iterable<MarginCall> marginCalls = allExpectedCallsFor(marginStatementId);
 
-        final Optional<MarginCall> expected = StreamSupport.stream(marginCalls.spliterator(), false)
-                .filter(clientCall -> MATCHING_CALLS.test(clientCall, cptyCall))
-                .findFirst();
-        if (expected.isPresent()) {
-            cptyCall.setMatchedItem(expected.get());
-            statementItemService.setStatus(expected.get().getItemId(), StatementStatus.MatchedToReceived);
-            save(cptyCall);
+            MarginCall finalCptyCall = cptyCall;
+            final Optional<MarginCall> expected = StreamSupport.stream(marginCalls.spliterator(), false)
+                    .filter(clientCall -> MATCHING_CALLS.test(clientCall, finalCptyCall))
+                    .findFirst();
+            if (expected.isPresent()) {
+                cptyCall.setMatchedItem(expected.get());
+                statementItemService.setStatus(expected.get().getItemId(), StatementStatus.MatchedToReceived);
+                cptyCall = save(cptyCall);
+            }
         }
+        return cptyCall;
     }
 
     @Override
@@ -178,7 +179,7 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
     public MarginCall createPartialDisputeCall(MarginCall parent, MarginCall child, Dispute dispute, StatementStatus status) {
 
         child = this.createOrUpdate(child);
-        statementItemService.setStatus(child.getItemId(), status);
+        child = statementItemService.setStatus(child.getItemId(), status);
 
         ChildOf childOf = new ChildOf();
         childOf.setTime(LocalDateTime.now());
