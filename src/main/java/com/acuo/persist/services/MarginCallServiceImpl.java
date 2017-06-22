@@ -103,6 +103,7 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
                     .findFirst();
             if (expected.isPresent()) {
                 cptyCall.setMatchedItem(expected.get());
+                cptyCall = statementItemService.setStatus(cptyCall.getItemId(), StatementStatus.Unrecon);
                 statementItemService.setStatus(expected.get().getItemId(), StatementStatus.MatchedToReceived);
                 cptyCall = save(cptyCall);
             }
