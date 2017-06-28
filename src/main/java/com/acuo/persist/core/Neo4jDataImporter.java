@@ -1,17 +1,19 @@
 package com.acuo.persist.core;
 
+import com.acuo.common.cache.manager.CacheManager;
+import com.acuo.common.cache.manager.Cacheable;
+import com.acuo.common.cache.manager.CachedObject;
 import com.acuo.common.util.ArgChecker;
 import com.acuo.persist.configuration.PropertiesHelper;
 import com.acuo.persist.utils.GraphData;
 import com.google.inject.Singleton;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,12 +26,11 @@ import java.util.regex.Pattern;
 public class Neo4jDataImporter implements DataImporter {
 
     private static final Logger LOG = LoggerFactory.getLogger(Neo4jDataImporter.class);
+    private static CacheManager cacheManager = new CacheManager();
 
     private final DataLoader loader;
-    private static final String ENCODING = "UTF-8";
     private final String workingDirPath;
     private final String dataBranch;
-    private final String dataDirPath;
     private final String directoryTemplate;
     private final String dataImportFiles;
     private Map<String, String> substitutions = new HashMap<>();
@@ -44,7 +45,7 @@ public class Neo4jDataImporter implements DataImporter {
         this.loader = loader;
         this.workingDirPath = dataDir;
         this.dataBranch = dataBranch;
-        this.dataDirPath = GraphData.getDataLink(dataImportLink);
+        String dataDirPath = GraphData.getDataLink(dataImportLink);
         this.directoryTemplate = directoryTemplate;
         this.dataImportFiles = dataImportFiles;
         substitutions.put("%workingDirPath%", workingDirPath);
@@ -60,7 +61,7 @@ public class Neo4jDataImporter implements DataImporter {
         if (branch == null)
             branch = dataBranch;
         final String value = branch;
-        Arrays.asList(fileNames).stream().forEach(f -> importFile(value, f));
+        Arrays.stream(fileNames).forEach(f -> importFile(value, f));
     }
 
     @Override
@@ -68,8 +69,8 @@ public class Neo4jDataImporter implements DataImporter {
         return Pattern.compile(",")
                 .splitAsStream(dataImportFiles)
                 .filter(Objects::nonNull)
-                .map(s -> s.trim())
-                .toArray(value -> new String[value]);
+                .map(String::trim)
+                .toArray(String[]::new);
     }
 
     private void importFile(String branch, String fileName) {
@@ -78,21 +79,22 @@ public class Neo4jDataImporter implements DataImporter {
             String filePath = String.format(directoryTemplate, workingDirPath, fileName);
             filePath = buildQuery(filePath, substitutions);
             LOG.info("Importing files [{}] from {}", fileName, filePath);
-            String file = GraphData.readFile(filePath);
-            String query = buildQuery(file, substitutions);
+            String query = file(filePath);
             loader.loadData(query);
         } catch (Exception e) {
             LOG.error("an error occured while importing file {}", fileName, e);
         }
     }
 
-    private String buildQuery(File cypherFile, Map<String, String> substitutions) throws IOException {
-        ArgChecker.notNull(cypherFile, "cypherFile");
-        ArgChecker.isTrue(cypherFile.exists(), "File: " + cypherFile.getName() + " does not exist!");
-        String query = FileUtils.readFileToString(cypherFile, ENCODING);
-        query = replacePlaceHolders(query, substitutions.entrySet());
-        LOG.debug("{}", query);
-        return query;
+    private String file(String filePath) throws IOException, URISyntaxException {
+        Cacheable value = cacheManager.getCache(filePath);
+        if (value == null) {
+            String file = GraphData.readFile(filePath);
+            file = buildQuery(file, substitutions);
+            value = new CachedObject(file, filePath, 3);
+            cacheManager.putCache(value);
+        }
+        return (String)value.getObject();
     }
 
     private String buildQuery(String file, Map<String, String> substitutions) throws IOException {
