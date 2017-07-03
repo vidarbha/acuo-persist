@@ -41,8 +41,7 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
     private Long tradeCount;
     private String ampId;
 
-    @Convert(LocalDateTimeConverter.class)
-    protected LocalDateTime modifiedDate;
+    protected String modifiedDate;
 
     public MarginCall() {
     }
