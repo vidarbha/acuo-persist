@@ -40,6 +40,7 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
     private Long tradeValued;
     private Long tradeCount;
     private String ampId;
+    private Integer sentMS;
 
     protected String modifiedDate;
 

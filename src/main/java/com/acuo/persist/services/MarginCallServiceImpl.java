@@ -199,4 +199,12 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
 
         return child;
     }
+
+    @Override
+    @Transactional
+    public void sentMS(MarginCall marginCall)
+    {
+        marginCall.setSentMS(1);
+        save(marginCall);
+    }
 }

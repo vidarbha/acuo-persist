@@ -31,4 +31,6 @@ public interface MarginCallService extends Service<MarginCall, String> {
 
     MarginCall createPartialDisputeCall(MarginCall parent, MarginCall child, Dispute dispute, StatementStatus status);
 
+    void sentMS(MarginCall marginCall);
+
 }
