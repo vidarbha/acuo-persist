@@ -17,8 +17,8 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"holds", "transfers"})
-@ToString(exclude = {"holds", "transfers"})
+@EqualsAndHashCode(callSuper = false, exclude = {"holds", "transfers", "settlementDate"})
+@ToString(exclude = {"holds", "transfers", "settlementDate"})
 public class Asset extends Entity<Asset> {
 
     @Property(name = "id")
@@ -60,4 +60,7 @@ public class Asset extends Entity<Asset> {
 
     @Relationship(type = "PRICING_SOURCE")
     private PricingSource pricingSource;
+
+    @Relationship(type = "SETTLE_DATE")
+    private SettlementDate settlementDate;
 }
