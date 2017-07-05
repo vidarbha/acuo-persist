@@ -11,6 +11,7 @@ import lombok.ToString;
 import org.neo4j.ogm.annotation.NodeEntity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import static com.acuo.common.model.margin.Types.MarginType;
@@ -40,7 +41,7 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
     private String ampId;
     private Integer sentMS;
 
-    protected String modifiedDate;
+    protected LocalDateTime modifiedDate;
 
     public MarginCall() {
     }
