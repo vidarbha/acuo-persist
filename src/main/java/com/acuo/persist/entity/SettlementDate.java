@@ -7,7 +7,9 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.neo4j.causalclustering.core.consensus.outcome.Outcome;
 import org.neo4j.cypher.internal.frontend.v3_1.SemanticDirection;
+import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
@@ -20,6 +22,10 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = false, exclude = {"settlementDates"})
 @ToString(exclude = {"settlementDates"})
 public class SettlementDate extends Entity<SettlementDate>{
+
+    @Property(name = "id")
+    @Index(primary = true)
+    private String settlementDateId;
 
     @Convert(LocalDateTimeConverter.class)
     private LocalDateTime queryDateTime;
