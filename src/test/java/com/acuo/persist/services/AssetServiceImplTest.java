@@ -56,7 +56,7 @@ public class AssetServiceImplTest {
     @Test
     public void findEligibleAssetByClientId() throws Exception {
         final Iterable<Asset> eligible = assetService.findAvailableAssetByClientId(client999);
-        assertThat(eligible).isNotNull().hasSize(2);
+        assertThat(eligible).isNotNull().hasSize(0);
     }
 
     @Test
