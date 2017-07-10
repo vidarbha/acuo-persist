@@ -12,9 +12,11 @@ public class AssetServiceImpl extends GenericService<Asset, String> implements A
             "WITH asset, client, rule " +
             "MATCH h=(:Custodian)-[:MANAGES]->(ca:CustodianAccount)-[holds:HOLDS]->(asset) " +
             "MATCH v=(asset)<-[:VALUATED]-(:AssetValuation)-[:VALUE]->(:AssetValue) " +
+            "MATCH r=(asset)>-[:SETTLE_DATE]-(:SettlementDate)-[:SETTLEMENT_DATE]->(:SettlementDate) " +
             "RETURN asset, " +
             "nodes(h), relationships(h), " +
-            "nodes(v), relationships(v)";
+            "nodes(v), relationships(v), " +
+            "nodes(r), relationships(r)";
 
     private final static String ELIGIBLE_ASSET_BY_CLIENT_AND_CALLID =
             "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:CLIENT_SIGNS]->(agreement:Agreement)-[:IS_COMPOSED_OF]->(rule:Rule)-[:APPLIES_TO]->(asset:Asset) " +
@@ -26,10 +28,12 @@ public class AssetServiceImpl extends GenericService<Asset, String> implements A
             "MATCH h=(:Custodian)-[:MANAGES]->(ca:CustodianAccount)-[:HOLDS]->(asset) " +
             "MATCH v=(asset)<-[:VALUATED]-(:AssetValuation)-[:VALUE]->(:AssetValue) " +
             "MATCH r=(rule)-[:APPLIES_TO]->(asset) " +
+            "MATCH y=(asset)>-[:SETTLE_DATE]-(:SettlementDate)-[:SETTLEMENT_DATE]->(:SettlementDate) " +
             "RETURN asset, " +
             "nodes(h), relationships(h), " +
             "nodes(v), relationships(v), " +
-            "nodes(r), relationships(r)";
+            "nodes(r), relationships(r), " +
+            "nodes(y), relationships(y)";
 
     @Override
     @Transactional
