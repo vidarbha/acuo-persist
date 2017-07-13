@@ -13,6 +13,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 
+import java.time.LocalDate;
+import java.util.stream.StreamSupport;
+
 public class ValuationServiceImpl extends GenericService<Valuation, String> implements ValuationService {
 
     private final PortfolioService portfolioService;
@@ -62,11 +65,11 @@ public class ValuationServiceImpl extends GenericService<Valuation, String> impl
     public MarginValuation getMarginValuationFor(PortfolioId portfolioId, Types.CallType callType) {
         String query =
                 "MATCH p=(value:MarginValue)<-[:VALUE]-(valuation:MarginValuation {callType: {callType}})" +
-                "-[:VALUATED]->(portfolio:Portfolio {id:{id}})-[:BELONGS_TO|FOLLOWS|PART_OF]-(n) " +
-                "RETURN p, nodes(p), relationships(p)";
+                        "-[:VALUATED]->(portfolio:Portfolio {id:{id}})-[:BELONGS_TO|FOLLOWS|PART_OF]-(n) " +
+                        "RETURN p, nodes(p), relationships(p)";
         final String pId = portfolioId.toString();
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", pId, "callType", callType.name());
-       return sessionProvider.get().queryForObject(MarginValuation.class, query, parameters);
+        return sessionProvider.get().queryForObject(MarginValuation.class, query, parameters);
     }
 
     @Override
@@ -103,5 +106,24 @@ public class ValuationServiceImpl extends GenericService<Valuation, String> impl
             valuation = save(valuation, 1);
         }
         return valuation;
+    }
+
+    @Override
+    @Transactional
+    public Long tradeCount(PortfolioId portfolioId) {
+        return portfolioService.tradeCount(portfolioId);
+    }
+
+    @Override
+    @Transactional
+    public Long tradeValuedCount(PortfolioId portfolioId, LocalDate valuationDate) {
+        String query =
+                "MATCH p=(portfolio:Portfolio {id:{id}})<-[:BELONGS_TO]-(trade:Trade)<-[:VALUATED]-(valuation:TradeValuation)-[:VALUE]->(value:TradeValue) " +
+                "RETURN valuation, nodes(p), relationships(p)";
+        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", portfolioId.toString());
+        Iterable<TradeValuation> valuations = sessionProvider.get().query(TradeValuation.class, query, parameters);
+        return StreamSupport.stream(valuations.spliterator(), true)
+                .filter(valuation -> valuation.isValuedFor(valuationDate))
+                .count();
     }
 }

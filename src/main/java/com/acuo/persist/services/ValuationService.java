@@ -9,6 +9,8 @@ import com.acuo.persist.ids.AssetId;
 import com.acuo.persist.ids.PortfolioId;
 import com.acuo.persist.ids.TradeId;
 
+import java.time.LocalDate;
+
 public interface ValuationService extends Service<Valuation, String> {
 
     TradeValuation getTradeValuationFor(TradeId tradeId);
@@ -22,4 +24,8 @@ public interface ValuationService extends Service<Valuation, String> {
     AssetValuation getAssetValuationFor(AssetId assetId);
 
     AssetValuation getOrCreateAssetValuationFor(AssetId assetId);
+
+    Long tradeCount(PortfolioId portfolioId);
+
+    Long tradeValuedCount(PortfolioId portfolioId, LocalDate valuationDate);
 }

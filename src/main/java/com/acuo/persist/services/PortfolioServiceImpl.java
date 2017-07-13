@@ -30,8 +30,8 @@ public class PortfolioServiceImpl extends GenericService<Portfolio, PortfolioId>
     @Transactional
     public Long tradeCount(PortfolioId portfolioId) {
         String query =
-                "MATCH p=(portfolio:Portfolio {id:{id}})<-[:BELONGS_TO]-(trade:Trade) " +
-                        "RETURN count(trade) as count";
+                "MATCH (portfolio:Portfolio {id:{id}})<-[:BELONGS_TO]-(trade:Trade) " +
+                "RETURN count(trade) as count";
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", portfolioId.toString());
         Result result =  sessionProvider.get().query(query, parameters);
         Map<String, Object> next = result.iterator().next();
