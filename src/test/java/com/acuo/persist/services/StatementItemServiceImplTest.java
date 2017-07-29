@@ -15,6 +15,8 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @RunWith(GuiceJUnitRunner.class)
 @GuiceJUnitRunner.GuiceModules({
         ConfigurationTestModule.class,
@@ -36,8 +38,13 @@ public class StatementItemServiceImplTest {
 
     @Test
     public void testStatus() {
-        statementItemService.setStatus("id", StatementStatus.Expected);
-        StatementItem id = statementItemService.find("id");
-        statementItemService.setStatus("id", StatementStatus.Pledged);
+        StatementItem id = statementItemService.setStatus("id", StatementStatus.Expected);
+        assertThat(id).isNotNull();
+        assertThat(id.getLastStep()).isNotNull();
+        assertThat(id.getLastStep().getStatus()).isEqualTo(StatementStatus.Expected);
+        id = statementItemService.setStatus("id", StatementStatus.Pledged);
+        assertThat(id).isNotNull();
+        assertThat(id.getLastStep()).isNotNull();
+        assertThat(id.getLastStep().getStatus()).isEqualTo(StatementStatus.Pledged);
     }
 }

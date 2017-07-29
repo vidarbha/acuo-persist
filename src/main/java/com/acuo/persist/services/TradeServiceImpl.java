@@ -12,6 +12,7 @@ import com.google.inject.persist.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.ogm.cypher.query.SortOrder;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -45,12 +46,15 @@ public class TradeServiceImpl<T extends Trade> extends GenericService<T, TradeId
 
     @Override
     @Transactional
-    public Iterable<T> findByPortfolioId(PortfolioId portfolioId) {
+    public Iterable<T> findByPortfolioId(PortfolioId... ids) {
         if (log.isDebugEnabled()) {
-            log.debug("findByPortfolioId {}",portfolioId);
+            log.debug("findByPortfolioId for {}", Arrays.asList(ids));
         }
-        String query =  "MATCH (t:IRS)-[r:BELONGS_TO]->(p:Portfolio {id:{id}}) return t";
-        return sessionProvider.get().query(getEntityType(), query, ImmutableMap.of("id",portfolioId.toString()));
+        String query =
+                "MATCH p=()-[*0..1]-(t:Trade)-[r:BELONGS_TO]->(portfolio:Portfolio) " +
+                "WHERE portfolio.id IN {ids} " +
+                "RETURN p, nodes(p), relationships(p)";
+        return sessionProvider.get().query(getEntityType(), query, ImmutableMap.of("ids", ids));
     }
 
     @Override

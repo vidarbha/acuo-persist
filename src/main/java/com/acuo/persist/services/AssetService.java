@@ -5,7 +5,7 @@ import com.acuo.persist.ids.ClientId;
 
 public interface AssetService extends Service<Asset, String>  {
 
-    Iterable<Asset> findEligibleAssetByClientId(ClientId clientId);
+    Iterable<Asset> findAvailableAssetByClientId(ClientId clientId);
 
     Iterable<Asset> findAvailableAssetByClientIdAndCallId(ClientId clientId, String callId);
 }

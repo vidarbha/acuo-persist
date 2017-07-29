@@ -10,7 +10,7 @@ import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public class AssetValue extends Value<AssetValue> {
 
     private Double yield;

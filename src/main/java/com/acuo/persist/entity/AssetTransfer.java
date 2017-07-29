@@ -1,5 +1,6 @@
 package com.acuo.persist.entity;
 
+import com.acuo.persist.entity.enums.AssetTransferStatus;
 import com.acuo.persist.neo4j.converters.LocalDateTimeConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

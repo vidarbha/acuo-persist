@@ -8,7 +8,7 @@ import org.neo4j.ogm.annotation.Relationship;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public class Step extends Entity<Step> {
 
     private StatementStatus status;

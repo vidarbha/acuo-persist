@@ -11,14 +11,16 @@ import lombok.ToString;
 import org.neo4j.ogm.annotation.NodeEntity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import static com.acuo.common.model.margin.Types.MarginType;
 import static com.opengamma.strata.basics.currency.Currency.USD;
+import static java.lang.Math.*;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 @ToString
 public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> {
 
@@ -36,6 +38,10 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
     private Double fxRate;
     private Long tradeValued;
     private Long tradeCount;
+    private String ampId;
+    private Integer sentMS;
+
+    protected LocalDateTime modifiedDate;
 
     public MarginCall() {
     }
@@ -64,38 +70,37 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
         this.balanceAmount = balance(agreement.getClientSignsRelation());
         this.pendingCollateral = pendingCollateral(agreement.getClientSignsRelation());
 
-        this.excessAmount = amount - (balanceAmount + pendingCollateral);
-
-        this.exposure = null;
+        this.exposure = amount;
 
         double balanceAndPendingAmount = balanceAmount + pendingCollateral;
-        if (excessAmount < 0) {
-            exposure = 0 - amount;
-            this.direction = StatementDirection.OUT;
 
+        this.excessAmount = amount - balanceAndPendingAmount;
+
+        if (excessAmount < 0) {
+            this.direction = StatementDirection.OUT;
         } else {
-            exposure = amount;
             this.direction = StatementDirection.IN;
         }
 
-        if (sign(exposure) == sign(balanceAndPendingAmount) && exposure > 0) {
-            deliverAmount = excessAmount;
-            returnAmount = 0d;
-        } else if (sign(exposure) == sign(balanceAndPendingAmount) && exposure < 0) {
-            deliverAmount = 0d;
-            returnAmount = excessAmount;
+        if (sign(exposure) == sign(balanceAndPendingAmount))
+            if(sign(excessAmount) == sign(balanceAndPendingAmount)) {
+                deliverAmount = abs(excessAmount);
+                returnAmount = 0d;
+            } else {
+                deliverAmount = 0d;
+                returnAmount = abs(excessAmount);
         } else {
-            deliverAmount = exposure;
-            returnAmount = Math.abs(balanceAndPendingAmount);
+            deliverAmount = abs(exposure);
+            returnAmount = abs(balanceAndPendingAmount);
         }
 
         Double rounding = agreement.getClientSignsRelation().getRounding() != null ? agreement.getClientSignsRelation().getRounding() : 0;
         if (rounding != 0) {
             if (deliverAmount != 0) {
-                deliverAmount = deliverAmount / Math.abs(deliverAmount) * Math.ceil(Math.abs(deliverAmount) / rounding) * rounding;
+                deliverAmount = deliverAmount / abs(deliverAmount) * ceil(abs(deliverAmount) / rounding) * rounding;
             }
             if (returnAmount != 0) {
-                returnAmount = returnAmount / Math.abs(returnAmount) * Math.floor(Math.abs(returnAmount) / rounding) * rounding;
+                returnAmount = returnAmount / abs(returnAmount) * floor(abs(returnAmount) / rounding) * rounding;
             }
         }
         this.marginAmount = deliverAmount + returnAmount;

@@ -2,6 +2,7 @@ package com.acuo.persist.services;
 
 import com.acuo.common.model.margin.Dispute;
 import com.acuo.common.model.margin.Types;
+import com.acuo.persist.entity.ChildOf;
 import com.acuo.persist.entity.MarginCall;
 import com.acuo.persist.entity.StatementItem;
 import com.acuo.persist.entity.enums.StatementStatus;
@@ -12,6 +13,7 @@ import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 import org.neo4j.ogm.model.Result;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.stream.StreamSupport;
@@ -21,6 +23,9 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
 
     @Inject
     StatementItemService statementItemService;
+
+    @Inject
+    DisputeService disputeService;
 
     @Override
     public Class<MarginCall> getEntityType() {
@@ -43,8 +48,8 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
     public Iterable<MarginCall> callFor(String marginStatementId, StatementStatus... statuses) {
         String query =
                 "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement {id:{msId}})<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
-                "WHERE step.status IN {statuses} " +
-                "RETURN mc, nodes(p), relationships(p)";
+                        "WHERE step.status IN {statuses} " +
+                        "RETURN mc, nodes(p), relationships(p)";
         return sessionProvider.get().query(MarginCall.class, query, ImmutableMap.of("msId", marginStatementId, "statuses", statuses));
     }
 
@@ -61,8 +66,8 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
     @Override
     @Transactional
     public Iterable<MarginCall> allExpectedCallsFor(MarginStatementId marginStatementId) {
-        String query =  "MATCH (m:MarginStatement {id:{msId}})<-[]-(mc:MarginCall)-[:LAST]->(step:Step {status:'Expected'}) " +
-                        "return mc";
+        String query = "MATCH (m:MarginStatement {id:{msId}})<-[]-(mc:MarginCall)-[:LAST]->(step:Step {status:'Expected'}) " +
+                "return mc";
         return sessionProvider.get().query(MarginCall.class, query, ImmutableMap.of("msId", marginStatementId.toString()));
     }
 
@@ -80,34 +85,35 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
 
     private static final BiPredicate<MarginCall, MarginCall> MATCHING_CALLS =
             (clientCall, cptyCall) ->
-                clientCall.getCallDate().equals(cptyCall.getCallDate()) &&
-                clientCall.getMarginType().equals(cptyCall.getMarginType());
+                    clientCall.getCallDate().equals(cptyCall.getCallDate()) &&
+                            clientCall.getMarginType().equals(cptyCall.getMarginType());
 
     @Override
     @Transactional
-    public void matchToExpected(String callId) {
+    public MarginCall matchToExpected(String callId) {
         MarginCall cptyCall = find(callId, 1);
         StatementItem matchedItem = cptyCall.getMatchedItem();
-        if (matchedItem != null) {
-            return;
-        }
-        final MarginStatementId marginStatementId = MarginStatementId.fromString(cptyCall.getMarginStatement().getStatementId());
-        final Iterable<MarginCall> marginCalls = allExpectedCallsFor(marginStatementId);
+        if (matchedItem == null) {
+            final MarginStatementId marginStatementId = MarginStatementId.fromString(cptyCall.getMarginStatement().getStatementId());
+            final Iterable<MarginCall> marginCalls = allExpectedCallsFor(marginStatementId);
 
-        final Optional<MarginCall> expected = StreamSupport.stream(marginCalls.spliterator(), false)
-                .filter(clientCall -> MATCHING_CALLS.test(clientCall, cptyCall))
-                .findFirst();
-        if (expected.isPresent()) {
-            cptyCall.setMatchedItem(expected.get());
-            statementItemService.setStatus(expected.get().getItemId(), StatementStatus.MatchedToReceived);
-            save(cptyCall);
+            MarginCall finalCptyCall = cptyCall;
+            final Optional<MarginCall> expected = StreamSupport.stream(marginCalls.spliterator(), false)
+                    .filter(clientCall -> MATCHING_CALLS.test(clientCall, finalCptyCall))
+                    .findFirst();
+            if (expected.isPresent()) {
+                cptyCall.setMatchedItem(expected.get());
+                cptyCall = statementItemService.setStatus(cptyCall.getItemId(), StatementStatus.Unrecon);
+                statementItemService.setStatus(expected.get().getItemId(), StatementStatus.MatchedToReceived);
+                cptyCall = save(cptyCall);
+            }
         }
+        return cptyCall;
     }
 
     @Override
     @Transactional
-    public List<com.acuo.common.model.margin.MarginCall> getDisputeMarginCall(String marginStatementId)
-    {
+    public List<com.acuo.common.model.margin.MarginCall> getDisputeMarginCall(String marginStatementId) {
         List<com.acuo.common.model.margin.MarginCall> marginCalls = new ArrayList<>();
         String query = "MATCH (ms:MarginStatement {id:{id}})<-[:ON]-(d:Dispute) " +
                 "WHERE d.agreedAmount = 0  " +
@@ -119,28 +125,26 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
         return marginCalls;
     }
 
-    private com.acuo.common.model.margin.MarginCall buildDisputeMarginCall(Map<String, Object> map)
-    {
+    private com.acuo.common.model.margin.MarginCall buildDisputeMarginCall(Map<String, Object> map) {
         com.acuo.common.model.margin.MarginCall marginCall = new com.acuo.common.model.margin.MarginCall();
-        marginCall.setAmpId((String)map.get("mc.ampId"));
-        marginCall.setAgreedAmount((Long)map.get("d.agreedAmount"));
+        marginCall.setAmpId((String) map.get("mc.ampId"));
+        marginCall.setAgreedAmount((Long) map.get("d.agreedAmount"));
         Dispute dispute = new Dispute();
         marginCall.setDispute(dispute);
         Set<Types.DisputeReasonCode> disputeReasonCodeSet = new HashSet<>();
         dispute.setDisputeReasonCodes(disputeReasonCodeSet);
-        String[] codes = (String[])map.get("d.disputeReasonCodes");
+        String[] codes = (String[]) map.get("d.disputeReasonCodes");
         Arrays.stream(codes).forEach(s -> disputeReasonCodeSet.add(Types.DisputeReasonCode.valueOf(s)));
         //disputeReasonCodeSet.add(Types.DisputeReasonCode.valueOf((map.get("d.disputeReasonCodes").toString())));
-        dispute.setComments((String)map.get("d.comments"));
-        dispute.setMtm(((Double)map.get("d.mtm")).doubleValue());
-        marginCall.setExposure((Double)map.get("d.balance"));
+        dispute.setComments((String) map.get("d.comments"));
+        dispute.setMtm(((Double) map.get("d.mtm")).doubleValue());
+        marginCall.setExposure((Double) map.get("d.balance"));
         return marginCall;
     }
 
     @Override
     @Transactional
-    public com.acuo.common.model.margin.MarginCall getPledgeMarginCall(String marginCallId)
-    {
+    public com.acuo.common.model.margin.MarginCall getPledgeMarginCall(String marginCallId) {
         com.acuo.common.model.margin.MarginCall marginCall = new com.acuo.common.model.margin.MarginCall();
         String query = String.format(
                 "MATCH (mc:MarginCall {id:{id}})<-[:GENERATED_BY]-(at:AssetTransfer)-[:OF]->(a:Asset) " +
@@ -152,10 +156,9 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
         Map<String, Object> map = result.iterator().next();
         //// TODO: 2017/5/15 0015   check if Custodian account ca is owned by the client or the counterpart. If it's owned by the client, then deliveryType is 'deliver', otherwise it's 'return'
 
-        if(map != null)
-        {
-            marginCall.setAmpId((String)map.get("mc.ampId"));
-            marginCall.setCurrency(com.opengamma.strata.basics.currency.Currency.of((String)map.get("a.currency")));
+        if (map != null) {
+            marginCall.setAmpId((String) map.get("mc.ampId"));
+            marginCall.setCurrency(com.opengamma.strata.basics.currency.Currency.of((String) map.get("a.currency")));
 
         }
         return marginCall;
@@ -163,13 +166,45 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
 
     @Override
     @Transactional
-    public MarginCall findByAmpId(String ampId)
-    {
-        String query =  "MATCH (mc:MarginCall {ampId:{id}}) RETURN mc;";
-        Iterator<MarginCall>  result = sessionProvider.get().query(MarginCall.class, query, ImmutableMap.of("id", ampId)).iterator();
-        if(result.hasNext())
+    public MarginCall findByAmpId(String ampId) {
+        String query = "MATCH (mc:MarginCall {ampId:{id}}) RETURN mc;";
+        Iterator<MarginCall> result = sessionProvider.get().query(MarginCall.class, query, ImmutableMap.of("id", ampId)).iterator();
+        if (result.hasNext())
             return result.next();
         else
             return null;
+    }
+
+    @Override
+    @Transactional
+    public MarginCall createPartialDisputeCall(MarginCall parent, MarginCall child, Dispute dispute, StatementStatus status) {
+
+        child = this.createOrUpdate(child);
+        child = statementItemService.setStatus(child.getItemId(), status);
+
+        ChildOf childOf = new ChildOf();
+        childOf.setTime(LocalDateTime.now());
+        childOf.setChild(child);
+        childOf.setParent(parent);
+
+        Set<ChildOf> children = new HashSet<ChildOf>();
+        children.add(childOf);
+        parent.setChildren(children);
+        parent = this.createOrUpdate(parent);
+        statementItemService.setStatus(parent.getItemId(), StatementStatus.PartialDispute);
+
+        if (StatementStatus.ActionDispute.equals(status)) {
+            com.acuo.persist.entity.Dispute disputeInDB = disputeService.add(parent.getMarginStatement(), dispute);
+        }
+
+        return child;
+    }
+
+    @Override
+    @Transactional
+    public void sentMS(MarginCall marginCall)
+    {
+        marginCall.setSentMS(1);
+        save(marginCall);
     }
 }

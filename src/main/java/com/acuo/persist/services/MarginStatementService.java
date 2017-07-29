@@ -2,6 +2,7 @@ package com.acuo.persist.services;
 
 import com.acuo.persist.entity.Agreement;
 import com.acuo.persist.entity.MarginStatement;
+import com.acuo.persist.entity.StatementItem;
 import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.ids.ClientId;
@@ -33,7 +34,11 @@ public interface MarginStatementService extends Service<MarginStatement, String>
 
     MarginStatement getOrCreateMarginStatement(Agreement agreement, LocalDate callDate, StatementDirection direction);
 
-    void setStatus(String statementItemId, StatementStatus status);
+    /**
+     * @deprecated  {@link StatementItemService#setStatus(String, StatementStatus)}
+     */
+    @Deprecated
+    <T extends StatementItem> T setStatus(String statementItemId, StatementStatus status);
 
-    Long getCountForMenu(String status);
+    Long count(StatementStatus status, StatementDirection... directions);
 }

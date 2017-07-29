@@ -15,9 +15,12 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import static com.acuo.persist.entity.enums.StatementStatus.*;
+import static java.util.Arrays.asList;
 
 @Slf4j
 public class MarginStatementServiceImpl extends GenericService<MarginStatement, String> implements MarginStatementService {
@@ -72,9 +75,9 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
     public Iterable<MarginStatement> allStatementsForRecon(ClientId clientId) {
         String query =
                 "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement)<-[]-(mc:StatementItem)-[:LAST]->(step:Step) " +
-                "WHERE step.status in ['Unrecon','Expected']" +
-                "WITH m " +
-                "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m)<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
+                "WHERE step.status in ['Unrecon','Expected','MatchedToReceived']" +
+                "WITH m, mc " +
+                "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m)<-[]-(mc)-[:LAST]->(step:Step) " +
                 "RETURN m, mc, nodes(p), relationships(p)";
         return sessionProvider.get().query(MarginStatement.class, query, ImmutableMap.of("clientId", clientId.toString()));
     }
@@ -89,7 +92,7 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
                 "(m) <-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step) " +
                 "WHERE NOT exists((mc)-[:MATCHED_TO]->()) " +
                 "AND step.status in ['Unrecon','Expected'] " +
-                "RETURN m, nodes(p), relationships(p)";
+                "RETURN p, nodes(p), relationships(p)";
         return sessionProvider.get().query(MarginStatement.class, query, ImmutableMap.of("clientId", clientId.toString()));
     }
 
@@ -120,10 +123,15 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
     public void reconcile(MarginStatementId marginStatementId, Double amount) {
         log.info("reconciling all items for margin statement [{}]", marginStatementId);
         MarginStatement marginStatement = find(marginStatementId.toString(), 2);
-        Set<StatementItem> receviedMarginCalls = filter(marginStatement.getStatementItems(), StatementStatus.Unrecon);
-        for (StatementItem marginCall : receviedMarginCalls) {
-            log.debug("parent call {} and children {}", marginCall);
-            statementItemService.setStatus(marginCall.getItemId(), StatementStatus.Reconciled);
+        Set<StatementItem> calls = filter(marginStatement.getStatementItems(), Unrecon, MatchedToReceived);
+        for (StatementItem call : calls) {
+            log.debug("parent call {} and children {}", call);
+            if (Unrecon.equals(call.getLastStep().getStatus())) {
+                statementItemService.setStatus(call.getItemId(), Reconciled);
+            }
+            if(MatchedToReceived.equals(call.getLastStep().getStatus())) {
+                statementItemService.setStatus(call.getItemId(), Closed);
+            }
         }
         log.info("margin statement {} reconciled",marginStatement);
     }
@@ -131,7 +139,7 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
     @Override
     @Transactional
     public void match(MarginStatementId fromId, MarginStatementId toId) {
-        MarginStatement from = find(fromId.toString());
+        //MarginStatement from = find(fromId.toString());
     }
 
     @Override
@@ -161,39 +169,41 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
         return marginStatement;
     }
 
-    private Set<StatementItem> filter(Set<StatementItem> calls, StatementStatus status) {
+    private Set<StatementItem> filter(Set<StatementItem> calls, StatementStatus... statuses) {
         return calls.stream()
-                .filter(mc -> status.equals(mc.getLastStep().getStatus()))
+                .filter(mc -> asList(statuses).contains(mc.getLastStep().getStatus()))
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * @deprecated  {@link StatementItemService#setStatus(String, StatementStatus)}
+     */
+    @Deprecated
     @Override
     @Transactional
-    public void setStatus(String statementItemId, StatementStatus status) {
-        statementItemService.setStatus(statementItemId, status);
+    public <T extends StatementItem> T setStatus(String statementItemId, StatementStatus status) {
+        return statementItemService.setStatus(statementItemId, status);
     }
 
     @Override
     @Transactional
-    public Long getCountForMenu(String status)
-    {
-        String query = "MATCH (ms:MarginStatement )<-[:PART_OF]-(s:StatementItem)-[:LAST]->(step:Step {status:{status}}) " +
-                "RETURN ms;";
-        long count = 0;
-        Iterator<MarginStatement> marginStatements = sessionProvider.get().query(MarginStatement.class, query, ImmutableMap.of("status", status)).iterator();
-        LocalDateTime max = LocalDateTime.now().plusHours(36);
-        LocalDateTime min = LocalDateTime.now().minusHours(36);
-        while(marginStatements.hasNext())
-        {
-            MarginStatement marginStatement = marginStatements.next();
-            marginStatement = this.find(marginStatement.getStatementId());
-            LocalDateTime localDateTime = LocalDateTime.of(marginStatement.getDate(), marginStatement.getAgreement().getNotificationTime());
-            if(localDateTime.isAfter(min) && localDateTime.isBefore(max) || status.equalsIgnoreCase(StatementStatus.Reconciled.name()))
-                count ++;
-        }
-        return count;
-        //return (Long) sessionProvider.get().query(query, ImmutableMap.of("status", status)).iterator().next().get("count");
+    public Long count(StatementStatus status, StatementDirection... directions) {
+        String query =
+                "MATCH p=(agreement:Agreement)<-[:STEMS_FROM]-(ms:MarginStatement)<-[:PART_OF]-(s:StatementItem)" +
+                "-[:LAST]->(step:Step) " +
+                "WHERE step.status = {status} " +
+                "AND ms.direction in {directions} " +
+                "RETURN ms, nodes(p), relationships(p)";
+        if(directions == null || directions.length == 0) directions = StatementDirection.values();
+        ImmutableMap<String, Object> parameters = ImmutableMap.of("status", status.name(), "directions", asList(directions));
+        Iterable<MarginStatement> marginStatements = sessionProvider.get().query(MarginStatement.class, query, parameters);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime max = now.plusHours(36);
+        LocalDateTime min = now.minusHours(36);
+        return StreamSupport.stream(marginStatements.spliterator(), true)
+                .filter(marginStatement -> {
+                    LocalDateTime localDateTime = LocalDateTime.of(marginStatement.getDate(), marginStatement.getAgreement().getNotificationTime());
+                    return localDateTime.isAfter(min) && localDateTime.isBefore(max);
+                }).count();
     }
-
-
 }

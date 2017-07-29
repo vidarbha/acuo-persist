@@ -10,7 +10,7 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public class Rule extends Entity<Rule> {
 
     @Property(name="marginType")
