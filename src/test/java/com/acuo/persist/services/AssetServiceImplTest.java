@@ -3,7 +3,8 @@ package com.acuo.persist.services;
 import com.acuo.common.util.GuiceJUnitRunner;
 import com.acuo.persist.core.ImportService;
 import com.acuo.persist.entity.Asset;
-import com.acuo.persist.ids.ClientId;
+import com.acuo.common.model.ids.AssetId;
+import com.acuo.common.model.ids.ClientId;
 import com.acuo.persist.modules.ConfigurationTestModule;
 import com.acuo.persist.modules.DataImporterModule;
 import com.acuo.persist.modules.DataLoaderModule;
@@ -49,8 +50,8 @@ public class AssetServiceImplTest {
         valuationHelper.createAssetValue(Currency.USD);
         valuationHelper.createAssetValue(Currency.EUR);
 
-        assetTransferService.sendAsset("mcp1", Currency.USD.getCode(), 10d, "CustodianAccount1D");
-        assetTransferService.receiveAsset("mcp1", Currency.EUR.getCode(), 10d, "CustodianAccount1A");
+        assetTransferService.sendAsset("mcp1", AssetId.fromString(Currency.USD.getCode()), 10d, "CustodianAccount1D");
+        assetTransferService.receiveAsset("mcp1", AssetId.fromString(Currency.EUR.getCode()), 10d, "CustodianAccount1A");
     }
 
     @Test
@@ -67,7 +68,7 @@ public class AssetServiceImplTest {
 
     @Test
     public void findAsset() {
-        final Asset usd = assetService.find("USD");
+        final Asset usd = assetService.find(AssetId.fromString("USD"));
         assertThat(usd).isNotNull();
         assertThat(usd.getRules()).hasSize(44);
     }

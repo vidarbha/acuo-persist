@@ -1,10 +1,12 @@
 package com.acuo.persist.neo4j.converters;
 
 import com.acuo.common.type.TypedString;
-import com.acuo.persist.ids.ClientId;
-import com.acuo.persist.ids.MarginStatementId;
-import com.acuo.persist.ids.PortfolioId;
-import com.acuo.persist.ids.TradeId;
+import com.acuo.common.model.ids.AssetId;
+import com.acuo.common.model.ids.BookId;
+import com.acuo.common.model.ids.ClientId;
+import com.acuo.common.model.ids.MarginStatementId;
+import com.acuo.common.model.ids.PortfolioId;
+import com.acuo.common.model.ids.TradeId;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.ogm.typeconversion.AttributeConverter;
 
@@ -19,6 +21,8 @@ public abstract class TypedStringConverter<T extends TypedString> implements Att
     public static class ClientIdConverter extends TypedStringConverter<ClientId> {}
     public static class TradeIdConverter extends TypedStringConverter<TradeId> {}
     public static class MarginStatementIdConverter extends TypedStringConverter<MarginStatementId> {}
+    public static class AssetIdConverter extends TypedStringConverter<AssetId> {}
+    public static class BookIdConverter extends TypedStringConverter<BookId> {}
 
     @Override
     public String toGraphProperty(T value) {

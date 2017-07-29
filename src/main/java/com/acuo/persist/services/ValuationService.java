@@ -5,9 +5,9 @@ import com.acuo.persist.entity.AssetValuation;
 import com.acuo.persist.entity.MarginValuation;
 import com.acuo.persist.entity.TradeValuation;
 import com.acuo.persist.entity.Valuation;
-import com.acuo.persist.ids.AssetId;
-import com.acuo.persist.ids.PortfolioId;
-import com.acuo.persist.ids.TradeId;
+import com.acuo.common.model.ids.AssetId;
+import com.acuo.common.model.ids.PortfolioId;
+import com.acuo.common.model.ids.TradeId;
 
 import java.time.LocalDate;
 

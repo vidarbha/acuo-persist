@@ -1,8 +1,8 @@
 package com.acuo.persist.services;
 
 import com.acuo.persist.entity.Agreement;
-import com.acuo.persist.ids.PortfolioId;
-import com.acuo.persist.ids.TradeId;
+import com.acuo.common.model.ids.PortfolioId;
+import com.acuo.common.model.ids.TradeId;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 

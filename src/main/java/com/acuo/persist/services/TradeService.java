@@ -2,9 +2,9 @@ package com.acuo.persist.services;
 
 import com.acuo.persist.entity.IRS;
 import com.acuo.persist.entity.Trade;
-import com.acuo.persist.ids.ClientId;
-import com.acuo.persist.ids.PortfolioId;
-import com.acuo.persist.ids.TradeId;
+import com.acuo.common.model.ids.ClientId;
+import com.acuo.common.model.ids.PortfolioId;
+import com.acuo.common.model.ids.TradeId;
 
 import java.util.List;
 

@@ -11,15 +11,18 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@ToString(callSuper = true, exclude = {"values"})
-@EqualsAndHashCode(callSuper = true, exclude = {"values"})
-public class MarginValuation extends Valuation {
+@ToString(callSuper = true, exclude = {"latestValue","values"})
+@EqualsAndHashCode(callSuper = true, exclude = {"latestValue","values"})
+public class MarginValuation extends Valuation<MarginValue> {
 
     private Types.CallType callType;
 
     @Relationship(type = "VALUATED")
     private Portfolio portfolio;
 
+    @Relationship(type = "LATEST")
+    protected MarginValue latestValue;
+
     @Relationship(type = "VALUE")
-    private Set<MarginValue> values;
+    protected Set<MarginValue> values;
 }

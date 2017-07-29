@@ -14,20 +14,23 @@ import static org.neo4j.ogm.annotation.Relationship.INCOMING;
 
 @NodeEntity
 @Data
-@ToString(callSuper = true, exclude = {"values", "latestValue"})
-@EqualsAndHashCode(callSuper = true, exclude = {"values", "latestValue"})
-public class TradeValuation extends Valuation {
+@ToString(callSuper = true, exclude = {"latestValue","values"})
+@EqualsAndHashCode(callSuper = true, exclude = {"latestValue","values"})
+public class TradeValuation extends Valuation<TradeValue> {
 
     @Relationship(type = "VALUATED")
     private Trade trade;
-
-    @Relationship(type = "VALUE")
-    private Set<TradeValue> values;
 
     public boolean isValuedFor(LocalDate valuationDate) {
         ArgChecker.notNull(valuationDate, "valuationDate");
         return values.stream().anyMatch(value -> valuationDate.isEqual(value.getValuationDate()));
     }
+
+    @Relationship(type = "LATEST")
+    protected TradeValue latestValue;
+
+    @Relationship(type = "VALUE")
+    protected Set<TradeValue> values;
 }
 
 

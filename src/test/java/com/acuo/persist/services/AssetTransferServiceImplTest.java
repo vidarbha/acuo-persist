@@ -3,7 +3,8 @@ package com.acuo.persist.services;
 import com.acuo.common.util.GuiceJUnitRunner;
 import com.acuo.persist.core.ImportService;
 import com.acuo.persist.entity.AssetTransfer;
-import com.acuo.persist.ids.ClientId;
+import com.acuo.common.model.ids.AssetId;
+import com.acuo.common.model.ids.ClientId;
 import com.acuo.persist.modules.ConfigurationTestModule;
 import com.acuo.persist.modules.DataImporterModule;
 import com.acuo.persist.modules.DataLoaderModule;
@@ -49,7 +50,7 @@ public class AssetTransferServiceImplTest {
 
     @Test
     public void findArrivingAssetTransferByClientId() throws Exception {
-        transferService.receiveAsset("mcp1", Currency.USD.getCode(), 10d, "CustodianAccount1D");
+        transferService.receiveAsset("mcp1", AssetId.fromString(Currency.USD.getCode()), 10d, "CustodianAccount1D");
 
         final Iterable<AssetTransfer> arriving = transferService.findArrivingAssetTransferByClientId(client999);
         assertThat(arriving).isNotNull().hasSize(1);
@@ -57,7 +58,7 @@ public class AssetTransferServiceImplTest {
 
     @Test
     public void findDepartedAssetTransferByClientId() throws Exception {
-        transferService.sendAsset("mcp1", Currency.USD.getCode(), 10d, "CustodianAccount1D");
+        transferService.sendAsset("mcp1", AssetId.fromString(Currency.USD.getCode()), 10d, "CustodianAccount1D");
 
         final Iterable<AssetTransfer> departed = transferService.findDepartedAssetTransferByClientId(client999);
         assertThat(departed).isNotNull().hasSize(1);

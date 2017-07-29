@@ -1,6 +1,6 @@
 package com.acuo.persist.neo4j.converters;
 
-import com.acuo.persist.ids.PortfolioId;
+import com.acuo.common.model.ids.PortfolioId;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

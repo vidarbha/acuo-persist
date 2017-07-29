@@ -6,7 +6,7 @@ import com.acuo.persist.entity.ChildOf;
 import com.acuo.persist.entity.MarginCall;
 import com.acuo.persist.entity.StatementItem;
 import com.acuo.persist.entity.enums.StatementStatus;
-import com.acuo.persist.ids.MarginStatementId;
+import com.acuo.common.model.ids.MarginStatementId;
 import com.acuo.persist.spring.Call;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;

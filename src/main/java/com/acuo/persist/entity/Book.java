@@ -1,0 +1,27 @@
+package com.acuo.persist.entity;
+
+import com.acuo.common.model.ids.BookId;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.neo4j.ogm.annotation.Index;
+import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
+import org.neo4j.ogm.annotation.Relationship;
+import org.neo4j.ogm.annotation.typeconversion.Convert;
+
+import static com.acuo.persist.neo4j.converters.TypedStringConverter.BookIdConverter;
+
+@NodeEntity
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class Book extends Entity<Book> {
+
+    @Property(name = "id")
+    @Index(primary = true)
+    @Convert(BookIdConverter.class)
+    private BookId bookId;
+
+    @Relationship(type = "PART_OF")
+    private Portfolio portfolio;
+
+}

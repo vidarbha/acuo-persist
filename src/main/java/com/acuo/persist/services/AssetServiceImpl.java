@@ -1,11 +1,12 @@
 package com.acuo.persist.services;
 
 import com.acuo.persist.entity.Asset;
-import com.acuo.persist.ids.ClientId;
+import com.acuo.common.model.ids.AssetId;
+import com.acuo.common.model.ids.ClientId;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 
-public class AssetServiceImpl extends GenericService<Asset, String> implements AssetService {
+public class AssetServiceImpl extends GenericService<Asset, AssetId> implements AssetService {
 
     private final static String AVAILABLE_ASSET =
             "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:CLIENT_SIGNS]->(agreement:Agreement)-[:IS_COMPOSED_OF]->(rule:Rule)-[:APPLIES_TO]->(asset:Asset) " +
