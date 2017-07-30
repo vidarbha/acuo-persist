@@ -36,8 +36,8 @@ public class AssetServiceImpl extends GenericService<Asset, AssetId> implements 
             "nodes(r), relationships(r)";
 
     private final static String TOTAL_HAIRCUT =
-            "MATCH (si)-[:PART_OF]->(:MarginStatement)-[:STEMS_FROM]->(agr:Agreement) " +
-            "MATCH (a)-[:IS_IN]->(:AssetCategory)-[eu:IS_ELIGIBLE_UNDER]->(agr) " +
+            "MATCH (si:StatementItem {id:{callId}})-[:PART_OF]->(:MarginStatement)-[:STEMS_FROM]->(agr:Agreement) " +
+            "MATCH (a:Asset {id:{assetId}})-[:IS_IN]->(:AssetCategory)-[eu:IS_ELIGIBLE_UNDER]->(agr) " +
             "WITH eu.haircut + eu.FXHaircut as totalHaircut " +
             "RETURN totalHaircut";
 
