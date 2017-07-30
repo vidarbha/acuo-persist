@@ -9,4 +9,6 @@ public interface AssetService extends Service<Asset, AssetId>  {
     Iterable<Asset> findAvailableAssetByClientId(ClientId clientId);
 
     Iterable<Asset> findAvailableAssetByClientIdAndCallId(ClientId clientId, String callId);
+
+    Double totalHaircut(AssetId assetId, String callId);
 }

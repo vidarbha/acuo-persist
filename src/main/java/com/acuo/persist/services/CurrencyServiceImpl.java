@@ -4,10 +4,7 @@ import com.acuo.persist.entity.CurrencyEntity;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 import com.opengamma.strata.basics.currency.Currency;
-import org.neo4j.ogm.model.Result;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 public class CurrencyServiceImpl extends GenericService<CurrencyEntity, String> implements CurrencyService {

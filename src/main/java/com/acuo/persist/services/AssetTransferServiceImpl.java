@@ -2,6 +2,7 @@ package com.acuo.persist.services;
 
 import com.acuo.persist.entity.Asset;
 import com.acuo.persist.entity.AssetTransfer;
+import com.acuo.persist.entity.FXRate;
 import com.acuo.persist.entity.enums.AssetTransferStatus;
 import com.acuo.persist.entity.CustodianAccount;
 import com.acuo.persist.entity.Holds;
@@ -32,6 +33,9 @@ public class AssetTransferServiceImpl extends GenericService<AssetTransfer, Stri
 
     @Inject
     private AssetValuationService assetValuationService = null;
+
+    @Inject
+    private FXRateService fxRateService = null;
 
     @Override
     public Class<AssetTransfer> getEntityType() {
@@ -123,9 +127,21 @@ public class AssetTransferServiceImpl extends GenericService<AssetTransfer, Stri
 
         Asset asset = assetService.find(assetId, 2);
         assetTransfer.setOf(asset);
+
+        // UnitValue
         assetTransfer.setTransferValue(asset.getParValue());
         assetValuationService.latest(asset.getAssetId())
                 .ifPresent(assetValue -> assetTransfer.setUnitValue(assetValue.getUnitValue()));
+
+        // FXRate
+        FXRate fxRate = fxRateService.get(asset.getCurrency(), call.getCurrency());
+        if (fxRate != null && fxRate.getLast() != null) {
+            assetTransfer.setFxRate(fxRate.getLast().getValue());
+        }
+
+        // totalHaircut
+        Double totalHaircut = assetService.totalHaircut(assetId, call.getItemId());
+        assetTransfer.setTotalHaircut(totalHaircut);
 
         return save(assetTransfer, 1);
     }
@@ -139,15 +155,6 @@ public class AssetTransferServiceImpl extends GenericService<AssetTransfer, Stri
         assetService.save(asset, 1);
     }
 
-    private void addQuantity(AssetId assetId, Double quantity) {
-        Asset asset = assetService.find(assetId, 2);
-        Holds holds = asset.getHolds();
-        if (holds != null) {
-            holds.setAvailableQuantity(holds.getAvailableQuantity() + quantity);
-        }
-        assetService.save(asset, 1);
-    }
-
     public Result getPledgedAssets() {
         String query = "MATCH (assets:Asset)<-[:OF]-(at:AssetTransfer)-[:GENERATED_BY]->(:MarginCall)-[:PART_OF]->(:MarginStatement)-[:STEMS_FROM]->(a:Agreement) " +
                 "WHERE at.status = 'Departed' " +
@@ -156,6 +163,5 @@ public class AssetTransferServiceImpl extends GenericService<AssetTransfer, Stri
                 "RETURN at.id, at.pledgeTime, a.name, l1.name, l2.name, a.currency, at.subStatus, c1.name, c2.name, ca1.name, ca2.name, at.quantities, assets.currency,assets.name, assets.id, assets.settlementTime";
 
         return sessionProvider.get().query(query, Collections.emptyMap());
-
     }
 }
