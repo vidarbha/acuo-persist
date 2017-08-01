@@ -116,7 +116,7 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
     public List<com.acuo.common.model.margin.MarginCall> getDisputeMarginCall(String marginStatementId) {
         List<com.acuo.common.model.margin.MarginCall> marginCalls = new ArrayList<>();
         String query = "MATCH (ms:MarginStatement {id:{id}})<-[:ON]-(d:Dispute) " +
-                "WHERE d.agreedAmount = 0  " +
+                "WHERE " +
                 "MATCH (mc:MarginCall)-[:PART_OF]->(ms) " +
                 "RETURN mc.ampId, d.agreedAmount, d.disputeReasonCodes, d.comments, d.mtm, d.balance";
 
