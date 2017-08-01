@@ -116,6 +116,11 @@ public class TestDeleteAcuo {
                 .setDriverClassName("org.neo4j.ogm.drivers.bolt.driver.BoltDriver")
                 .setEncryptionLevel("NONE")
                 .setURI("bolt://localhost:5001");
+        /*Configuration configuration = new Configuration.Builder()
+                .uri("bolt://localhost:5001")
+                .connectionPoolSize(150)
+                .encryptionLevel("NONE")
+                .build();*/
         return new SessionFactory(configuration, "com.acuo.persist.learning", "com.acuo.persist.entity").openSession();
     }
 }
