@@ -51,7 +51,7 @@ public class TradeServiceImpl<T extends Trade> extends GenericService<T, TradeId
             log.debug("findByPortfolioId for {}", Arrays.asList(ids));
         }
         String query =
-                "MATCH p=()-[*0..1]-(t:Trade)-[r:BELONGS_TO]->(portfolio:Portfolio) " +
+                "MATCH p=()-[*0..1]-(t:Trade)-[r:BELONGS_TO]->(portfolio:Portfolio)-[:FOLLOWS]->(a:Agreement) " +
                 "WHERE portfolio.id IN {ids} " +
                 "RETURN p, nodes(p), relationships(p)";
         return sessionProvider.get().query(getEntityType(), query, ImmutableMap.of("ids", ids));

@@ -8,6 +8,8 @@ public interface PortfolioService extends Service<Portfolio, PortfolioId> {
 
     Portfolio findBy(TradeId tradeId);
 
+    Iterable<Portfolio> portfolios(PortfolioId... ids);
+
     Long tradeCount(PortfolioId portfolioId);
 
 }

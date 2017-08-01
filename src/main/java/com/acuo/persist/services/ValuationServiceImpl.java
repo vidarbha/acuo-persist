@@ -3,13 +3,17 @@ package com.acuo.persist.services;
 import com.acuo.common.model.margin.Types;
 import com.acuo.persist.entity.AssetValuation;
 import com.acuo.persist.entity.MarginValuation;
+import com.acuo.persist.entity.MarginValue;
 import com.acuo.persist.entity.Trade;
 import com.acuo.persist.entity.TradeValuation;
+import com.acuo.persist.entity.TradeValue;
 import com.acuo.persist.entity.Valuation;
 import com.acuo.common.model.ids.AssetId;
 import com.acuo.common.model.ids.PortfolioId;
 import com.acuo.common.model.ids.TradeId;
+import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 
@@ -125,5 +129,30 @@ public class ValuationServiceImpl extends GenericService<Valuation, String> impl
         return StreamSupport.stream(valuations.spliterator(), true)
                 .filter(valuation -> valuation.isValuedFor(valuationDate))
                 .count();
+    }
+
+    @Override
+    @Transactional
+    public boolean isTradeValuated(TradeId tradeId, LocalDate valuationDate) {
+        String query =
+                "MATCH (value:TradeValue {valuationDate:{date}})<-[:VALUE]-(valuation:TradeValuation)-[:VALUATED]->(trade:Trade {id:{id}})" +
+                "RETURN value";
+        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", tradeId.toString(),
+                "date", new LocalDateConverter().toGraphProperty(valuationDate));
+        Iterable<TradeValue> values = sessionProvider.get().query(TradeValue.class, query, parameters);
+        return values != null && !Iterables.isEmpty(values);
+    }
+
+    @Override
+    @Transactional
+    public boolean isPortfolioValuated(PortfolioId portfolioId, Types.CallType callType, LocalDate valuationDate) {
+        String query =
+                "MATCH (value:MarginValue {valuationDate:{date}})<-[:VALUE]-(valuation:MarginValuation {callType:{callType}})-[:VALUATED]->(portfolio:Portfolio {id:{id}})" +
+                "RETURN value";
+        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", portfolioId.toString(),
+                "callType", callType.name(),
+                "date", new LocalDateConverter().toGraphProperty(valuationDate));
+        Iterable<MarginValue> values = sessionProvider.get().query(MarginValue.class, query, parameters);
+        return values != null && !Iterables.isEmpty(values);
     }
 }

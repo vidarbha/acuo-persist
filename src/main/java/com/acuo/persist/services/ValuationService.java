@@ -28,4 +28,8 @@ public interface ValuationService extends Service<Valuation, String> {
     Long tradeCount(PortfolioId portfolioId);
 
     Long tradeValuedCount(PortfolioId portfolioId, LocalDate valuationDate);
+
+    boolean isTradeValuated(TradeId tradeId, LocalDate valuationDate);
+
+    boolean isPortfolioValuated(PortfolioId portfolioId, Types.CallType callType, LocalDate valuationDate);
 }
