@@ -120,6 +120,18 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
 
     @Override
     @Transactional
+    public Iterable<MarginStatement> statementOf(String... callIds) {
+        String query =
+                "MATCH (m:MarginStatement)<-[*1..2]-(mc:MarginCall) " +
+                "WHERE mc.id IN {ids} " +
+                "WITH m " +
+                "MATCH p=(f:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m)<-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step) " +
+                "RETURN m, nodes(p), relationships(p)";
+        return sessionProvider.get().query(MarginStatement.class, query, ImmutableMap.of("ids", callIds));
+    }
+
+    @Override
+    @Transactional
     public void reconcile(MarginStatementId marginStatementId, Double amount) {
         log.info("reconciling all items for margin statement [{}]", marginStatementId);
         MarginStatement marginStatement = find(marginStatementId.toString(), 2);

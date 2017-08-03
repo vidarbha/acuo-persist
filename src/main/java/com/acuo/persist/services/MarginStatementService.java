@@ -26,6 +26,8 @@ public interface MarginStatementService extends Service<MarginStatement, String>
 
     MarginStatement statementOf(String callId);
 
+    Iterable<MarginStatement> statementOf(String... callIds);
+
     void reconcile(MarginStatementId marginStatementId, Double amount);
 
     void match(MarginStatementId fromId, MarginStatementId toId);
