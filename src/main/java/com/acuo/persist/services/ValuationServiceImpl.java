@@ -68,7 +68,7 @@ public class ValuationServiceImpl extends GenericService<Valuation, String> impl
     @Transactional
     public MarginValuation getMarginValuationFor(PortfolioId portfolioId, Types.CallType callType) {
         String query =
-                "MATCH p=(value:MarginValue)<-[:VALUE]-(valuation:MarginValuation {callType: {callType}})" +
+                "MATCH p=(value)<-[*0..1]-(valuation:MarginValuation {callType: {callType}})" +
                         "-[:VALUATED]->(portfolio:Portfolio {id:{id}})-[:BELONGS_TO|FOLLOWS|PART_OF]-(n) " +
                         "RETURN p, nodes(p), relationships(p)";
         final String pId = portfolioId.toString();
