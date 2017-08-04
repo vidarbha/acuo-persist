@@ -93,18 +93,20 @@ public class TradeServiceImpl<T extends Trade> extends GenericService<T, TradeId
 
     @Transactional
     public <S extends T> Iterable<S> createOrUpdate(Iterable<S> trades) {
+//        final Iterable<S> saved = save(trades);
+//        final Iterable<T> all = findAll();
+//        final List<TradeId> idsToDelete = intersection(tradeIds(all), tradeIds(saved));
+//        Iterable<T> toDelete = findAllTradeByIds(idsToDelete);
+//        if (!Iterables.isEmpty(toDelete)) {
+//            delete(toDelete);
+//        }
+        deleteAll();
         final Iterable<S> saved = save(trades);
-        final Iterable<T> all = findAll();
-        final List<TradeId> idsToDelete = intersection(tradeIds(all), tradeIds(saved));
-        Iterable<T> toDelete = findAllTradeByIds(idsToDelete);
-        if (!Iterables.isEmpty(toDelete)) {
-            delete(toDelete);
-        }
         if (log.isDebugEnabled()) {
             log.debug("saving {} trades",Iterables.size(trades));
             log.debug("saved {} trades",Iterables.size(saved));
-            log.debug("found {} trades",Iterables.size(all));
-            log.debug("deleted {} trades",Iterables.size(toDelete));
+//            log.debug("found {} trades",Iterables.size(all));
+//            log.debug("deleted {} trades",Iterables.size(toDelete));
         }
         return saved;
     }
