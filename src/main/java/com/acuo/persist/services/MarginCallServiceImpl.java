@@ -22,10 +22,10 @@ import java.util.stream.StreamSupport;
 public class MarginCallServiceImpl extends GenericService<MarginCall, String> implements MarginCallService {
 
     @Inject
-    StatementItemService statementItemService;
+    private StatementItemService statementItemService = null;
 
     @Inject
-    DisputeService disputeService;
+    private DisputeService disputeService = null;
 
     @Override
     public Class<MarginCall> getEntityType() {
@@ -37,9 +37,9 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
     public Iterable<MarginCall> allCallsFor(String clientId, StatementStatus... statuses) {
         String query =
                 "MATCH p=(:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[r:CLIENT_SIGNS]->(a:Agreement)<-[:STEMS_FROM]-" +
-                        "(m:MarginStatement)<-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step) " +
-                        "WHERE step.status IN {statuses} " +
-                        "RETURN mc, nodes(p), relationships(p)";
+                "(m:MarginStatement)<-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step) " +
+                "WHERE step.status IN {statuses} " +
+                "RETURN mc, nodes(p), relationships(p)";
         return sessionProvider.get().query(MarginCall.class, query, ImmutableMap.of("clientId", clientId, "statuses", statuses));
     }
 
@@ -54,10 +54,22 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
     }
 
     @Override
+    @Transactional
+    public Iterable<MarginCall> calls(String... callIds) {
+        String query =
+                "MATCH p=(firm:Firm)-[:MANAGES]->(l:LegalEntity)-[r:CLIENT_SIGNS|COUNTERPARTY_SIGNS]->" +
+                "(a:Agreement)<-[]-(m:MarginStatement)<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
+                "WHERE mc.id IN {ids} " +
+                "RETURN mc, nodes(p), relationships(p)";
+        return sessionProvider.get().query(MarginCall.class, query, ImmutableMap.of("ids", callIds));
+    }
+
+    @Override
     @Deprecated
     @Transactional
     public Iterable<MarginCall> callsForExpected(String marginStatementId) {
-        String query = "MATCH (:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement {id:{msId}})<-[]-(mc1:MarginCall)-[:LAST]->(step:Step {status:'Unrecon'}) " +
+        String query =
+                "MATCH (:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement {id:{msId}})<-[]-(mc1:MarginCall)-[:LAST]->(step:Step {status:'Unrecon'}) " +
                 "MATCH (mc2:MarginCall)<-[:MATCHED_TO]-(mc1) " +
                 "return mc2";
         return sessionProvider.get().query(MarginCall.class, query, ImmutableMap.of("msId", marginStatementId));

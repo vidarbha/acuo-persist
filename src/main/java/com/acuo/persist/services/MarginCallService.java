@@ -14,6 +14,8 @@ public interface MarginCallService extends Service<MarginCall, String> {
 
     Iterable<MarginCall> callFor(String marginStatementId, StatementStatus... statuses);
 
+    Iterable<MarginCall> calls(String... callIds);
+
     @Deprecated
     Iterable<MarginCall> callsForExpected(String marginStatementId);
 
