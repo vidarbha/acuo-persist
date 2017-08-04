@@ -10,6 +10,8 @@ public interface PortfolioService extends Service<Portfolio, PortfolioId> {
 
     Iterable<Portfolio> portfolios(PortfolioId... ids);
 
+    Portfolio portfolio(PortfolioId id);
+
     Long tradeCount(PortfolioId portfolioId);
 
 }

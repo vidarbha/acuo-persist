@@ -39,16 +39,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ValuationServiceTest {
 
     @Inject
-    ImportService importService;
+    private ImportService importService = null;
 
     @Inject
-    ValuationService valuationService;
+    private ValuationService valuationService = null;
 
     @Inject
-    ValueService valueService;
+    private ValueService valueService = null;
 
     @Inject
-    TradeService<IRS> tradeService;
+    private TradeService<IRS> tradeService = null;
 
     @Before
     public void setUp() {
@@ -78,7 +78,7 @@ public class ValuationServiceTest {
 
         AssetValuation valuation = valuationService.getOrCreateAssetValuationFor(AssetId.fromString("USD"));
 
-        AssetValue newValue = createAssetValue(Currency.USD, 1.0d, "DataScope");
+        AssetValue newValue = createAssetValue(Currency.USD, 1.0d, "Reuters");
         newValue.setValuation(valuation);
 
         AssetValue value = valueService.save(newValue);

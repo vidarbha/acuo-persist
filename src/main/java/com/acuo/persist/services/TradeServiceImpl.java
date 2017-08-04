@@ -15,6 +15,7 @@ import org.neo4j.ogm.cypher.query.SortOrder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
@@ -93,20 +94,22 @@ public class TradeServiceImpl<T extends Trade> extends GenericService<T, TradeId
 
     @Transactional
     public <S extends T> Iterable<S> createOrUpdate(Iterable<S> trades) {
-//        final Iterable<S> saved = save(trades);
-//        final Iterable<T> all = findAll();
-//        final List<TradeId> idsToDelete = intersection(tradeIds(all), tradeIds(saved));
-//        Iterable<T> toDelete = findAllTradeByIds(idsToDelete);
-//        if (!Iterables.isEmpty(toDelete)) {
-//            delete(toDelete);
-//        }
-        deleteAll();
-        final Iterable<S> saved = save(trades);
+        long start = System.nanoTime();
+        final Iterable<S> saved = save(trades, 1);
+        long end = System.nanoTime();
+        log.info("Save time: " + TimeUnit.NANOSECONDS.toSeconds(end - start));
+        final Iterable<T> all = findAll();
+        final List<TradeId> idsToDelete = intersection(tradeIds(all), tradeIds(saved));
+        Iterable<T> toDelete = findAllTradeByIds(idsToDelete);
+        if (!Iterables.isEmpty(toDelete)) {
+            delete(toDelete);
+        }
+
         if (log.isDebugEnabled()) {
             log.debug("saving {} trades",Iterables.size(trades));
             log.debug("saved {} trades",Iterables.size(saved));
-//            log.debug("found {} trades",Iterables.size(all));
-//            log.debug("deleted {} trades",Iterables.size(toDelete));
+            log.debug("found {} trades",Iterables.size(all));
+            log.debug("deleted {} trades",Iterables.size(toDelete));
         }
         return saved;
     }

@@ -5,6 +5,7 @@ import com.acuo.common.model.ids.TradeId;
 import com.acuo.persist.entity.Portfolio;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
+import org.neo4j.driver.internal.util.Iterables;
 import org.neo4j.ogm.model.Result;
 
 import java.util.Map;
@@ -35,6 +36,12 @@ public class PortfolioServiceImpl extends GenericService<Portfolio, PortfolioId>
                 "WHERE portfolio.id IN {ids} " +
                 "RETURN portfolio, nodes(p), relationships(p)";
         return sessionProvider.get().query(Portfolio.class, query, ImmutableMap.of("ids", ids));
+    }
+
+    @Override
+    @Transactional
+    public Portfolio portfolio(PortfolioId id) {
+        return Iterables.single(portfolios(id));
     }
 
     @Override
