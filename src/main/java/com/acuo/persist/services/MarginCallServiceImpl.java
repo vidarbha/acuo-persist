@@ -128,7 +128,7 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
     public List<com.acuo.common.model.margin.MarginCall> getDisputeMarginCall(String marginStatementId) {
         List<com.acuo.common.model.margin.MarginCall> marginCalls = new ArrayList<>();
         String query = "MATCH (ms:MarginStatement {id:{id}})<-[:ON]-(d:Dispute) " +
-                "MATCH (mc:MarginCall)-[:PART_OF]->(ms) " +
+                "MATCH (mc:MarginCall {side:'Cpty'})-[:PART_OF]->(ms) " +
                 "RETURN mc.ampId, d.agreedAmount, d.disputeReasonCodes, d.comments, d.mtm, d.balance, mc.version";
 
         Result result = sessionProvider.get().query(query, ImmutableMap.of("id", marginStatementId));
