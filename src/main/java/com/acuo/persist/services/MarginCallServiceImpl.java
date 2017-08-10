@@ -129,7 +129,7 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
         List<com.acuo.common.model.margin.MarginCall> marginCalls = new ArrayList<>();
         String query = "MATCH (ms:MarginStatement {id:{id}})<-[:ON]-(d:Dispute) " +
                 "MATCH (mc:MarginCall {side:'Cpty'})-[:PART_OF]->(ms) " +
-                "RETURN mc.ampId, d.agreedAmount, d.disputeReasonCodes, d.comments, d.mtm, d.balance, mc.version";
+                "RETURN mc.ampId, d.agreedAmount, d.disputeReasonCodes, d.comments, d.mtm, d.balance ";
 
         Result result = sessionProvider.get().query(query, ImmutableMap.of("id", marginStatementId));
         result.forEach(map -> marginCalls.add(buildDisputeMarginCall(map)));
@@ -139,7 +139,8 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
     private com.acuo.common.model.margin.MarginCall buildDisputeMarginCall(Map<String, Object> map) {
         com.acuo.common.model.margin.MarginCall marginCall = new com.acuo.common.model.margin.MarginCall();
         marginCall.setAmpId((String) map.get("mc.ampId"));
-        marginCall.setVersion(((Double)map.get("mc.version")).intValue());
+        //marginCall.setVersion(((Long)map.get("mc.version")).intValue());
+
         //marginCall.setAgreedAmount((Double) map.get("d.agreedAmount"));
         Dispute dispute = new Dispute();
         marginCall.setDispute(dispute);
