@@ -1,7 +1,6 @@
 package com.acuo.persist.services;
 
 import com.acuo.persist.entity.FXRate;
-import com.acuo.persist.entity.FXValue;
 import com.opengamma.strata.basics.currency.Currency;
 
 import java.time.LocalDateTime;

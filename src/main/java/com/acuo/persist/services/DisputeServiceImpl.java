@@ -2,7 +2,7 @@ package com.acuo.persist.services;
 
 import com.acuo.persist.entity.Dispute;
 import com.acuo.persist.entity.MarginStatement;
-import com.acuo.persist.ids.MarginStatementId;
+import com.acuo.common.model.ids.MarginStatementId;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 

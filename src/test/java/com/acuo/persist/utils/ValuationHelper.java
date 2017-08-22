@@ -1,7 +1,7 @@
 package com.acuo.persist.utils;
 
 import com.acuo.common.model.results.AssetValuation;
-import com.acuo.persist.ids.AssetId;
+import com.acuo.common.model.ids.AssetId;
 import com.acuo.persist.services.AssetService;
 import com.acuo.persist.services.AssetValuationService;
 import com.opengamma.strata.basics.currency.Currency;
@@ -62,7 +62,7 @@ public class ValuationHelper {
 
     private List<AssetId> assetIds() {
         return StreamSupport.stream(assetService.findAll().spliterator(), true)
-                .map(asset -> AssetId.fromString(asset.getAssetId()))
+                .map(asset -> asset.getAssetId())
                 .collect(toList());
     }
 }

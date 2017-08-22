@@ -3,7 +3,7 @@ package com.acuo.persist.services;
 import com.acuo.common.util.GuiceJUnitRunner;
 import com.acuo.persist.core.ImportService;
 import com.acuo.persist.entity.Portfolio;
-import com.acuo.persist.ids.PortfolioId;
+import com.acuo.common.model.ids.PortfolioId;
 import com.acuo.persist.modules.*;
 import org.junit.Before;
 import org.junit.Test;

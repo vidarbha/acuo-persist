@@ -37,13 +37,20 @@ public class Agreement extends Entity<Agreement> {
 
     private String type;
 
+    private String law;
+
     @Convert(LocalTimeConverter.class)
     private LocalTime notificationTime;
 
     @Convert(CurrencyConverter.class)
     private Currency currency;
 
+    //@Convert(CurrencyConverter.class)
+    //private Currency baseCurrency;
+
     private String FCMCustodian;
+
+    private String counterpartCustodian;
 
     private Double tolerance;
 

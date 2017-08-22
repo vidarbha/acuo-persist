@@ -1,9 +1,8 @@
 package com.acuo.persist.entity;
 
-import com.acuo.persist.ids.TradeId;
+import com.acuo.common.model.ids.TradeId;
 import com.acuo.persist.neo4j.converters.CurrencyConverter;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
-import com.acuo.persist.neo4j.converters.TypedStringConverter;
 import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,10 +13,10 @@ import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
+import javax.annotation.Nonnull;
 import java.time.LocalDate;
-import java.util.Set;
 
-import static com.acuo.persist.neo4j.converters.TypedStringConverter.*;
+import static com.acuo.persist.neo4j.converters.TypedStringConverter.TradeIdConverter;
 
 @NodeEntity
 @Data
@@ -66,7 +65,7 @@ public abstract class Trade<T extends Trade> extends Entity implements Comparabl
     private PricingSource pricingSource;
 
     @Override
-    public int compareTo(T o) {
+    public int compareTo(@Nonnull T o) {
         return this.getTradeId().compareTo(o.getTradeId());
     }
 }

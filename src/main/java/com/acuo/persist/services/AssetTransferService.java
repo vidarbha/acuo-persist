@@ -1,7 +1,8 @@
 package com.acuo.persist.services;
 
 import com.acuo.persist.entity.AssetTransfer;
-import com.acuo.persist.ids.ClientId;
+import com.acuo.common.model.ids.AssetId;
+import com.acuo.common.model.ids.ClientId;
 import org.neo4j.ogm.model.Result;
 
 public interface AssetTransferService extends Service<AssetTransfer, String> {
@@ -10,9 +11,9 @@ public interface AssetTransferService extends Service<AssetTransfer, String> {
 
     Iterable<AssetTransfer> findDepartedAssetTransferByClientId(ClientId clientId);
 
-    void sendAsset(String marginCallId, String assetId, Double quantity, String fromAccount);
+    void sendAsset(String marginCallId, AssetId assetId, Double quantity, String fromAccount);
 
-    void receiveAsset(String marginCallId, String assetId, Double quantity, String fromAccount);
+    void receiveAsset(String marginCallId, AssetId assetId, Double quantity, String fromAccount);
 
     Result getPledgedAssets();
 }

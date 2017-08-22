@@ -34,8 +34,15 @@ public class Neo4jSessionFactory implements Provider<SessionFactory> {
                 .setConnectionPoolSize(150)
                 .setEncryptionLevel("NONE")
                 .setCredentials(new UsernamePasswordCredentials(userName, password));
-
+        /*this.configuration = new Configuration.Builder()
+                .autoIndex("assert")
+                .uri(url)
+                .connectionPoolSize(150)
+                .encryptionLevel("NONE")
+                .credentials(userName, password)
+                .build();*/
     }
+
     @Override
     public SessionFactory get() {
         return new SessionFactory(configuration, persistencePackages);

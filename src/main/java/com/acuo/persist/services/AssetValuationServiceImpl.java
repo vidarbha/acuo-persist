@@ -2,7 +2,7 @@ package com.acuo.persist.services;
 
 import com.acuo.persist.entity.AssetValuation;
 import com.acuo.persist.entity.AssetValue;
-import com.acuo.persist.ids.AssetId;
+import com.acuo.common.model.ids.AssetId;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
@@ -11,6 +11,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
@@ -25,6 +26,12 @@ public class AssetValuationServiceImpl implements AssetValuationService {
     public AssetValuationServiceImpl(ValuationService valuationService, ValueService valueService) {
         this.valuationService = valuationService;
         this.valueService = valueService;
+    }
+
+    @Override
+    public Optional<AssetValue> latest(AssetId assetId) {
+        AssetValuation assetValuation = valuationService.getAssetValuationFor(assetId);
+        return (assetValuation != null) ? Optional.ofNullable(assetValuation.getLatestValue()) : Optional.empty();
     }
 
     public AssetValue persist(AssetId assetId, AssetValue value) {

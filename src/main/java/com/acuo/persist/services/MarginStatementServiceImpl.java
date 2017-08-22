@@ -5,8 +5,8 @@ import com.acuo.persist.entity.MarginStatement;
 import com.acuo.persist.entity.StatementItem;
 import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.entity.enums.StatementStatus;
-import com.acuo.persist.ids.ClientId;
-import com.acuo.persist.ids.MarginStatementId;
+import com.acuo.common.model.ids.ClientId;
+import com.acuo.common.model.ids.MarginStatementId;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
@@ -116,6 +116,18 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
                 "MATCH p=(f:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m)<-[*1..2]-(mc:MarginCall) " +
                 "RETURN m, nodes(p), relationships(p)";
         return sessionProvider.get().queryForObject(MarginStatement.class, query, ImmutableMap.of("callId", callId));
+    }
+
+    @Override
+    @Transactional
+    public Iterable<MarginStatement> statementOf(String... callIds) {
+        String query =
+                "MATCH (m:MarginStatement)<-[*1..2]-(mc:MarginCall) " +
+                "WHERE mc.id IN {ids} " +
+                "WITH m " +
+                "MATCH p=(f:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[:STEMS_FROM]-(m)<-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step) " +
+                "RETURN m, nodes(p), relationships(p)";
+        return sessionProvider.get().query(MarginStatement.class, query, ImmutableMap.of("ids", callIds));
     }
 
     @Override

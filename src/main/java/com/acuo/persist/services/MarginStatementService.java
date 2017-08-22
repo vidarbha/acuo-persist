@@ -5,8 +5,8 @@ import com.acuo.persist.entity.MarginStatement;
 import com.acuo.persist.entity.StatementItem;
 import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.entity.enums.StatementStatus;
-import com.acuo.persist.ids.ClientId;
-import com.acuo.persist.ids.MarginStatementId;
+import com.acuo.common.model.ids.ClientId;
+import com.acuo.common.model.ids.MarginStatementId;
 
 import java.time.LocalDate;
 
@@ -25,6 +25,8 @@ public interface MarginStatementService extends Service<MarginStatement, String>
     MarginStatement statementForRecon(MarginStatementId marginStatementId);
 
     MarginStatement statementOf(String callId);
+
+    Iterable<MarginStatement> statementOf(String... callIds);
 
     void reconcile(MarginStatementId marginStatementId, Double amount);
 

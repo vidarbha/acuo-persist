@@ -10,13 +10,16 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"values"})
-@ToString(exclude = {"values"})
-public class AssetValuation extends Valuation{
+@ToString(callSuper = true, exclude = {"latestValue","values"})
+@EqualsAndHashCode(callSuper = true, exclude = {"latestValue","values"})
+public class AssetValuation extends Valuation<AssetValue> {
 
     @Relationship(type = "VALUATED")
     private Asset asset;
 
+    @Relationship(type = "LATEST")
+    protected AssetValue latestValue;
+
     @Relationship(type = "VALUE")
-    private Set<AssetValue> values;
+    protected Set<AssetValue> values;
 }

@@ -1,10 +1,11 @@
 package com.acuo.persist.services;
 
+import com.acuo.common.model.ids.PortfolioId;
+import com.acuo.common.model.ids.TradeId;
 import com.acuo.persist.entity.Portfolio;
-import com.acuo.persist.ids.PortfolioId;
-import com.acuo.persist.ids.TradeId;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
+import org.neo4j.driver.internal.util.Iterables;
 import org.neo4j.ogm.model.Result;
 
 import java.util.Map;
@@ -28,6 +29,23 @@ public class PortfolioServiceImpl extends GenericService<Portfolio, PortfolioId>
 
     @Override
     @Transactional
+    public Iterable<Portfolio> portfolios(PortfolioId... ids) {
+        String query =
+                "MATCH p=(firm:Firm)-[:MANAGES]-(legal:LegalEntity)-[:CLIENT_SIGNS|COUNTERPARTY_SIGNS]-" +
+                "(a:Agreement)<-[:FOLLOWS]-(portfolio:Portfolio) " +
+                "WHERE portfolio.id IN {ids} " +
+                "RETURN portfolio, nodes(p), relationships(p)";
+        return sessionProvider.get().query(Portfolio.class, query, ImmutableMap.of("ids", ids));
+    }
+
+    @Override
+    @Transactional
+    public Portfolio portfolio(PortfolioId id) {
+        return Iterables.single(portfolios(id));
+    }
+
+    @Override
+    @Transactional
     public Long tradeCount(PortfolioId portfolioId) {
         String query =
                 "MATCH (portfolio:Portfolio {id:{id}})<-[:BELONGS_TO]-(trade:Trade) " +
@@ -35,7 +53,6 @@ public class PortfolioServiceImpl extends GenericService<Portfolio, PortfolioId>
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", portfolioId.toString());
         Result result =  sessionProvider.get().query(query, parameters);
         Map<String, Object> next = result.iterator().next();
-        Long count = (Long) next.get("count");
-        return count;
+        return (Long) next.get("count");
     }
 }

@@ -1,7 +1,9 @@
 package com.acuo.persist.entity;
 
+import com.acuo.common.model.ids.AssetId;
 import com.acuo.persist.neo4j.converters.CurrencyConverter;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
+import com.acuo.persist.neo4j.converters.TypedStringConverter.AssetIdConverter;
 import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,7 +25,9 @@ public class Asset extends Entity<Asset> {
 
     @Property(name = "id")
     @Index(primary = true)
-    private String assetId;
+    @Convert(AssetIdConverter.class)
+    private AssetId assetId;
+
     private String idType;
     private String name;
     private String isin;

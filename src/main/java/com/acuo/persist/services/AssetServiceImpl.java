@@ -1,11 +1,15 @@
 package com.acuo.persist.services;
 
 import com.acuo.persist.entity.Asset;
-import com.acuo.persist.ids.ClientId;
+import com.acuo.common.model.ids.AssetId;
+import com.acuo.common.model.ids.ClientId;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
+import org.neo4j.ogm.model.Result;
 
-public class AssetServiceImpl extends GenericService<Asset, String> implements AssetService {
+import java.util.Map;
+
+public class AssetServiceImpl extends GenericService<Asset, AssetId> implements AssetService {
 
     private final static String AVAILABLE_ASSET =
             "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:CLIENT_SIGNS]->(agreement:Agreement)-[:IS_COMPOSED_OF]->(rule:Rule)-[:APPLIES_TO]->(asset:Asset) " +
@@ -31,6 +35,12 @@ public class AssetServiceImpl extends GenericService<Asset, String> implements A
             "nodes(v), relationships(v), " +
             "nodes(r), relationships(r)";
 
+    private final static String TOTAL_HAIRCUT =
+            "MATCH (si:StatementItem {id:{callId}})-[:PART_OF]->(:MarginStatement)-[:STEMS_FROM]->(agr:Agreement) " +
+            "MATCH (a:Asset {id:{assetId}})-[:IS_IN]->(:AssetCategory)-[eu:IS_ELIGIBLE_UNDER]->(agr) " +
+            "WITH eu.haircut + eu.FXHaircut as totalHaircut " +
+            "RETURN totalHaircut";
+
     @Override
     @Transactional
     public Iterable<Asset> findAvailableAssetByClientId(ClientId clientId) {
@@ -44,6 +54,16 @@ public class AssetServiceImpl extends GenericService<Asset, String> implements A
         final ImmutableMap<String, String> parameters = ImmutableMap.of("clientId", clientId.toString(),
                 "callId", callId);
         return sessionProvider.get().query(getEntityType(), ELIGIBLE_ASSET_BY_CLIENT_AND_CALLID, parameters);
+    }
+
+    @Override
+    @Transactional
+    public Double totalHaircut(AssetId assetId, String callId) {
+        final ImmutableMap<String, String> parameters = ImmutableMap.of("assetId", assetId.toString(),
+                "callId", callId);
+        Result result = sessionProvider.get().query(TOTAL_HAIRCUT, parameters);
+        Map<String, Object> next = result.iterator().next();
+        return (Double) next.get("totalHaircut");
     }
 
     @Override

@@ -2,12 +2,14 @@ package com.acuo.persist.services;
 
 import com.acuo.persist.entity.Asset;
 import com.acuo.persist.entity.AssetTransfer;
+import com.acuo.persist.entity.FXRate;
 import com.acuo.persist.entity.enums.AssetTransferStatus;
 import com.acuo.persist.entity.CustodianAccount;
 import com.acuo.persist.entity.Holds;
 import com.acuo.persist.entity.LegalEntity;
 import com.acuo.persist.entity.MarginCall;
-import com.acuo.persist.ids.ClientId;
+import com.acuo.common.model.ids.AssetId;
+import com.acuo.common.model.ids.ClientId;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 import org.neo4j.ogm.model.Result;
@@ -28,6 +30,12 @@ public class AssetTransferServiceImpl extends GenericService<AssetTransfer, Stri
 
     @Inject
     private CustodianAccountService custodianAccountService = null;
+
+    @Inject
+    private AssetValuationService assetValuationService = null;
+
+    @Inject
+    private FXRateService fxRateService = null;
 
     @Override
     public Class<AssetTransfer> getEntityType() {
@@ -74,7 +82,7 @@ public class AssetTransferServiceImpl extends GenericService<AssetTransfer, Stri
 
     @Override
     @Transactional
-    public void sendAsset(String marginCallId, String assetId, Double quantity, String fromAccount) {
+    public void sendAsset(String marginCallId, AssetId assetId, Double quantity, String fromAccount) {
         MarginCall call = marginCallService.find(marginCallId, 3);
 
         AssetTransfer assetTransfer = createAssetTransfer(call, assetId, quantity, Departed, InFlight);
@@ -90,7 +98,7 @@ public class AssetTransferServiceImpl extends GenericService<AssetTransfer, Stri
 
     @Override
     @Transactional
-    public void receiveAsset(String marginCallId, String assetId, Double quantity, String toAccount) {
+    public void receiveAsset(String marginCallId, AssetId assetId, Double quantity, String toAccount) {
         MarginCall call = marginCallService.find(marginCallId, 3);
         AssetTransfer assetTransfer = createAssetTransfer(call, assetId, quantity, Arriving, InFlight);
 
@@ -105,7 +113,7 @@ public class AssetTransferServiceImpl extends GenericService<AssetTransfer, Stri
     }
 
     private AssetTransfer createAssetTransfer(MarginCall call,
-                                              String assetId,
+                                              AssetId assetId,
                                               Double quantity,
                                               AssetTransferStatus status,
                                               AssetTransferStatus subStaus) {
@@ -119,25 +127,30 @@ public class AssetTransferServiceImpl extends GenericService<AssetTransfer, Stri
 
         Asset asset = assetService.find(assetId, 2);
         assetTransfer.setOf(asset);
+
+        // UnitValue
         assetTransfer.setTransferValue(asset.getParValue());
+        assetValuationService.latest(asset.getAssetId())
+                .ifPresent(assetValue -> assetTransfer.setUnitValue(assetValue.getUnitValue()));
+
+        // FXRate
+        FXRate fxRate = fxRateService.get(asset.getCurrency(), call.getCurrency());
+        if (fxRate != null && fxRate.getLast() != null) {
+            assetTransfer.setFxRate(fxRate.getLast().getValue());
+        }
+
+        // totalHaircut
+        Double totalHaircut = assetService.totalHaircut(assetId, call.getItemId());
+        assetTransfer.setTotalHaircut(totalHaircut);
 
         return save(assetTransfer, 1);
     }
 
-    private void removeQuantity(String assetId, Double quantity) {
+    private void removeQuantity(AssetId assetId, Double quantity) {
         Asset asset = assetService.find(assetId, 2);
         Holds holds = asset.getHolds();
         if (holds != null) {
             holds.setAvailableQuantity(holds.getAvailableQuantity() - quantity);
-        }
-        assetService.save(asset, 1);
-    }
-
-    private void addQuantity(String assetId, Double quantity) {
-        Asset asset = assetService.find(assetId, 2);
-        Holds holds = asset.getHolds();
-        if (holds != null) {
-            holds.setAvailableQuantity(holds.getAvailableQuantity() + quantity);
         }
         assetService.save(asset, 1);
     }
@@ -150,6 +163,5 @@ public class AssetTransferServiceImpl extends GenericService<AssetTransfer, Stri
                 "RETURN at.id, at.pledgeTime, a.name, l1.name, l2.name, a.currency, at.subStatus, c1.name, c2.name, ca1.name, ca2.name, at.quantities, assets.currency,assets.name, assets.id, assets.settlementTime";
 
         return sessionProvider.get().query(query, Collections.emptyMap());
-
     }
 }
