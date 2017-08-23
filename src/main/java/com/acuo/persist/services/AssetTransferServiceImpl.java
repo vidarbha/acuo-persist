@@ -22,20 +22,27 @@ import static com.acuo.persist.entity.enums.AssetTransferStatus.*;
 
 public class AssetTransferServiceImpl extends GenericService<AssetTransfer, String> implements AssetTransferService {
 
-    @Inject
-    private MarginCallService marginCallService = null;
+    private final MarginCallService marginCallService;
+    private final AssetService assetService;
+    private final CustodianAccountService custodianAccountService;
+    private final AssetValuationService assetValuationService;
+    private final FXRateService fxRateService;
+    private final CollateralService collateralService;
 
     @Inject
-    private AssetService assetService = null;
-
-    @Inject
-    private CustodianAccountService custodianAccountService = null;
-
-    @Inject
-    private AssetValuationService assetValuationService = null;
-
-    @Inject
-    private FXRateService fxRateService = null;
+    public AssetTransferServiceImpl(MarginCallService marginCallService,
+                                    AssetService assetService,
+                                    CustodianAccountService custodianAccountService,
+                                    AssetValuationService assetValuationService,
+                                    FXRateService fxRateService,
+                                    CollateralService collateralService) {
+        this.marginCallService = marginCallService;
+        this.assetService = assetService;
+        this.custodianAccountService = custodianAccountService;
+        this.assetValuationService = assetValuationService;
+        this.fxRateService = fxRateService;
+        this.collateralService = collateralService;
+    }
 
     @Override
     public Class<AssetTransfer> getEntityType() {
@@ -94,6 +101,8 @@ public class AssetTransferServiceImpl extends GenericService<AssetTransfer, Stri
         save(assetTransfer, 1);
 
         removeQuantity(assetId, quantity);
+
+        collateralService.handle(assetTransfer);
     }
 
     @Override
@@ -110,6 +119,7 @@ public class AssetTransferServiceImpl extends GenericService<AssetTransfer, Stri
         save(assetTransfer, 1);
 
         //addQuantity(assetId, quantity);
+        collateralService.handle(assetTransfer);
     }
 
     private AssetTransfer createAssetTransfer(MarginCall call,
