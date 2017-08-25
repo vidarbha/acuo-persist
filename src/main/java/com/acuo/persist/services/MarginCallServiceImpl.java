@@ -48,9 +48,18 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
     public Iterable<MarginCall> callFor(String marginStatementId, StatementStatus... statuses) {
         String query =
                 "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement {id:{msId}})<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
-                        "WHERE step.status IN {statuses} " +
-                        "RETURN mc, nodes(p), relationships(p)";
+                "WHERE step.status IN {statuses} " +
+                "RETURN mc, nodes(p), relationships(p)";
         return sessionProvider.get().query(MarginCall.class, query, ImmutableMap.of("msId", marginStatementId, "statuses", statuses));
+    }
+
+    @Override
+    @Transactional
+    public MarginCall callByAmpId(String ampId) {
+        String query =
+                "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement)<-[]-(mc:MarginCall {ampId:{id}})-[:LAST]->(step:Step) " +
+                "RETURN mc, nodes(p), relationships(p)";
+        return sessionProvider.get().queryForObject(MarginCall.class, query, ImmutableMap.of("id", ampId));
     }
 
     @Override
@@ -177,17 +186,6 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
 
         }
         return marginCall;
-    }
-
-    @Override
-    @Transactional
-    public MarginCall findByAmpId(String ampId) {
-        String query = "MATCH (mc:MarginCall {ampId:{id}}) RETURN mc;";
-        Iterator<MarginCall> result = sessionProvider.get().query(MarginCall.class, query, ImmutableMap.of("id", ampId)).iterator();
-        if (result.hasNext())
-            return result.next();
-        else
-            return null;
     }
 
     @Override

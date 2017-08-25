@@ -14,6 +14,8 @@ public interface MarginCallService extends Service<MarginCall, String> {
 
     Iterable<MarginCall> callFor(String marginStatementId, StatementStatus... statuses);
 
+    MarginCall callByAmpId(String ampId);
+
     Iterable<MarginCall> calls(String... callIds);
 
     @Deprecated
@@ -28,8 +30,6 @@ public interface MarginCallService extends Service<MarginCall, String> {
     List<com.acuo.common.model.margin.MarginCall> getDisputeMarginCall(String marginStatementId);
 
     com.acuo.common.model.margin.MarginCall getPledgeMarginCall(String marginCallId);
-
-    MarginCall findByAmpId(String ampId);
 
     MarginCall createPartialDisputeCall(MarginCall parent, MarginCall child, Dispute dispute, StatementStatus status);
 
