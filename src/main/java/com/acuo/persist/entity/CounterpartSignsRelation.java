@@ -1,14 +1,18 @@
 package com.acuo.persist.entity;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.neo4j.ogm.annotation.EndNode;
 import org.neo4j.ogm.annotation.RelationshipEntity;
 import org.neo4j.ogm.annotation.StartNode;
 
 @RelationshipEntity(type="COUNTERPARTY_SIGNS")
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper = false, exclude = {"legalEntity", "agreement"})
+@ToString(exclude = {"legalEntity", "agreement"})
 public class CounterpartSignsRelation extends Entity<CounterpartSignsRelation> {
 
     @StartNode
@@ -17,20 +21,20 @@ public class CounterpartSignsRelation extends Entity<CounterpartSignsRelation> {
     @EndNode
     private Agreement agreement;
 
-    private Double initialMarginBalance;
-
     private Double rounding;
 
     private Double MTA;
 
-    private Double variationMarginBalance;
+    //private Double variationMarginBalance;
 
-    private Double variationPending;
+    //private Double initialMarginBalance;
 
-    private Double initialPending;
+    //private Double variationPending;
 
-    private Double initialPendingNonCash;
+    //private Double initialPending;
 
-    private Double variationPendingNonCash;
+    //private Double initialPendingNonCash;
+
+    //private Double variationPendingNonCash;
 
 }

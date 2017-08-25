@@ -1,7 +1,7 @@
 package com.acuo.persist.services;
 
+import com.acuo.common.model.ids.MarginStatementId;
 import com.acuo.common.model.margin.Types;
-import com.acuo.persist.entity.Agreement;
 import com.acuo.persist.entity.Asset;
 import com.acuo.persist.entity.AssetTransfer;
 import com.acuo.persist.entity.Collateral;
@@ -16,13 +16,13 @@ import javax.inject.Inject;
 
 public class CollateralServiceImpl extends GenericService<Collateral, Long> implements CollateralService {
 
-    private final AgreementService agreementService;
+    private final MarginStatementService marginStatementService;
     private final CollateralValueService collateralValueService;
 
     @Inject
-    public CollateralServiceImpl(AgreementService agreementService,
+    public CollateralServiceImpl(MarginStatementService marginStatementService,
                                  CollateralValueService collateralValueService) {
-        this.agreementService = agreementService;
+        this.marginStatementService = marginStatementService;
         this.collateralValueService = collateralValueService;
     }
 
@@ -33,15 +33,15 @@ public class CollateralServiceImpl extends GenericService<Collateral, Long> impl
 
     @Override
     @Transactional
-    public Collateral getCollateralFor(String agreementId,
+    public Collateral getCollateralFor(MarginStatementId statementId,
                                        Types.MarginType marginType,
                                        Types.AssetType assetType,
                                        Types.BalanceStatus status) {
         String query =
                 "MATCH p=(value)<-[*0..1]-(collateral:Collateral {marginType: {marginType}, assetType: {assetType}, status: {status}})" +
-                "-[:BALANCE]->(agreement:Agreement {id:{id}}) " +
+                "-[:BALANCE]->(statement:MarginStatement {id:{id}}) " +
                 "RETURN p, nodes(p), relationships(p)";
-        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", agreementId,
+        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", statementId.toString(),
                 "marginType", marginType.name(),
                 "assetType", assetType.name(),
                 "status", status.name());
@@ -50,17 +50,17 @@ public class CollateralServiceImpl extends GenericService<Collateral, Long> impl
 
     @Override
     @Transactional
-    public Collateral getOrCreateCollateralFor(String agreementId,
+    public Collateral getOrCreateCollateralFor(MarginStatementId statementId,
                                                Types.MarginType marginType,
                                                Types.AssetType assetType,
                                                Types.BalanceStatus status) {
-        Collateral collateral = getCollateralFor(agreementId, marginType, assetType, status);
+        Collateral collateral = getCollateralFor(statementId, marginType, assetType, status);
         if (collateral == null) {
             collateral = new Collateral();
             collateral.setMarginType(marginType);
             collateral.setAssetType(assetType);
             collateral.setStatus(status);
-            collateral.setAgreement(agreementService.find(agreementId));
+            collateral.setStatement(marginStatementService.find(statementId.toString()));
             collateral = createOrUpdate(collateral);
         }
         return collateral;
@@ -74,8 +74,7 @@ public class CollateralServiceImpl extends GenericService<Collateral, Long> impl
         Types.MarginType marginType = marginCall.getMarginType();
 
         MarginStatement marginStatement = marginCall.getMarginStatement();
-        Agreement agreement = marginStatement.getAgreement();
-        String agreementId = agreement.getAgreementId();
+        String statementId = marginStatement.getStatementId();
 
         Asset asset = transfer.getOf();
         String type = asset.getType();
@@ -84,7 +83,7 @@ public class CollateralServiceImpl extends GenericService<Collateral, Long> impl
         Types.BalanceStatus status = status(transfer.getStatus());
 
         double amount = transfer.getQuantities() * transfer.getTransferValue();//transfer.getUnitValue();
-        Collateral collateral = getOrCreateCollateralFor(agreementId, marginType, assetType, status);
+        Collateral collateral = getOrCreateCollateralFor(MarginStatementId.fromString(statementId), marginType, assetType, status);
         CollateralValue value = collateralValueService.createCollateralValue(amount);
         value.setCollateral(collateral);
         collateral.setLatestValue(value);

@@ -32,9 +32,9 @@ public interface MarginStatementService extends Service<MarginStatement, String>
 
     void match(MarginStatementId fromId, MarginStatementId toId);
 
-    MarginStatement getMarginStatement(Agreement agreement, LocalDate callDate, StatementDirection direction);
+    MarginStatement getMarginStatement(Agreement agreement, LocalDate callDate/*, StatementDirection direction*/);
 
-    MarginStatement getOrCreateMarginStatement(Agreement agreement, LocalDate callDate, StatementDirection direction);
+    MarginStatement getOrCreateMarginStatement(Agreement agreement, LocalDate callDate/*, StatementDirection direction*/);
 
     /**
      * @deprecated  {@link StatementItemService#setStatus(String, StatementStatus)}
@@ -42,5 +42,5 @@ public interface MarginStatementService extends Service<MarginStatement, String>
     @Deprecated
     <T extends StatementItem> T setStatus(String statementItemId, StatementStatus status);
 
-    Long count(StatementStatus status, StatementDirection... directions);
+    Long count(StatementStatus status/*, StatementDirection... directions*/);
 }

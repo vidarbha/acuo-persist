@@ -1,9 +1,9 @@
 package com.acuo.persist.services;
 
+import com.acuo.common.model.ids.MarginStatementId;
 import com.acuo.common.model.margin.Types;
 import com.acuo.common.util.GuiceJUnitRunner;
 import com.acuo.persist.core.ImportService;
-import com.acuo.persist.entity.Agreement;
 import com.acuo.persist.entity.Asset;
 import com.acuo.persist.entity.AssetTransfer;
 import com.acuo.persist.entity.Collateral;
@@ -23,7 +23,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import javax.inject.Inject;
-
 import java.util.Set;
 
 import static com.acuo.common.model.margin.Types.AssetType.Cash;
@@ -61,9 +60,6 @@ public class CollateralServiceImplTest {
     private MarginStatement marginStatement;
 
     @Mock
-    private Agreement agreement;
-
-    @Mock
     private Asset asset;
 
     @Before
@@ -74,10 +70,11 @@ public class CollateralServiceImplTest {
 
     @Test
     public void getCollateralFor() throws Exception {
-        Collateral b1 = collateralService.getCollateralFor("a1", Variation, Cash, Settled);
+        MarginStatementId statementId = MarginStatementId.fromString("msp1");
+        Collateral b1 = collateralService.getCollateralFor(statementId, Variation, Cash, Settled);
         assertThat(b1).isNull();
-        collateralService.getOrCreateCollateralFor("a1", Variation, Cash, Settled);
-        b1 = collateralService.getCollateralFor("a1", Variation, Cash, Settled);
+        collateralService.getOrCreateCollateralFor(statementId, Variation, Cash, Settled);
+        b1 = collateralService.getCollateralFor(statementId, Variation, Cash, Settled);
         assertThat(b1).isNotNull();
         assertThat(b1.getMarginType()).isEqualTo(Variation);
         assertThat(b1.getAssetType()).isEqualTo(Cash);
@@ -86,7 +83,8 @@ public class CollateralServiceImplTest {
 
     @Test
     public void getOrCreateCollateralFor() throws Exception {
-        Collateral b1 = collateralService.getOrCreateCollateralFor("a1", Variation, Cash, Pending);
+        MarginStatementId statementId = MarginStatementId.fromString("msp1");
+        Collateral b1 = collateralService.getOrCreateCollateralFor(statementId, Variation, Cash, Pending);
         assertThat(b1).isNotNull();
         assertThat(b1.getMarginType()).isEqualTo(Variation);
         assertThat(b1.getAssetType()).isEqualTo(Cash);
@@ -99,8 +97,7 @@ public class CollateralServiceImplTest {
         when(transfer.getGeneratedBy()).thenReturn(marginCall);
         when(marginCall.getMarginType()).thenReturn(Types.MarginType.Variation);
         when(marginCall.getMarginStatement()).thenReturn(marginStatement);
-        when(marginStatement.getAgreement()).thenReturn(agreement);
-        when(agreement.getAgreementId()).thenReturn("a1");
+        when(marginStatement.getStatementId()).thenReturn("msp1");
 
         when(transfer.getOf()).thenReturn(asset);
         when(asset.getType()).thenReturn("CASH");
@@ -116,7 +113,7 @@ public class CollateralServiceImplTest {
         assertThat(collateral.getStatus()).isEqualTo(Types.BalanceStatus.Pending);
         assertThat(collateral.getAssetType()).isEqualTo(Types.AssetType.Cash);
         assertThat(collateral.getMarginType()).isEqualTo(Types.MarginType.Variation);
-        assertThat(collateral.getAgreement()).isNotNull();
+        assertThat(collateral.getStatement()).isNotNull();
         assertThat(collateral.getLatestValue()).isNotNull();
         assertThat(collateral.getLatestValue().getAmount()).isEqualTo(20000d);
         assertThat(collateral.getValues()).isNotEmpty().hasSize(1);
@@ -124,7 +121,8 @@ public class CollateralServiceImplTest {
 
     @Test
     public void testSaveValues() {
-        Collateral collateral = collateralService.getOrCreateCollateralFor("a1", Variation, Cash, Pending);
+        MarginStatementId statementId = MarginStatementId.fromString("msp1");
+        Collateral collateral = collateralService.getOrCreateCollateralFor(statementId, Variation, Cash, Pending);
 
         CollateralValue collateralValue = collateralValueService.createCollateralValue(10d);
         collateralValue.setCollateral(collateral);
@@ -133,7 +131,7 @@ public class CollateralServiceImplTest {
 
         assertThat(collateralValue).isNotNull();
 
-        collateral = collateralService.getCollateralFor("a1", Variation, Cash, Pending);
+        collateral = collateralService.getCollateralFor(statementId, Variation, Cash, Pending);
 
         Set<CollateralValue> values = collateral.getValues();
 

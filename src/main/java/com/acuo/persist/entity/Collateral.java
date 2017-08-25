@@ -20,7 +20,7 @@ public class Collateral extends Entity<Collateral>{
     private Types.BalanceStatus status;
 
     @Relationship(type = "BALANCE")
-    private Agreement agreement;
+    private MarginStatement statement;
 
     @Relationship(type = "LATEST")
     private CollateralValue latestValue;

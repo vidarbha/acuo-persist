@@ -45,6 +45,9 @@ public class VariationMarginTest {
     private Agreement agreement;
 
     @Mock
+    private MarginStatement statement;
+
+    @Mock
     private ClientSignsRelation clientSignsRelation;
 
     @Parameters
@@ -92,8 +95,8 @@ public class VariationMarginTest {
         when(agreement.getCurrency()).thenReturn(currency);
         when(agreement.getNotificationTime()).thenReturn(notificationTime);
         when(agreement.getClientSignsRelation()).thenReturn(clientSignsRelation);
-        when(clientSignsRelation.getVariationBalance()).thenReturn(balance);
-        when(clientSignsRelation.getVariationPending()).thenReturn(pending);
+        when(statement.variationBalance()).thenReturn(balance);
+        when(statement.variationPending()).thenReturn(pending);
 
         final ImmutableMap<Currency, Double> rates = ImmutableMap.of(currency, 1d);
 
@@ -103,6 +106,7 @@ public class VariationMarginTest {
                 now,
                 currency,
                 agreement,
+                statement,
                 rates,
                 tradeCount);
 

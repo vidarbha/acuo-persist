@@ -72,9 +72,6 @@ public class Agreement extends Entity<Agreement> {
     @Relationship(type = "COUNTERPARTY_SIGNS", direction = Relationship.INCOMING)
     private CounterpartSignsRelation counterpartSignsRelation;
 
-    @Relationship(type = "BALANCE", direction = Relationship.INCOMING)
-    private Set<Collateral> collaterals;
-
     @Relationship(type = "IS_COMPOSED_OF")
     private Set<Rule> rules;
 
