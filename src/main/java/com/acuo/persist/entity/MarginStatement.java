@@ -3,7 +3,6 @@ package com.acuo.persist.entity;
 import com.acuo.common.model.margin.Types.AssetType;
 import com.acuo.common.model.margin.Types.BalanceStatus;
 import com.acuo.common.model.margin.Types.MarginType;
-import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.neo4j.converters.CurrencyConverter;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import com.acuo.persist.utils.GraphData;
@@ -59,8 +58,6 @@ public class MarginStatement extends Entity<MarginStatement> {
 
     private Double pendingNonCash;
 
-    //private StatementDirection direction;
-
     private String legalEntityId;
 
     @Convert(CurrencyConverter.class)
@@ -112,16 +109,17 @@ public class MarginStatement extends Entity<MarginStatement> {
     public MarginStatement(Agreement agreement, LocalDate callDate/*, StatementDirection direction*/) {
         this.agreement = agreement;
         this.statementId = marginStatementId(agreement, callDate);
-        //this.direction = direction;
         this.currency = agreement.getCurrency();
         this.date = callDate;
         ClientSignsRelation clientSignsRelation = agreement.getClientSignsRelation();
         CounterpartSignsRelation counterpartSignsRelation = agreement.getCounterpartSignsRelation();
         LegalEntity client = clientSignsRelation.getLegalEntity();
         LegalEntity counterpart = counterpartSignsRelation.getLegalEntity();
-        //if (direction.equals(StatementDirection.IN)) {
-            this.setDirectedTo(counterpart);
-            this.setSentFrom(client);
+        //this.direction = direction;
+        // if (direction.equals(StatementDirection.IN)) {
+        //TODO make sure this two properties are not used
+        this.setDirectedTo(counterpart);
+        this.setSentFrom(client);
         //} else {
         //    this.setDirectedTo(client);
         //    this.setSentFrom(counterpart);

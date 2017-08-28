@@ -2,8 +2,6 @@ package com.acuo.persist.entity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 import org.neo4j.ogm.annotation.EndNode;
 import org.neo4j.ogm.annotation.RelationshipEntity;
@@ -24,17 +22,5 @@ public class CounterpartSignsRelation extends Entity<CounterpartSignsRelation> {
     private Double rounding;
 
     private Double MTA;
-
-    //private Double variationMarginBalance;
-
-    //private Double initialMarginBalance;
-
-    //private Double variationPending;
-
-    //private Double initialPending;
-
-    //private Double initialPendingNonCash;
-
-    //private Double variationPendingNonCash;
 
 }

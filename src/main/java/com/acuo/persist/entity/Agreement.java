@@ -19,8 +19,8 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"clientSignsRelation", "counterpartSignsRelation", "collaterals"})
-@ToString(exclude = {"clientSignsRelation", "counterpartSignsRelation", "collaterals"})
+@EqualsAndHashCode(callSuper = false, exclude = {"clientSignsRelation", "counterpartSignsRelation"})
+@ToString(exclude = {"clientSignsRelation", "counterpartSignsRelation"})
 public class Agreement extends Entity<Agreement> {
 
     @Property(name="id")
@@ -44,9 +44,6 @@ public class Agreement extends Entity<Agreement> {
 
     @Convert(CurrencyConverter.class)
     private Currency currency;
-
-    //@Convert(CurrencyConverter.class)
-    //private Currency baseCurrency;
 
     private String FCMCustodian;
 

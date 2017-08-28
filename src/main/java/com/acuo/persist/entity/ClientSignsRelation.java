@@ -25,16 +25,4 @@ public class ClientSignsRelation extends Entity<ClientSignsRelation> {
 
     private Double threshold;
 
-    //private Double variationBalance;
-
-    //private Double initialBalance;
-
-    //private Double variationPending;
-
-    //private Double initialPending;
-
-    //private Double variationPendingNonCash;
-
-    //private Double initialPendingNonCash;
-
 }

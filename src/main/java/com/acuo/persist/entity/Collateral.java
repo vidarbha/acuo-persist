@@ -27,5 +27,4 @@ public class Collateral extends Entity<Collateral>{
 
     @Relationship(type = "VALUE")
     private Set<CollateralValue> values;
-
 }

@@ -4,7 +4,6 @@ import com.acuo.persist.entity.enums.Side;
 import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import org.neo4j.ogm.annotation.NodeEntity;
 
 import java.time.LocalDate;

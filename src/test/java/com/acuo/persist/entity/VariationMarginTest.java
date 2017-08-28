@@ -26,10 +26,10 @@ import static org.mockito.Mockito.when;
 @RunWith(Parameterized.class)
 public class VariationMarginTest {
 
+    private static final long tradeCount = 1L;
     private final Currency currency = USD;
     private final LocalTime notificationTime = LocalTime.now();
     private final LocalDate now = LocalDate.now();
-    private final long tradeCount = 1L;
 
     private final Double balance;
     private final Double pending;

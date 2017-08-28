@@ -136,7 +136,5 @@ public class CollateralServiceImplTest {
         Set<CollateralValue> values = collateral.getValues();
 
         assertThat(values).isNotEmpty();
-
     }
-
 }
