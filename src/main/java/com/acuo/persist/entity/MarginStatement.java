@@ -115,15 +115,9 @@ public class MarginStatement extends Entity<MarginStatement> {
         CounterpartSignsRelation counterpartSignsRelation = agreement.getCounterpartSignsRelation();
         LegalEntity client = clientSignsRelation.getLegalEntity();
         LegalEntity counterpart = counterpartSignsRelation.getLegalEntity();
-        //this.direction = direction;
-        // if (direction.equals(StatementDirection.IN)) {
-        //TODO make sure this two properties are not used
-        this.setDirectedTo(counterpart);
+        // always the same direction from the principal to the counterpart
         this.setSentFrom(client);
-        //} else {
-        //    this.setDirectedTo(client);
-        //    this.setSentFrom(counterpart);
-        //}
+        this.setDirectedTo(counterpart);
         this.setPendingCash(addition(initialPending(), variationPending()));
         this.setPendingNonCash(addition(initialPendingNonCash(), variationPendingNonCash()));
     }

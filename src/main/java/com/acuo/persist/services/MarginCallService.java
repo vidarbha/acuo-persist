@@ -16,6 +16,8 @@ public interface MarginCallService extends Service<MarginCall, String> {
 
     MarginCall callByAmpId(String ampId);
 
+    MarginCall callById(String callId);
+
     Iterable<MarginCall> calls(String... callIds);
 
     @Deprecated

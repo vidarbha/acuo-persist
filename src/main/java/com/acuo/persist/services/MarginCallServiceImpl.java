@@ -58,8 +58,21 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
     public MarginCall callByAmpId(String ampId) {
         String query =
                 "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement)<-[]-(mc:MarginCall {ampId:{id}})-[:LAST]->(step:Step) " +
-                "RETURN mc, nodes(p), relationships(p)";
+                "WITH mc, m, p " +
+                "MATCH a=(m)-[:SENT_FROM|DIRECTED_TO]->()-[:ACCESSES]->() " +
+                "RETURN mc, nodes(p), relationships(p), nodes(a), relationships(a)";
         return sessionProvider.get().queryForObject(MarginCall.class, query, ImmutableMap.of("id", ampId));
+    }
+
+    @Override
+    @Transactional
+    public MarginCall callById(String callId) {
+        String query =
+                "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement)<-[]-(mc:MarginCall {id:{id}})-[:LAST]->(step:Step) " +
+                "WITH mc, m, p " +
+                "MATCH a=(m)-[:SENT_FROM|DIRECTED_TO]->()-[:ACCESSES]->() " +
+                "RETURN mc, nodes(p), relationships(p), nodes(a), relationships(a)";
+        return sessionProvider.get().queryForObject(MarginCall.class, query, ImmutableMap.of("id", callId));
     }
 
     @Override

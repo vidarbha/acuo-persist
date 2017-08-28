@@ -90,14 +90,15 @@ public class AssetTransferServiceImpl extends GenericService<AssetTransfer, Stri
     @Override
     @Transactional
     public void sendAsset(String marginCallId, AssetId assetId, Double quantity, String fromAccount) {
-        MarginCall call = marginCallService.find(marginCallId, 3);
+        MarginCall call = marginCallService.callById(marginCallId);
+
 
         AssetTransfer assetTransfer = createAssetTransfer(call, assetId, quantity, Departed, InFlight);
 
         CustodianAccount custodianAccount = custodianAccountService.find(fromAccount, 2);
         assetTransfer.setFrom(custodianAccount);
-        final LegalEntity sentFrom = call.getMarginStatement().getSentFrom();
-        assetTransfer.setTo(sentFrom.getCustodianAccounts().iterator().next());
+        final LegalEntity directedTo = call.getMarginStatement().getDirectedTo();
+        assetTransfer.setTo(directedTo.getCustodianAccounts().iterator().next());
         save(assetTransfer, 1);
 
         removeQuantity(assetId, quantity);
@@ -108,13 +109,13 @@ public class AssetTransferServiceImpl extends GenericService<AssetTransfer, Stri
     @Override
     @Transactional
     public void receiveAsset(String marginCallId, AssetId assetId, Double quantity, String toAccount) {
-        MarginCall call = marginCallService.find(marginCallId, 3);
+        MarginCall call = marginCallService.callById(marginCallId);
         AssetTransfer assetTransfer = createAssetTransfer(call, assetId, quantity, Arriving, InFlight);
 
         CustodianAccount custodianAccount = custodianAccountService.find(toAccount, 2);
         assetTransfer.setTo(custodianAccount);
         final LegalEntity directedTo = call.getMarginStatement().getDirectedTo();
-        final Iterable<CustodianAccount> accounts = custodianAccountService.custodianAccountsFor(directedTo);
+        final Iterable<CustodianAccount> accounts = custodianAccountService.counterPartyCustodianAccountsFor(directedTo);
         assetTransfer.setFrom(accounts.iterator().next());
         save(assetTransfer, 1);
 
