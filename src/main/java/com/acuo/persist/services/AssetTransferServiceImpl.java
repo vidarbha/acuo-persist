@@ -145,10 +145,10 @@ public class AssetTransferServiceImpl extends GenericService<AssetTransfer, Stri
                 .ifPresent(assetValue -> assetTransfer.setUnitValue(assetValue.getUnitValue()));
 
         // FXRate
-        FXRate fxRate = fxRateService.get(asset.getCurrency(), call.getCurrency());
-        if (fxRate != null && fxRate.getLast() != null) {
-            assetTransfer.setFxRate(fxRate.getLast().getValue());
-        }
+        Double assetFx = fxRateService.getFXValue(asset.getCurrency());
+        Double callFx = fxRateService.getFXValue(call.getCurrency());
+        assetTransfer.setAssetFxRate(assetFx);
+        assetTransfer.setCallFxRate(callFx);
 
         // totalHaircut
         Double totalHaircut = assetService.totalHaircut(assetId, call.getItemId());

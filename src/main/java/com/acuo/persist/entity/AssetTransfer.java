@@ -35,7 +35,9 @@ public class AssetTransfer extends Entity<AssetTransfer> {
     private Double transferValue;
     private Double unitValue;
     private Double totalHaircut;
-    private Double fxRate;
+
+    private Double assetFxRate;
+    private Double callFxRate;
 
     @Relationship(type = "OF")
     private Asset of;
