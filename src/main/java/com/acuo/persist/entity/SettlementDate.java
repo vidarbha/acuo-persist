@@ -19,8 +19,7 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"settlementDates"})
-@ToString(exclude = {"settlementDates"})
+@EqualsAndHashCode(callSuper = false)
 public class SettlementDate extends Entity<SettlementDate>{
 
     @Property(name = "id")
@@ -32,7 +31,4 @@ public class SettlementDate extends Entity<SettlementDate>{
 
     @Convert(LocalDateConverter.class)
     private LocalDate settlementDate;
-
-    @Relationship(type = "SETTLEMENT_DATE", direction = Relationship.OUTGOING)
-    private Set<SettlementDate> settlementDates;
 }

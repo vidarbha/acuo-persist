@@ -36,6 +36,7 @@ public class RepositoryModule extends AbstractModule {
         bind(NextService.class).to(NextServiceImpl.class);
         bind(FXRateService.class).to(FXRateServiceImpl.class);
         bind(FXValueService.class).to(FXValueServiceImpl.class);
+        bind(SettlementService.class).to(SettlementServiceImpl.class);
         bind(SettlementDateService.class).to(SettlementDateServiceImpl.class);
         bind(CollateralService.class).to(CollateralServiceImpl.class);
         bind(CollateralValueService.class).to(CollateralValueServiceImpl.class);

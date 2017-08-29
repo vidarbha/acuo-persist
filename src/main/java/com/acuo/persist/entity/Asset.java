@@ -65,6 +65,6 @@ public class Asset extends Entity<Asset> {
     @Relationship(type = "PRICING_SOURCE")
     private PricingSource pricingSource;
 
-    @Relationship(type = "SETTLE_DATE")
-    private SettlementDate settlementDate;
+    @Relationship(type = "SETTLEMENT")
+    private Settlement settlement;
 }
