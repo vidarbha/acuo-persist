@@ -19,8 +19,8 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"holds", "transfers", "settlementDate"})
-@ToString(exclude = {"holds", "transfers", "settlementDate"})
+@EqualsAndHashCode(callSuper = false, exclude = {"holds", "transfers", "settlement"})
+@ToString(exclude = {"holds", "transfers", "settlement"})
 public class Asset extends Entity<Asset> {
 
     @Property(name = "id")
@@ -30,7 +30,6 @@ public class Asset extends Entity<Asset> {
 
     private String idType;
     private String name;
-    private String isin;
     @Convert(CurrencyConverter.class)
     private Currency currency;
     private Double yield;
