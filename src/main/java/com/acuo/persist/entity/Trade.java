@@ -17,16 +17,18 @@ import org.neo4j.ogm.annotation.typeconversion.Convert;
 import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.acuo.persist.neo4j.converters.TypedStringConverter.TradeIdConverter;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"account"})
-@ToString(exclude = {"account"})
+@EqualsAndHashCode(callSuper = false, exclude = {"account", "errors"})
+@ToString(exclude = {"account", "errors"})
 public abstract class Trade<T extends Trade> extends Entity implements Comparable<T> {
 
-    @Property(name="id")
+    @Property(name = "id")
     @Index(primary = true)
     @Convert(TradeIdConverter.class)
     protected TradeId tradeId;
@@ -35,7 +37,7 @@ public abstract class Trade<T extends Trade> extends Entity implements Comparabl
 
     private Double notional;
 
-    private  String buySellProtection;
+    private String buySellProtection;
 
     private Double couponRate;
 
@@ -68,6 +70,17 @@ public abstract class Trade<T extends Trade> extends Entity implements Comparabl
 
     @Relationship(type = "PRICING_SOURCE")
     private PricingSource pricingSource;
+
+    @Relationship(type = "ENCOUNTERS")
+    private List<ServiceError> errors = new ArrayList<>();
+
+    public void addErrors(ServiceError error) {
+        errors.add(error);
+    }
+
+    public void addAllErrors(List<ServiceError> error) {
+        errors.addAll(errors);
+    }
 
     @Override
     public int compareTo(@Nonnull T o) {
