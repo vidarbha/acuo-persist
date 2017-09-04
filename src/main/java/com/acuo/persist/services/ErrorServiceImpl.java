@@ -1,8 +1,10 @@
 package com.acuo.persist.services;
 
 import com.acuo.common.model.ids.AssetId;
+import com.acuo.common.model.ids.PortfolioId;
 import com.acuo.common.model.ids.TradeId;
 import com.acuo.persist.entity.Asset;
+import com.acuo.persist.entity.Portfolio;
 import com.acuo.persist.entity.ServiceError;
 import com.acuo.persist.entity.Trade;
 import com.google.inject.Inject;
@@ -16,6 +18,9 @@ public class ErrorServiceImpl extends GenericService<ServiceError, String> imple
 
     @Inject
     private AssetService assetService;
+
+    @Inject
+    private PortfolioService portfolioService;
 
     @Override
     public Class<ServiceError> getEntityType() {
@@ -41,4 +46,15 @@ public class ErrorServiceImpl extends GenericService<ServiceError, String> imple
         trade.addErrors(serviceError);
         tradeService.save(trade);
     }
+
+    @Override
+    public void persist(PortfolioId portfolioId, ServiceError serviceError) {
+        if (portfolioId == null || serviceError == null) return;
+
+        Portfolio portfolio = portfolioService.find(portfolioId);
+        if (portfolio == null) return;
+        portfolio.addErrors(serviceError);
+        portfolioService.save(portfolio);
+    }
+
 }
