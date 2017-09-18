@@ -1,6 +1,5 @@
 package com.acuo.persist.modules;
 
-import com.acuo.persist.entity.CollateralValue;
 import com.acuo.persist.entity.FRA;
 import com.acuo.persist.entity.IRS;
 import com.acuo.persist.entity.Trade;
@@ -40,6 +39,7 @@ public class RepositoryModule extends AbstractModule {
         bind(SettlementDateService.class).to(SettlementDateServiceImpl.class);
         bind(CollateralService.class).to(CollateralServiceImpl.class);
         bind(CollateralValueService.class).to(CollateralValueServiceImpl.class);
+        bind(ErrorService.class).to(ErrorServiceImpl.class);
     }
 
 }
