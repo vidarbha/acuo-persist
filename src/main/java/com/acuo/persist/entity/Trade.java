@@ -26,7 +26,7 @@ import static com.acuo.persist.neo4j.converters.TypedStringConverter.TradeIdConv
 @Data
 @EqualsAndHashCode(callSuper = false, exclude = {"account", "errors"})
 @ToString(exclude = {"account", "errors"})
-public abstract class Trade<T extends Trade> extends Entity implements Comparable<T> {
+public abstract class Trade<T extends Trade> extends Entity<T> implements Comparable<T> {
 
     @Property(name = "id")
     @Index(primary = true)

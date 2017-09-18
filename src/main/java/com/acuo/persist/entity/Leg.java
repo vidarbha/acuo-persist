@@ -69,4 +69,5 @@ public class Leg extends Entity<Leg> {
     @Convert(CurrencyConverter.class)
     private Currency currency;
 
+    private Boolean variableCurrency;
 }
