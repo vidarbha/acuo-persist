@@ -40,7 +40,7 @@ public class TradeServiceImplTest {
     }
 
     @Test
-    public void createOrUpdate() throws Exception {
+    public void testCreateAndUpdateTradeAndAvoidCreatingMultipleLegsOW754() throws Exception {
 
         fraTradeService.createOrUpdate(ImmutableSet.of(createFRA()));
         fraTradeService.createOrUpdate(ImmutableSet.of(createFRA()));
