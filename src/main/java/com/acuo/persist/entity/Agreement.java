@@ -45,9 +45,6 @@ public class Agreement extends Entity<Agreement> {
     @Convert(CurrencyConverter.class)
     private Currency currency;
 
-    //@Convert(CurrencyConverter.class)
-    //private Currency baseCurrency;
-
     private String FCMCustodian;
 
     private String counterpartCustodian;

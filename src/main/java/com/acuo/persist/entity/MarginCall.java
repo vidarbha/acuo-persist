@@ -52,14 +52,24 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
                       LocalDate callDate,
                       Currency currency,
                       Agreement agreement,
+                      MarginStatement marginStatement,
                       Map<Currency, Double> rates,
                       Long tradeCount) {
-        this(side, convert(amount, currency, agreement.getCurrency(), rates), valuationDate, callDate, agreement);
+        this(side, convert(amount, currency, agreement.getCurrency(), rates), valuationDate, callDate, agreement, marginStatement);
         this.fxRate = getRate(currency, agreement.getCurrency(), rates);
         this.tradeCount = this.tradeValued = tradeCount;
     }
 
-    private MarginCall(Side side, Double amount, LocalDate valuationDate, LocalDate callDate, Agreement agreement) {
+    abstract Double collateralSettled(MarginStatement marginStatement);
+
+    abstract Double collateralPending(MarginStatement marginStatement);
+    
+    private MarginCall(Side side,
+                       Double amount,
+                       LocalDate valuationDate,
+                       LocalDate callDate,
+                       Agreement agreement,
+                       MarginStatement marginStatement) {
         this.side = side;
         this.valuationDate = valuationDate;
         this.callDate = callDate;
@@ -67,8 +77,8 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
         this.parentRank = 0;
         this.notificationTime = callDate.atTime(agreement.getNotificationTime());
 
-        this.balanceAmount = balance(agreement.getClientSignsRelation());
-        this.pendingCollateral = pendingCollateral(agreement.getClientSignsRelation());
+        this.balanceAmount = collateralSettled(marginStatement);
+        this.pendingCollateral = collateralPending(marginStatement);
 
         this.exposure = amount;
 
@@ -110,14 +120,6 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
         String todayFormatted = GraphData.getStatementDateFormatter().format(valuationDate);
         String value = todayFormatted + "-" + agreement.getAgreementId() + "-" + marginType.name() + "-" + side;
         return IDGen.encode(value) ;
-    }
-
-    private Double balance(ClientSignsRelation clientSignsRelation) {
-        return clientSignsRelation.getVariationBalance() != null ? clientSignsRelation.getVariationBalance() : 0.0d;
-    }
-
-    private Double pendingCollateral(ClientSignsRelation clientSignsRelation) {
-        return clientSignsRelation.getVariationPending() != null ? clientSignsRelation.getVariationPending() : 0.0d;
     }
 
     private static Double convert(Double value, Currency from, Currency to, Map<Currency, Double> rates) {

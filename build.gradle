@@ -1,4 +1,5 @@
-apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/root/buildscript.gradle"
+//apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/root/buildscript.gradle"
+apply from: "file://home/hicham/Projects/acuo/gradle-plugins/root/buildscript.gradle"
 apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/root/gradle-wrapper.gradle"
 apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/root/profiles-config.gradle"
 apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/root/deployment.gradle"
@@ -18,7 +19,7 @@ apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/ja
 group = 'com.acuo.collateral'
 
 ext.versions += [
-        common  : '0.11.1'
+        common  : '0.12.1'
 ]
 
 configurations {

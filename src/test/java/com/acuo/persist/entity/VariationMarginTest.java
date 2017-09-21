@@ -26,10 +26,10 @@ import static org.mockito.Mockito.when;
 @RunWith(Parameterized.class)
 public class VariationMarginTest {
 
+    private static final long tradeCount = 1L;
     private final Currency currency = USD;
     private final LocalTime notificationTime = LocalTime.now();
     private final LocalDate now = LocalDate.now();
-    private final long tradeCount = 1L;
 
     private final Double balance;
     private final Double pending;
@@ -43,6 +43,9 @@ public class VariationMarginTest {
 
     @Mock
     private Agreement agreement;
+
+    @Mock
+    private MarginStatement statement;
 
     @Mock
     private ClientSignsRelation clientSignsRelation;
@@ -92,8 +95,8 @@ public class VariationMarginTest {
         when(agreement.getCurrency()).thenReturn(currency);
         when(agreement.getNotificationTime()).thenReturn(notificationTime);
         when(agreement.getClientSignsRelation()).thenReturn(clientSignsRelation);
-        when(clientSignsRelation.getVariationBalance()).thenReturn(balance);
-        when(clientSignsRelation.getVariationPending()).thenReturn(pending);
+        when(statement.variationBalance()).thenReturn(balance);
+        when(statement.variationPending()).thenReturn(pending);
 
         final ImmutableMap<Currency, Double> rates = ImmutableMap.of(currency, 1d);
 
@@ -103,6 +106,7 @@ public class VariationMarginTest {
                 now,
                 currency,
                 agreement,
+                statement,
                 rates,
                 tradeCount);
 

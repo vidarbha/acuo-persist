@@ -4,7 +4,6 @@ import com.acuo.persist.entity.enums.Side;
 import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import org.neo4j.ogm.annotation.NodeEntity;
 
 import java.time.LocalDate;
@@ -31,22 +30,19 @@ public class InitialMargin extends MarginCall<InitialMargin> {
                          LocalDate callDate,
                          Currency currency,
                          Agreement agreement,
+                         MarginStatement marginStatement,
                          Map<Currency, Double> rates,
                          Long tradeCount) {
-        super(side, value, valuationDate, callDate, currency, agreement, rates, tradeCount);
+        super(side, value, valuationDate, callDate, currency, agreement, marginStatement, rates, tradeCount);
         this.marginType = Initial;
         this.itemId = marginCallId(side, agreement, callDate, Initial);
     }
 
-    @Override
-    public String toString() {
-        return "InitialMargin{" +
-                "exchangeRequirement=" + exchangeRequirement +
-                ", brokerRequirement=" + brokerRequirement +
-                ", initialBalanceCash=" + initialBalanceCash +
-                ", initialBalanceNonCash=" + initialBalanceNonCash +
-                ", IMRole='" + IMRole + '\'' +
-                super.toString() +
-                '}';
+    protected Double collateralSettled(MarginStatement marginStatement){
+        return marginStatement.initialBalance();
+    }
+
+    protected Double collateralPending(MarginStatement marginStatement) {
+        return marginStatement.initialPending();
     }
 }

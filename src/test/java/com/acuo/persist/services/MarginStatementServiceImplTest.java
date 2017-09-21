@@ -150,10 +150,9 @@ public class MarginStatementServiceImplTest {
     public void testGetMarginStatement(){
         Agreement agreement = agreementService.agreementFor(PortfolioId.fromString("p2"));
         LocalDate callDate = LocalDate.of(2017, 1, 13);
-        MarginStatement marginStatement = marginStatementService.getMarginStatement(agreement, callDate, OUT);
+        MarginStatement marginStatement = marginStatementService.getMarginStatement(agreement, callDate);
         assertThat(marginStatement).isNotNull()
                 .satisfies(statement -> {
-                    assertThat(statement).extracting("direction").containsOnly(OUT);
                     assertThat(statement).extracting("date").containsOnly(callDate);
                     assertThat(statement).extracting("agreement").isNotEmpty().doesNotContainNull();
                     assertThat(statement).extracting("directedTo").isNotEmpty().doesNotContainNull();
@@ -165,10 +164,9 @@ public class MarginStatementServiceImplTest {
     public void testGetOrCreateMarginStatement(){
         Agreement agreement = agreementService.agreementFor(PortfolioId.fromString("p2"));
         LocalDate callDate = LocalDate.of(2017, 1, 13);
-        MarginStatement marginStatement = marginStatementService.getOrCreateMarginStatement(agreement, callDate, IN);
+        MarginStatement marginStatement = marginStatementService.getOrCreateMarginStatement(agreement, callDate);
         assertThat(marginStatement).isNotNull()
                 .satisfies(statement -> {
-                    assertThat(statement).extracting("direction").containsOnly(IN);
                     assertThat(statement).extracting("date").containsOnly(callDate);
                     assertThat(statement).extracting("agreement").isNotEmpty().doesNotContainNull();
                     assertThat(statement).extracting("directedTo").isNotEmpty().doesNotContainNull();
@@ -186,17 +184,15 @@ public class MarginStatementServiceImplTest {
     public void testCount(){
         LocalDate now = LocalDate.now();
         Agreement agreement = agreementService.find("a1");
-        MarginStatement marginStatement = marginStatementService.getOrCreateMarginStatement(agreement, now, OUT);
+        MarginStatement marginStatement = marginStatementService.getOrCreateMarginStatement(agreement, now);
         VariationMargin margin = new VariationMargin(Side.Client,
-                100.0d, now, now, Currency.USD, agreement, currencyService.getAllFX(), 0L);
+                100.0d, now, now, Currency.USD, agreement, marginStatement, currencyService.getAllFX(), 0L);
         margin = statementItemService.save(margin);
         margin.setMarginStatement(marginStatement);
         marginStatementService.setStatus(margin.getItemId(), StatementStatus.Reconciled);
         statementItemService.save(margin);
         Long count = marginStatementService.count(StatementStatus.Reconciled);
         assertThat(count).isNotNull().isEqualTo(1);
-        count = marginStatementService.count(StatementStatus.Reconciled, IN);
-        assertThat(count).isNotNull().isEqualTo(0);
         count = marginStatementService.count(StatementStatus.Unrecon);
         assertThat(count).isNotNull().isEqualTo(0);
     }

@@ -3,6 +3,7 @@ package com.acuo.persist.entity;
 import com.acuo.common.model.ids.TradeId;
 import com.acuo.persist.neo4j.converters.CurrencyConverter;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
+import com.acuo.persist.neo4j.converters.LocalTimeConverter;
 import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,6 +16,7 @@ import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import javax.annotation.Nonnull;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import static com.acuo.persist.neo4j.converters.TypedStringConverter.TradeIdConverter;
 
@@ -39,6 +41,9 @@ public abstract class Trade<T extends Trade> extends Entity implements Comparabl
 
     @Convert(LocalDateConverter.class)
     private LocalDate tradeDate;
+
+    @Convert(LocalTimeConverter.class)
+    private LocalTime tradeTime;
 
     @Convert(LocalDateConverter.class)
     private LocalDate maturity;

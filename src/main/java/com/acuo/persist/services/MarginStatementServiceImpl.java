@@ -1,12 +1,11 @@
 package com.acuo.persist.services;
 
+import com.acuo.common.model.ids.ClientId;
+import com.acuo.common.model.ids.MarginStatementId;
 import com.acuo.persist.entity.Agreement;
 import com.acuo.persist.entity.MarginStatement;
 import com.acuo.persist.entity.StatementItem;
-import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.entity.enums.StatementStatus;
-import com.acuo.common.model.ids.ClientId;
-import com.acuo.common.model.ids.MarginStatementId;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
@@ -156,26 +155,25 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
 
     @Override
     @Transactional
-    public MarginStatement getMarginStatement(Agreement agreement, LocalDate callDate, StatementDirection direction) {
-        String query = "MATCH p=(firm:Firm)-[:MANAGES]-(l1:LegalEntity)-[:CLIENT_SIGNS|COUNTERPARTY_SIGNS]-" +
-                "(a:Agreement {id:{agreementId}})<-[:STEMS_FROM]-(m:MarginStatement {date:{date}, direction:{direction}})" +
+    public MarginStatement getMarginStatement(Agreement agreement, LocalDate callDate) {
+        String query =
+                "MATCH p=(firm:Firm)-[:MANAGES]-(l1:LegalEntity)-[:CLIENT_SIGNS|COUNTERPARTY_SIGNS]-" +
+                "(a:Agreement {id:{agreementId}})<-[:STEMS_FROM]-(m:MarginStatement {date:{date}})" +
                 "-[:SENT_FROM|DIRECTED_TO]->(l2:LegalEntity)" +
                 "RETURN m, nodes(p), relationships(p)";
         String dateStr = new LocalDateConverter().toGraphProperty(callDate);
         String agreementId = agreement.getAgreementId();
-        String dir = direction.name();
         ImmutableMap<String, String> parameters = ImmutableMap.of("agreementId", agreementId,
-                                                                  "date", dateStr,
-                                                                  "direction", dir);
+                                                                  "date", dateStr);
         return sessionProvider.get().queryForObject(MarginStatement.class, query, parameters);
     }
 
     @Override
     @Transactional
-    public MarginStatement getOrCreateMarginStatement(Agreement agreement, LocalDate callDate, StatementDirection direction) {
-        MarginStatement marginStatement = getMarginStatement(agreement, callDate, direction);
+    public MarginStatement getOrCreateMarginStatement(Agreement agreement, LocalDate callDate) {
+        MarginStatement marginStatement = getMarginStatement(agreement, callDate);
         if (marginStatement == null) {
-            marginStatement = new MarginStatement(agreement, callDate, direction);
+            marginStatement = new MarginStatement(agreement, callDate);
             marginStatement = save(marginStatement);
         }
         return marginStatement;
@@ -199,15 +197,13 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
 
     @Override
     @Transactional
-    public Long count(StatementStatus status, StatementDirection... directions) {
+    public Long count(StatementStatus status) {
         String query =
                 "MATCH p=(agreement:Agreement)<-[:STEMS_FROM]-(ms:MarginStatement)<-[:PART_OF]-(s:StatementItem)" +
                 "-[:LAST]->(step:Step) " +
                 "WHERE step.status = {status} " +
-                "AND ms.direction in {directions} " +
                 "RETURN ms, nodes(p), relationships(p)";
-        if(directions == null || directions.length == 0) directions = StatementDirection.values();
-        ImmutableMap<String, Object> parameters = ImmutableMap.of("status", status.name(), "directions", asList(directions));
+        ImmutableMap<String, Object> parameters = ImmutableMap.of("status", status.name());
         Iterable<MarginStatement> marginStatements = sessionProvider.get().query(MarginStatement.class, query, parameters);
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime max = now.plusHours(36);

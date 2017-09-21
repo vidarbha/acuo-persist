@@ -5,7 +5,6 @@ import com.acuo.persist.entity.enums.Side;
 import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import org.neo4j.ogm.annotation.NodeEntity;
 
 import java.time.LocalDate;
@@ -28,9 +27,10 @@ public class VariationMargin extends MarginCall<VariationMargin> {
                            LocalDate callDate,
                            Currency currency,
                            Agreement agreement,
+                           MarginStatement marginStatement,
                            Map<Currency, Double> rates,
                            Long tradeCount) {
-        super(side, amount, valuationDate, callDate, currency, agreement, rates, tradeCount);
+        super(side, amount, valuationDate, callDate, currency, agreement, marginStatement, rates, tradeCount);
         this.marginType = Variation;
         this.itemId = marginCallId(side, agreement, callDate, Variation);
     }
@@ -38,18 +38,15 @@ public class VariationMargin extends MarginCall<VariationMargin> {
     public static Converter<com.acuo.common.model.margin.MarginCall, VariationMargin> converter = Converter.ofNullable(
             com.acuo.common.model.margin.MarginCall.class,
             VariationMargin.class,
-            call -> {
-                VariationMargin margin = new VariationMargin();
-                return margin;
-            },
-            variationMargin -> {
-                com.acuo.common.model.margin.MarginCall call = new com.acuo.common.model.margin.MarginCall();
-                return call;
-            }
+            call -> new VariationMargin(),
+            variationMargin -> new com.acuo.common.model.margin.MarginCall()
     );
 
-    @Override
-    public String toString() {
-        return "VariationMargin{"  + super.toString() + "} ";
+    protected Double collateralSettled(MarginStatement marginStatement){
+        return marginStatement.variationBalance();
+    }
+
+    protected Double collateralPending(MarginStatement marginStatement) {
+        return marginStatement.variationPending();
     }
 }

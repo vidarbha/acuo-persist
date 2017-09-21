@@ -1,12 +1,11 @@
 package com.acuo.persist.services;
 
+import com.acuo.common.model.ids.ClientId;
+import com.acuo.common.model.ids.MarginStatementId;
 import com.acuo.persist.entity.Agreement;
 import com.acuo.persist.entity.MarginStatement;
 import com.acuo.persist.entity.StatementItem;
-import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.entity.enums.StatementStatus;
-import com.acuo.common.model.ids.ClientId;
-import com.acuo.common.model.ids.MarginStatementId;
 
 import java.time.LocalDate;
 
@@ -32,9 +31,9 @@ public interface MarginStatementService extends Service<MarginStatement, String>
 
     void match(MarginStatementId fromId, MarginStatementId toId);
 
-    MarginStatement getMarginStatement(Agreement agreement, LocalDate callDate, StatementDirection direction);
+    MarginStatement getMarginStatement(Agreement agreement, LocalDate callDate/*, StatementDirection direction*/);
 
-    MarginStatement getOrCreateMarginStatement(Agreement agreement, LocalDate callDate, StatementDirection direction);
+    MarginStatement getOrCreateMarginStatement(Agreement agreement, LocalDate callDate/*, StatementDirection direction*/);
 
     /**
      * @deprecated  {@link StatementItemService#setStatus(String, StatementStatus)}
@@ -42,5 +41,5 @@ public interface MarginStatementService extends Service<MarginStatement, String>
     @Deprecated
     <T extends StatementItem> T setStatus(String statementItemId, StatementStatus status);
 
-    Long count(StatementStatus status, StatementDirection... directions);
+    Long count(StatementStatus status/*, StatementDirection... directions*/);
 }
