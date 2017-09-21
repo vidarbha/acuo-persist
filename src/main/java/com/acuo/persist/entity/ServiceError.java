@@ -8,7 +8,7 @@ import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.time.LocalDateTime;
 
-@NodeEntity(label = "Error")
+@NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ServiceError extends Entity<ServiceError> {
@@ -19,5 +19,4 @@ public class ServiceError extends Entity<ServiceError> {
 
     @Convert(LocalDateTimeConverter.class)
     private LocalDateTime dateTime;
-
 }
