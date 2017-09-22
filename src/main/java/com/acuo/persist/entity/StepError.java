@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Error extends Step {
+public class StepError extends Step {
 
     @Convert(LocalDateTimeConverter.class)
     private LocalDateTime dateTime;
