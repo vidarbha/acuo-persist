@@ -185,15 +185,28 @@ public class MarginStatementServiceImplTest {
         LocalDate now = LocalDate.now();
         Agreement agreement = agreementService.find("a1");
         MarginStatement marginStatement = marginStatementService.getOrCreateMarginStatement(agreement, now);
-        VariationMargin margin = new VariationMargin(Side.Client,
-                100.0d, now, now, Currency.USD, agreement, marginStatement, currencyService.getAllFX(), 0L);
-        margin = statementItemService.save(margin);
-        margin.setMarginStatement(marginStatement);
-        marginStatementService.setStatus(margin.getItemId(), StatementStatus.Reconciled);
-        statementItemService.save(margin);
+
+        VariationMargin out = new VariationMargin(Side.Client,-100.0d, now, now, Currency.USD,
+                agreement, marginStatement, currencyService.getAllFX(), 0L);
+        out = save(marginStatement, out, StatementStatus.Reconciled);
+
+        VariationMargin in = new VariationMargin(Side.Client,100.0d, now, now, Currency.USD,
+                agreement, marginStatement, currencyService.getAllFX(), 0L);
+        in = save(marginStatement, in, StatementStatus.Reconciled);
+
         Long count = marginStatementService.count(StatementStatus.Reconciled);
         assertThat(count).isNotNull().isEqualTo(1);
+
         count = marginStatementService.count(StatementStatus.Unrecon);
         assertThat(count).isNotNull().isEqualTo(0);
+    }
+
+    private VariationMargin save(MarginStatement marginStatement,
+                      VariationMargin margin,
+                      StatementStatus status) {
+        margin = statementItemService.save(margin);
+        margin.setMarginStatement(marginStatement);
+        marginStatementService.setStatus(margin.getItemId(), status);
+        return statementItemService.save(margin);
     }
 }

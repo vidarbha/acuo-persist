@@ -116,9 +116,9 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
         this.marginAmount = deliverAmount + returnAmount;
     }
 
-    String marginCallId(Side side, Agreement agreement, LocalDate valuationDate, MarginType marginType) {
+    String marginCallId(Side side, Agreement agreement, LocalDate valuationDate, MarginType marginType, StatementDirection direction) {
         String todayFormatted = GraphData.getStatementDateFormatter().format(valuationDate);
-        String value = todayFormatted + "-" + agreement.getAgreementId() + "-" + marginType.name() + "-" + side;
+        String value = todayFormatted + "-" + agreement.getAgreementId() + "-" + marginType.name() + "-" + side + "-" + direction;
         return IDGen.encode(value) ;
     }
 

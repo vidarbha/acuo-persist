@@ -35,7 +35,7 @@ public class InitialMargin extends MarginCall<InitialMargin> {
                          Long tradeCount) {
         super(side, value, valuationDate, callDate, currency, agreement, marginStatement, rates, tradeCount);
         this.marginType = Initial;
-        this.itemId = marginCallId(side, agreement, callDate, Initial);
+        this.itemId = marginCallId(side, agreement, callDate, Initial, direction);
     }
 
     protected Double collateralSettled(MarginStatement marginStatement){
