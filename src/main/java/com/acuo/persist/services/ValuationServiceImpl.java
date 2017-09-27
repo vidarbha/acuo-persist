@@ -49,7 +49,7 @@ public class ValuationServiceImpl extends GenericService<Valuation, String> impl
     @Transactional
     public TradeValuation getTradeValuationFor(TradeId tradeId) {
         String query =
-                "MATCH p=(value:TradeValue)<-[:VALUE]-(valuation:TradeValuation)-[:VALUATED]->(trade:Trade {id:{id}})-[*0..1]-(n) " +
+                "MATCH p=(value:TradeValue)<-[:VALUE*0..1]-(valuation:TradeValuation)-[:VALUATED]->(trade:Trade {id:{id}})-[*0..1]-(n) " +
                         "RETURN p, nodes(p), relationships(p)";
         final String id = tradeId.toString();
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", id);
@@ -73,7 +73,7 @@ public class ValuationServiceImpl extends GenericService<Valuation, String> impl
     @Transactional
     public MarginValuation getMarginValuationFor(PortfolioId portfolioId, Types.CallType callType) {
         String query =
-                "MATCH p=(value)<-[*0..1]-(valuation:MarginValuation {callType: {callType}})" +
+                "MATCH p=(value)<-[:VALUE*0..1]-(valuation:MarginValuation {callType: {callType}})" +
                         "-[:VALUATED]->(portfolio:Portfolio {id:{id}})-[:BELONGS_TO|FOLLOWS|PART_OF]-(n) " +
                         "RETURN p, nodes(p), relationships(p)";
         final String pId = portfolioId.toString();
@@ -99,7 +99,7 @@ public class ValuationServiceImpl extends GenericService<Valuation, String> impl
     @Transactional
     public AssetValuation getAssetValuationFor(AssetId assetId) {
         String query =
-                "MATCH p=(value:AssetValue)<-[:VALUE]-(valuation:AssetValuation)-[:VALUATED]->(asset:Asset {id:{id}})-[*0..1]-(n) " +
+                "MATCH p=(value:AssetValue)<-[:VALUE*0..1]-(valuation:AssetValuation)-[:VALUATED]->(asset:Asset {id:{id}})-[*0..1]-(n) " +
                         "RETURN p, nodes(p), relationships(p)";
         final String aId = assetId.toString();
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", aId);

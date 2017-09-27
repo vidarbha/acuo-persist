@@ -5,6 +5,7 @@ import com.acuo.common.model.ids.MarginStatementId;
 import com.acuo.persist.entity.Agreement;
 import com.acuo.persist.entity.MarginStatement;
 import com.acuo.persist.entity.StatementItem;
+import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import com.google.common.collect.ImmutableMap;
@@ -137,8 +138,18 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
         Set<StatementItem> calls = filter(marginStatement.getStatementItems(), Unrecon, MatchedToReceived);
         for (StatementItem call : calls) {
             log.debug("parent call {} and children {}", call);
-            if (Unrecon.equals(call.getLastStep().getStatus())) {
-                statementItemService.setStatus(call.getItemId(), Reconciled);
+            final StatementDirection direction = call.getDirection();
+            switch (direction) {
+                case IN:
+                    if (Unrecon.equals(call.getLastStep().getStatus())) {
+                        statementItemService.setStatus(call.getItemId(), Closed);
+                    }
+                    break;
+                case OUT:
+                    if (Unrecon.equals(call.getLastStep().getStatus())) {
+                        statementItemService.setStatus(call.getItemId(), Reconciled);
+                    }
+                    break;
             }
             if(MatchedToReceived.equals(call.getLastStep().getStatus())) {
                 statementItemService.setStatus(call.getItemId(), Closed);
