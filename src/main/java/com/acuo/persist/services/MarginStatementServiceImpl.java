@@ -138,18 +138,8 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
         Set<StatementItem> calls = filter(marginStatement.getStatementItems(), Unrecon, MatchedToReceived);
         for (StatementItem call : calls) {
             log.debug("parent call {} and children {}", call);
-            final StatementDirection direction = call.getDirection();
-            switch (direction) {
-                case IN:
-                    if (Unrecon.equals(call.getLastStep().getStatus())) {
-                        statementItemService.setStatus(call.getItemId(), Closed);
-                    }
-                    break;
-                case OUT:
-                    if (Unrecon.equals(call.getLastStep().getStatus())) {
-                        statementItemService.setStatus(call.getItemId(), Reconciled);
-                    }
-                    break;
+            if (Unrecon.equals(call.getLastStep().getStatus())) {
+                statementItemService.setStatus(call.getItemId(), Reconciled);
             }
             if(MatchedToReceived.equals(call.getLastStep().getStatus())) {
                 statementItemService.setStatus(call.getItemId(), Closed);
@@ -210,9 +200,8 @@ public class MarginStatementServiceImpl extends GenericService<MarginStatement, 
     @Transactional
     public Long count(StatementStatus status) {
         String query =
-                "MATCH p=(agreement:Agreement)<-[:STEMS_FROM]-(ms:MarginStatement)<-[:PART_OF]-(s:StatementItem)" +
-                "-[:LAST]->(step:Step) " +
-                "WHERE step.status = {status} " +
+                "MATCH p=(agreement:Agreement)<-[:STEMS_FROM]-(ms:MarginStatement)<-[:PART_OF]-(s:StatementItem {direction:'OUT'})" +
+                "-[:LAST]->(step:Step {status:{status}}) " +
                 "RETURN ms, nodes(p), relationships(p)";
         ImmutableMap<String, Object> parameters = ImmutableMap.of("status", status.name());
         Iterable<MarginStatement> marginStatements = sessionProvider.get().query(MarginStatement.class, query, parameters);
