@@ -2,7 +2,7 @@ package com.acuo.persist.services;
 
 import com.acuo.persist.entity.CollateralValue;
 
-public interface CollateralValueService extends Service<CollateralValue, String> {
+public interface CollateralValueService extends Service<CollateralValue, Long> {
 
-    CollateralValue createCollateralValue(Double amount);
+    CollateralValue createValue(Double amount);
 }

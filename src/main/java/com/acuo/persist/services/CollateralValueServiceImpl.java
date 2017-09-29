@@ -6,7 +6,7 @@ import com.google.inject.persist.Transactional;
 import java.time.Instant;
 import java.time.LocalDate;
 
-public class CollateralValueServiceImpl extends GenericService<CollateralValue, String> implements CollateralValueService {
+public class CollateralValueServiceImpl extends GenericService<CollateralValue, Long> implements CollateralValueService {
     @Override
     public Class<CollateralValue> getEntityType() {
         return CollateralValue.class;
@@ -15,7 +15,7 @@ public class CollateralValueServiceImpl extends GenericService<CollateralValue, 
 
     @Override
     @Transactional
-    public CollateralValue createCollateralValue(Double amount) {
+    public CollateralValue createValue(Double amount) {
         CollateralValue value = new CollateralValue();
         value.setAmount(amount);
         value.setTimestamp(Instant.now());
