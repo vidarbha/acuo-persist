@@ -13,10 +13,10 @@ import javax.inject.Inject
 import static org.assertj.core.api.Assertions.assertThat
 
 @UseModules([ConsistencyModule.class])
-class BalanceCheckerImplSpec extends Specification {
+class CheckerManagerImplSpec extends Specification {
 
     @Inject
-    private BalanceChecker checker
+    private CheckManager checker
 
     private Asset asset
     private AssetTransfer assetTransfer
