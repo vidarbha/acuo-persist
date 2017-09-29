@@ -1,10 +1,8 @@
 package com.acuo.persist.transaction;
 
 import com.acuo.persist.entity.Foo;
-import com.acuo.persist.modules.Neo4jPersistModule;
-import com.acuo.persist.core.Neo4jPersistService;
 import com.acuo.persist.modules.ConfigurationTestModule;
-import com.google.common.base.Throwables;
+import com.acuo.persist.modules.Neo4jPersistModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.persist.PersistService;
@@ -16,11 +14,10 @@ import org.neo4j.ogm.session.Session;
 import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 public abstract class AbstractPersistTest {
 
-  protected Injector injector;
+  Injector injector;
 
   @Before
   public void setUp() {
@@ -36,19 +33,15 @@ public abstract class AbstractPersistTest {
     injector.getInstance(PersistService.class).stop();
   }
 
-  protected PersistService getPersistService() {
-    return injector.getInstance(PersistService.class);
-  }
-
-  protected UnitOfWork getUnitOfWork() {
+  UnitOfWork getUnitOfWork() {
     return injector.getInstance(UnitOfWork.class);
   }
 
-  protected void assertTransactionActive() {
+  void assertTransactionActive() {
     assertTransaction(true);
   }
 
-  protected void assertTransactionNotActive() {
+  void assertTransactionNotActive() {
     assertTransaction(false);
   }
 
@@ -58,23 +51,23 @@ public abstract class AbstractPersistTest {
     assertEquals(message, active, injector.getInstance(Session.class).getTransaction() != null);
   }
 
-  protected Collection<Foo> getFoos() {
+  Collection<Foo> getFoos() {
     return injector.getInstance(FooGetter.class).getFoos();
   }
 
-  protected <X extends Exception, T extends FooAdder<X>> void testRollbackOccurs(Class<T> type,
+  <X extends Exception, T extends FooAdder<X>> void testRollbackOccurs(Class<T> type,
                                                                                  Class<X> exceptionType) {
     testRollback(true, type, exceptionType);
   }
 
-  protected <X extends Exception, T extends FooAdder<X>> void testRollbackDoesNotOccur(
+  <X extends Exception, T extends FooAdder<X>> void testRollbackDoesNotOccur(
       Class<T> type, Class<X> exceptionType) {
     testRollback(false, type, exceptionType);
   }
 
-  protected <X extends Exception, T extends FooAdder<X>> void testRollback(boolean expected,
-                                                                           Class<T> type,
-                                                                           Class<X> exceptionType) {
+  private <X extends Exception, T extends FooAdder<X>> void testRollback(boolean expected,
+                                                                         Class<T> type,
+                                                                         Class<X> exceptionType) {
     getUnitOfWork().begin();
 
     T repository = injector.getInstance(type);
@@ -83,7 +76,7 @@ public abstract class AbstractPersistTest {
       repository.addFoo(new Foo(1, "bar"));
     } catch (Exception e) {
       if (!exceptionType.isInstance(e))
-        throw Throwables.propagate(e);
+        throw new RuntimeException(e);
     }
 
     String message = expected ? "got a result, no rollback occurred" :
@@ -91,10 +84,5 @@ public abstract class AbstractPersistTest {
     assertEquals(message, expected, getFoos().isEmpty());
 
     getUnitOfWork().end();
-  }
-
-  protected void assertUnitOfWorkNotActive() {
-    assertFalse("unit of work active when it should not have been",
-        injector.getInstance(Neo4jPersistService.class).isWorking());
   }
 }
