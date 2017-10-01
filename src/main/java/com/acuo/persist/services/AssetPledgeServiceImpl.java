@@ -1,6 +1,7 @@
 package com.acuo.persist.services;
 
 import com.acuo.common.model.ids.AssetId;
+import com.acuo.common.model.margin.Types;
 import com.acuo.persist.entity.Asset;
 import com.acuo.persist.entity.AssetPledge;
 import com.acuo.persist.entity.AssetPledgeValue;
@@ -11,6 +12,7 @@ import com.google.inject.persist.Transactional;
 
 import javax.inject.Inject;
 
+import static com.acuo.common.model.margin.Types.*;
 import static com.acuo.common.model.margin.Types.BalanceStatus;
 import static com.acuo.common.model.margin.Types.MarginType;
 import static com.google.common.collect.ImmutableMap.of;
@@ -83,13 +85,28 @@ public class AssetPledgeServiceImpl extends GenericService<AssetPledge, Long> im
     }
 
     @Override
-    public Double amount(MarginType[] types, BalanceStatus[] statuses) {
+    public Double sum(MarginType[] types, BalanceStatus[] statuses) {
         String query =
                 "MATCH (value:AssetPledgeValue)<-[:VALUE]-(assetPledge:AssetPledge)-[:OF]->(:Asset) " +
                 "WHERE assetPledge.status IN {statuses} " +
                 "AND assetPledge.marginType IN {types} " +
                 "RETURN sum(value.amount)";
         final ImmutableMap<String, Object[]> parameters = of("types", types,"statuses", statuses);
+        return sessionProvider.get().queryForObject(Double.class, query, parameters);
+    }
+
+    @Override
+    public Double amount(AssetType assetType, MarginType marginType, BalanceStatus status) {
+        String query =
+                "MATCH (a:Asset)<-[:OF]-(ap:AssetPledge)-[:LATEST]->(apv:AssetPledgeValue) " +
+                "WHERE a.type IN {assetTypes} " +
+                "AND ap.marginType = {marginType} " +
+                "AND ap.status = {status}" +
+                "RETURN sum(apv.amount)";
+        final ImmutableMap<String, Object> parameters =
+                of("assetTypes", AssetSubType.of(assetType),
+                "marginType", marginType.name(),
+                "status", status.name());
         return sessionProvider.get().queryForObject(Double.class, query, parameters);
     }
 }

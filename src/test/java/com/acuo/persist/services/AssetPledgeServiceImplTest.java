@@ -22,8 +22,12 @@ import org.mockito.MockitoAnnotations;
 
 import javax.inject.Inject;
 
+import static com.acuo.common.model.margin.Types.*;
+import static com.acuo.common.model.margin.Types.AssetType.*;
+import static com.acuo.common.model.margin.Types.BalanceStatus.*;
 import static com.acuo.common.model.margin.Types.BalanceStatus.Pending;
 import static com.acuo.common.model.margin.Types.BalanceStatus.Settled;
+import static com.acuo.common.model.margin.Types.MarginType.*;
 import static com.acuo.common.model.margin.Types.MarginType.Variation;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -84,8 +88,8 @@ public class AssetPledgeServiceImplTest {
         AssetPledge assetPledge = createPledge();
 
         assertThat(assetPledge).isNotNull();
-        assertThat(assetPledge.getStatus()).isEqualTo(Types.BalanceStatus.Pending);
-        assertThat(assetPledge.getMarginType()).isEqualTo(Types.MarginType.Variation);
+        assertThat(assetPledge.getStatus()).isEqualTo(Pending);
+        assertThat(assetPledge.getMarginType()).isEqualTo(Variation);
         assertThat(assetPledge.getAsset()).isNotNull();
         assertThat(assetPledge.getLatestValue()).isNotNull();
         assertThat(assetPledge.getLatestValue().getAmount()).isEqualTo(20000d);
@@ -95,18 +99,18 @@ public class AssetPledgeServiceImplTest {
     @Test
     public void amount() {
 
-        Double amount = assetPledgeService.amount(Types.MarginType.values(), Types.BalanceStatus.values());
+        Double amount = assetPledgeService.amount(Cash, Variation, Pending);
         assertThat(amount).isEqualTo(0.0d);
 
         createPledge();
 
-        amount = assetPledgeService.amount(Types.MarginType.values(), Types.BalanceStatus.values());
+        amount = assetPledgeService.amount(Cash, Variation, Pending);
         assertThat(amount).isEqualTo(20000.0d);
     }
 
     private AssetPledge createPledge() {
         when(transfer.getGeneratedBy()).thenReturn(marginCall);
-        when(marginCall.getMarginType()).thenReturn(Types.MarginType.Variation);
+        when(marginCall.getMarginType()).thenReturn(Variation);
 
         when(transfer.getOf()).thenReturn(asset);
         when(asset.getAssetId()).thenReturn(AssetId.fromString("USD"));

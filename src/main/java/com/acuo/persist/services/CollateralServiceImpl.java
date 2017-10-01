@@ -14,6 +14,8 @@ import com.google.inject.persist.Transactional;
 
 import javax.inject.Inject;
 
+import static com.google.common.collect.ImmutableMap.of;
+
 public class CollateralServiceImpl extends GenericService<Collateral, Long> implements CollateralService {
 
     private final MarginStatementService marginStatementService;
@@ -91,6 +93,19 @@ public class CollateralServiceImpl extends GenericService<Collateral, Long> impl
         return find(collateral.getId());
     }
 
-
+    @Override
+    public Double amount(Types.AssetType assetType, Types.MarginType marginType, Types.BalanceStatus status) {
+        String query =
+                "MATCH (c:Collateral)-[:LATEST]->(d:CollateralValue) " +
+                "WHERE c.marginType = {marginType} " +
+                "AND c.assetType = {assetType} " +
+                "AND c.status= {status} " +
+                "RETURN sum(d.amount)";
+        final ImmutableMap<String, String> parameters =
+                of("assetType", assetType.name(),
+                   "marginType", marginType.name(),
+                   "status", status.name());
+        return sessionProvider.get().queryForObject(Double.class, query, parameters);
+    }
 
 }

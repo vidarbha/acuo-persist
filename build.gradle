@@ -19,7 +19,7 @@ apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/ja
 group = 'com.acuo.collateral'
 
 ext.versions += [
-        common  : '0.13.3',
+        common  : '0.14.0-SNAPSHOT',
         strata  : '1.3.3'
 ]
 

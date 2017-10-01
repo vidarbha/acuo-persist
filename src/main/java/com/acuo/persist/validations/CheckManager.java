@@ -1,4 +1,4 @@
-package com.acuo.persist.consistency;
+package com.acuo.persist.validations;
 
 import com.opengamma.strata.collect.result.Result;
 
