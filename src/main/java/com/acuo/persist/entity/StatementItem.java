@@ -23,8 +23,8 @@ import static com.acuo.common.model.margin.Types.MarginType;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"marginStatement", "matchedItem", "children"})
-@ToString(exclude = {"marginStatement", "matchedItem", "children"})
+@EqualsAndHashCode(callSuper = false, exclude = {"marginStatement", "matchedItem", "parent"})
+@ToString(exclude = {"marginStatement", "matchedItem", "parent"})
 public class StatementItem<T extends StatementItem> extends Entity<T> {
 
     @Property(name = "id")
@@ -57,6 +57,6 @@ public class StatementItem<T extends StatementItem> extends Entity<T> {
     @Relationship(type = "MATCHED_TO")
     private StatementItem matchedItem;
 
-    @Relationship(type = "CHILD_OF", direction = Relationship.INCOMING)
-    private Set<ChildOf> children;
+    @Relationship(type = "CHILD_OF")
+    private ChildOf parent;
 }

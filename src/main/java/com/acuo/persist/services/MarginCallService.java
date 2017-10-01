@@ -1,9 +1,8 @@
 package com.acuo.persist.services;
 
-import com.acuo.common.model.margin.Dispute;
+import com.acuo.common.model.ids.MarginStatementId;
 import com.acuo.persist.entity.MarginCall;
 import com.acuo.persist.entity.enums.StatementStatus;
-import com.acuo.common.model.ids.MarginStatementId;
 import com.acuo.persist.spring.Call;
 
 import java.util.List;
@@ -29,11 +28,13 @@ public interface MarginCallService extends Service<MarginCall, String> {
 
     MarginCall matchToExpected(String callId);
 
+    MarginCall matchToSent(String callId);
+
     List<com.acuo.common.model.margin.MarginCall> getDisputeMarginCall(String marginStatementId);
 
     com.acuo.common.model.margin.MarginCall getPledgeMarginCall(String marginCallId);
 
-    MarginCall createPartialDisputeCall(MarginCall parent, MarginCall child, Dispute dispute, StatementStatus status);
+    MarginCall link(MarginCall parent, MarginCall child);
 
     void sentMS(MarginCall marginCall);
 
