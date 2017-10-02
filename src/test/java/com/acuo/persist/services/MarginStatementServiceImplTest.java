@@ -82,7 +82,7 @@ public class MarginStatementServiceImplTest {
     public void testAllStatementsForRecon() {
         Iterable<MarginStatement> statements = marginStatementService.allStatementsForRecon(client999);
         assertThat(statements).isNotNull().hasSize(42);
-        assertThat(Iterables.first(statements).getPendingCash()).isNotNull();
+        assertThat(Iterables.first(statements).getTotalAmount()).isNotNull();
     }
 
     @Test

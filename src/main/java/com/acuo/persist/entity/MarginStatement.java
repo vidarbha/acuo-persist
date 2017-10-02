@@ -54,10 +54,6 @@ public class MarginStatement extends Entity<MarginStatement> {
 
     private Double feesCommissions;
 
-    private Double pendingCash;
-
-    private Double pendingNonCash;
-
     private String legalEntityId;
 
     @Convert(CurrencyConverter.class)
@@ -106,7 +102,7 @@ public class MarginStatement extends Entity<MarginStatement> {
     public MarginStatement() {
     }
 
-    public MarginStatement(Agreement agreement, LocalDate callDate/*, StatementDirection direction*/) {
+    public MarginStatement(Agreement agreement, LocalDate callDate) {
         this.agreement = agreement;
         this.statementId = marginStatementId(agreement, callDate);
         this.currency = agreement.getCurrency();
@@ -118,8 +114,6 @@ public class MarginStatement extends Entity<MarginStatement> {
         // always the same direction from the principal to the counterpart
         this.setSentFrom(client);
         this.setDirectedTo(counterpart);
-        this.setPendingCash(addition(initialPending(), variationPending()));
-        this.setPendingNonCash(addition(initialPendingNonCash(), variationPendingNonCash()));
     }
 
     private String marginStatementId(Agreement agreement, LocalDate date) {
@@ -140,6 +134,14 @@ public class MarginStatement extends Entity<MarginStatement> {
                 .map(Collateral::getLatestValue)
                 .mapToDouble(CollateralValue::getAmount)
                 .sum();
+    }
+
+    public Double pendingCash(){
+        return addition(initialPending(), variationPending());
+    }
+
+    public Double pendingNonCash(){
+        return addition(initialPendingNonCash(), variationPendingNonCash());
     }
 
     public Double variationBalance() {
