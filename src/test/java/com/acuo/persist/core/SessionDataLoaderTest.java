@@ -9,9 +9,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.neo4j.ogm.session.Session;
 
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class SessionDataLoaderTest {
@@ -20,12 +20,12 @@ public class SessionDataLoaderTest {
 	public ExpectedException expectedException = ExpectedException.none();
 
 	@Mock
-	Provider<Session> sessionProvider;
+	private Provider<Session> sessionProvider;
 
 	@Mock
-	Session session;
+	private Session session;
 
-	DataLoader loader;
+	private DataLoader loader;
 
 	@Before
 	public void setUp() throws Exception {

@@ -14,6 +14,8 @@ import com.google.inject.persist.Transactional;
 
 import javax.inject.Inject;
 
+import static com.google.common.collect.ImmutableMap.of;
+
 public class CollateralServiceImpl extends GenericService<Collateral, Long> implements CollateralService {
 
     private final MarginStatementService marginStatementService;
@@ -80,35 +82,30 @@ public class CollateralServiceImpl extends GenericService<Collateral, Long> impl
         String type = asset.getType();
         Types.AssetType assetType = "CASH".equals(type) ? Types.AssetType.Cash : Types.AssetType.NonCash;
 
-        Types.BalanceStatus status = status(transfer.getStatus());
+        Types.BalanceStatus status = AssetTransfer.status(transfer.getStatus());
 
         double amount = transfer.getQuantities() * transfer.getTransferValue();//transfer.getUnitValue();
         Collateral collateral = getOrCreateCollateralFor(MarginStatementId.fromString(statementId), marginType, assetType, status);
-        CollateralValue value = collateralValueService.createCollateralValue(amount);
+        CollateralValue value = collateralValueService.createValue(amount);
         value.setCollateral(collateral);
         collateral.setLatestValue(value);
         save(collateral, 2);
         return find(collateral.getId());
     }
 
-    private Types.BalanceStatus status(AssetTransferStatus status) {
-        switch (status) {
-            case Departed:
-                return Types.BalanceStatus.Pending;
-            case InFlight:
-                return Types.BalanceStatus.Pending;
-            case Delayed:
-                return Types.BalanceStatus.Pending;
-            case Cancelled:
-                return Types.BalanceStatus.Settled;
-            case Deployed:
-                return Types.BalanceStatus.Settled;
-            case Available:
-                return Types.BalanceStatus.Settled;
-            case Arriving:
-                return Types.BalanceStatus.Pending;
-        }
-        return null;
+    @Override
+    public Double amount(Types.AssetType assetType, Types.MarginType marginType, Types.BalanceStatus status) {
+        String query =
+                "MATCH (c:Collateral)-[:LATEST]->(d:CollateralValue) " +
+                "WHERE c.marginType = {marginType} " +
+                "AND c.assetType = {assetType} " +
+                "AND c.status= {status} " +
+                "RETURN sum(d.amount)";
+        final ImmutableMap<String, String> parameters =
+                of("assetType", assetType.name(),
+                   "marginType", marginType.name(),
+                   "status", status.name());
+        return sessionProvider.get().queryForObject(Double.class, query, parameters);
     }
 
 }
