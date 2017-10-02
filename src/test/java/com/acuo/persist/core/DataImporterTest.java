@@ -7,7 +7,7 @@ import org.mockito.MockitoAnnotations;
 
 import static com.acuo.common.TestHelper.matchesArgRegex;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.argThat;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
 
 public class DataImporterTest {
@@ -15,7 +15,7 @@ public class DataImporterTest {
 	private DataImporter importer;
 
 	@Mock
-	DataLoader loader;
+	private DataLoader loader;
 
 	@Before
 	public void setup() {

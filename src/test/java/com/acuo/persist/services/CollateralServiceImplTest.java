@@ -124,7 +124,7 @@ public class CollateralServiceImplTest {
         MarginStatementId statementId = MarginStatementId.fromString("msp1");
         Collateral collateral = collateralService.getOrCreateCollateralFor(statementId, Variation, Cash, Pending);
 
-        CollateralValue collateralValue = collateralValueService.createCollateralValue(10d);
+        CollateralValue collateralValue = collateralValueService.createValue(10d);
         collateralValue.setCollateral(collateral);
 
         collateralValue = collateralValueService.save(collateralValue);

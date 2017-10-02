@@ -1,8 +1,8 @@
 package com.acuo.persist.services;
 
-import com.acuo.persist.entity.Asset;
 import com.acuo.common.model.ids.AssetId;
 import com.acuo.common.model.ids.ClientId;
+import com.acuo.persist.entity.Asset;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 import org.neo4j.ogm.model.Result;

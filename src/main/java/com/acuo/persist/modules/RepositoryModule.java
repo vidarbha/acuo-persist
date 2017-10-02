@@ -40,6 +40,8 @@ public class RepositoryModule extends AbstractModule {
         bind(CollateralService.class).to(CollateralServiceImpl.class);
         bind(CollateralValueService.class).to(CollateralValueServiceImpl.class);
         bind(ErrorService.class).to(ErrorServiceImpl.class);
+        bind(AssetPledgeService.class).to(AssetPledgeServiceImpl.class);
+        bind(AssetPledgeValueService.class).to(AssetPledgeValueServiceImpl.class);
     }
 
 }
