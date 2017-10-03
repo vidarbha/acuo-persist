@@ -1,15 +1,14 @@
 package com.acuo.persist.services;
 
+import com.acuo.common.model.ids.AssetId;
+import com.acuo.common.model.ids.ClientId;
 import com.acuo.persist.entity.Asset;
 import com.acuo.persist.entity.AssetTransfer;
-import com.acuo.persist.entity.FXRate;
-import com.acuo.persist.entity.enums.AssetTransferStatus;
 import com.acuo.persist.entity.CustodianAccount;
 import com.acuo.persist.entity.Holds;
 import com.acuo.persist.entity.LegalEntity;
 import com.acuo.persist.entity.MarginCall;
-import com.acuo.common.model.ids.AssetId;
-import com.acuo.common.model.ids.ClientId;
+import com.acuo.persist.entity.enums.AssetTransferStatus;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 import org.neo4j.ogm.model.Result;
