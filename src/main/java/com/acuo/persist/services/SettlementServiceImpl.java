@@ -2,17 +2,19 @@ package com.acuo.persist.services;
 
 import com.acuo.common.model.ids.AssetId;
 import com.acuo.persist.entity.Settlement;
-import com.acuo.persist.entity.SettlementDate;
 import com.google.common.collect.ImmutableMap;
+import org.neo4j.ogm.session.Session;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
-public class SettlementServiceImpl extends GenericService<Settlement, String> implements SettlementService{
+public class SettlementServiceImpl extends AbstractService<Settlement, String> implements SettlementService{
 
     private final AssetService assetService;
 
     @Inject
-    public SettlementServiceImpl(AssetService assetService) {
+    public SettlementServiceImpl(Provider<Session> session, AssetService assetService) {
+        super(session);
         this.assetService = assetService;
     }
 
@@ -27,7 +29,7 @@ public class SettlementServiceImpl extends GenericService<Settlement, String> im
                 "MATCH p=(child:SettlementDate)<-[:SETTLEMENT_DATE]-(sd:Settlement)<-[:SETTLEMENT]-(asset:Asset {id:{id}}) " +
                 "RETURN sd, nodes(p), relationships(p)";
         ImmutableMap<String, String> parameters = ImmutableMap.of("id", assetId.toString());
-        return sessionProvider.get().queryForObject(Settlement.class, query, parameters);
+        return dao.getSession().queryForObject(Settlement.class, query, parameters);
     }
 
     @Override

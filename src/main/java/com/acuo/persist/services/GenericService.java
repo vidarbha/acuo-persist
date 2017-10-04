@@ -1,6 +1,5 @@
 package com.acuo.persist.services;
 
-import com.acuo.common.util.ArgChecker;
 import com.google.inject.persist.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.ogm.session.Session;
@@ -9,21 +8,32 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.io.Serializable;
 
+import static com.acuo.common.util.ArgChecker.notEmpty;
+import static com.acuo.common.util.ArgChecker.notNull;
+
 @Slf4j
 @Transactional
-public abstract class GenericService<T, ID extends Serializable> implements Service<T, ID> {
+public final class GenericService<T, ID extends Serializable> implements Service<T, ID> {
 
     private static final int DEPTH_LIST = 0;
     private static final int DEPTH_ENTITY = 1;
 
-    @Inject
-    protected Provider<Session> sessionProvider;
+    private final Provider<Session> sessionProvider;
+    private final Class<T> type;
 
-    public abstract Class<T> getEntityType();
+    @Inject
+    public GenericService(Provider<Session> sessionProvider, Class<T> type) {
+        this.sessionProvider = sessionProvider;
+        this.type = type;
+    }
+
+    private Class<T> getEntityType() {
+        return type;
+    }
 
     @Override
     public <S extends T> S save(S entity) {
-        ArgChecker.notNull(entity, "entity");
+        entity = notNull(entity, "entity");
         if (log.isDebugEnabled()) {
             log.debug("save {}",entity);
         }
@@ -33,8 +43,7 @@ public abstract class GenericService<T, ID extends Serializable> implements Serv
 
     @Override
     public <S extends T> Iterable<S> save(Iterable<S> entities) {
-        ArgChecker.notNull(entities, "entities");
-        ArgChecker.notEmpty(entities, "entities");
+        entities = notEmpty(entities, "entities");
         if (log.isDebugEnabled()) {
             log.debug("save {}",entities);
         }
@@ -44,7 +53,7 @@ public abstract class GenericService<T, ID extends Serializable> implements Serv
 
     @Override
     public void delete(ID id) {
-        ArgChecker.notNull(id, "id");
+        id = notNull(id, "id");
         if (log.isDebugEnabled()) {
             log.debug("delete {}", id);
         }
@@ -53,7 +62,7 @@ public abstract class GenericService<T, ID extends Serializable> implements Serv
 
     @Override
     public void delete(T entity) {
-        ArgChecker.notNull(entity, "entity");
+        entity = notNull(entity, "entity");
         if (log.isDebugEnabled()) {
             log.debug("delete {}", entity);
         }
@@ -62,8 +71,7 @@ public abstract class GenericService<T, ID extends Serializable> implements Serv
 
     @Override
     public void delete(Iterable<? extends T> entities) {
-        ArgChecker.notNull(entities, "entities");
-        ArgChecker.notEmpty(entities, "entities");
+        entities = notEmpty(entities, "entities");
         if (log.isDebugEnabled()) {
             log.debug("delete {}", entities);
         }
@@ -77,7 +85,7 @@ public abstract class GenericService<T, ID extends Serializable> implements Serv
 
     @Override
     public <S extends T> S save(S entity, int depth) {
-        ArgChecker.notNull(entity, "entity");
+        entity = notNull(entity, "entity");
         if (log.isDebugEnabled()) {
             log.debug("save {} depth {}", entity, depth);
         }
@@ -87,8 +95,7 @@ public abstract class GenericService<T, ID extends Serializable> implements Serv
 
     @Override
     public <S extends T> Iterable<S> save(Iterable<S> entities, int depth) {
-        ArgChecker.notNull(entities, "entities");
-        ArgChecker.notEmpty(entities, "entities");
+        entities = notEmpty(entities, "entities");
         if (log.isDebugEnabled()) {
             log.debug("save {} depth {}", entities, depth);
         }
@@ -98,7 +105,7 @@ public abstract class GenericService<T, ID extends Serializable> implements Serv
 
     @Override
     public <S extends T> S createOrUpdate(S entity) {
-        ArgChecker.notNull(entity, "entity");
+        entity = notNull(entity, "entity");
         if (log.isDebugEnabled()) {
             log.debug("createOrUpdate {}", entity);
         }
@@ -121,7 +128,7 @@ public abstract class GenericService<T, ID extends Serializable> implements Serv
 
     @Override
     public T find(ID id) {
-        ArgChecker.notNull(id, "id");
+        id = notNull(id, "id");
         if (log.isDebugEnabled()) {
             log.debug("find {}", id);
         }
@@ -130,14 +137,14 @@ public abstract class GenericService<T, ID extends Serializable> implements Serv
 
     @Override
     public T find(ID id, int depth) {
-        ArgChecker.notNull(id, "id");
+        id = notNull(id, "id");
         if (log.isDebugEnabled()) {
             log.debug("find {} depth {}", id, depth);
         }
         return getSession().load(getEntityType(), id, depth);
     }
 
-    private Session getSession() {
+    public Session getSession() {
         final Session session = sessionProvider.get();
         if (log.isDebugEnabled()) {
             log.debug("session {}", session.hashCode());

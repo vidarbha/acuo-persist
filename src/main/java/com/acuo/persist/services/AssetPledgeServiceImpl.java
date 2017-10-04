@@ -1,7 +1,6 @@
 package com.acuo.persist.services;
 
 import com.acuo.common.model.ids.AssetId;
-import com.acuo.common.model.margin.Types;
 import com.acuo.persist.entity.Asset;
 import com.acuo.persist.entity.AssetPledge;
 import com.acuo.persist.entity.AssetPledgeValue;
@@ -9,22 +8,24 @@ import com.acuo.persist.entity.AssetTransfer;
 import com.acuo.persist.entity.MarginCall;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
+import org.neo4j.ogm.session.Session;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import static com.acuo.common.model.margin.Types.*;
-import static com.acuo.common.model.margin.Types.BalanceStatus;
-import static com.acuo.common.model.margin.Types.MarginType;
 import static com.google.common.collect.ImmutableMap.of;
 
-public class AssetPledgeServiceImpl extends GenericService<AssetPledge, Long> implements AssetPledgeService {
+public class AssetPledgeServiceImpl extends AbstractService<AssetPledge, Long> implements AssetPledgeService {
 
     private final AssetService assetService;
     private final AssetPledgeValueService assetPledgeValueService;
 
     @Inject
-    public AssetPledgeServiceImpl(AssetService assetService,
+    public AssetPledgeServiceImpl(Provider<Session> session,
+                                  AssetService assetService,
                                   AssetPledgeValueService assetPledgeValueService) {
+        super(session);
         this.assetService = assetService;
         this.assetPledgeValueService = assetPledgeValueService;
     }
@@ -46,7 +47,7 @@ public class AssetPledgeServiceImpl extends GenericService<AssetPledge, Long> im
         final ImmutableMap<String, String> parameters = of("id", assetId.toString(),
                 "marginType", marginType.name(),
                 "status", status.name());
-        return sessionProvider.get().queryForObject(AssetPledge.class, query, parameters);
+        return dao.getSession().queryForObject(AssetPledge.class, query, parameters);
     }
 
     @Override
@@ -92,7 +93,7 @@ public class AssetPledgeServiceImpl extends GenericService<AssetPledge, Long> im
                 "AND assetPledge.marginType IN {types} " +
                 "RETURN sum(value.amount)";
         final ImmutableMap<String, Object[]> parameters = of("types", types,"statuses", statuses);
-        return sessionProvider.get().queryForObject(Double.class, query, parameters);
+        return dao.getSession().queryForObject(Double.class, query, parameters);
     }
 
     @Override
@@ -107,6 +108,6 @@ public class AssetPledgeServiceImpl extends GenericService<AssetPledge, Long> im
                 of("assetTypes", AssetSubType.of(assetType),
                 "marginType", marginType.name(),
                 "status", status.name());
-        return sessionProvider.get().queryForObject(Double.class, query, parameters);
+        return dao.getSession().queryForObject(Double.class, query, parameters);
     }
 }

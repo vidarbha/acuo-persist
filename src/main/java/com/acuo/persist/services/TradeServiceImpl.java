@@ -1,17 +1,20 @@
 package com.acuo.persist.services;
 
-import com.acuo.common.typeref.TypeReference;
-import com.acuo.persist.entity.IRS;
-import com.acuo.persist.entity.Trade;
 import com.acuo.common.model.ids.ClientId;
 import com.acuo.common.model.ids.PortfolioId;
 import com.acuo.common.model.ids.TradeId;
+import com.acuo.common.typeref.TypeReference;
+import com.acuo.persist.entity.IRS;
+import com.acuo.persist.entity.Trade;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.inject.persist.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.ogm.cypher.query.SortOrder;
+import org.neo4j.ogm.session.Session;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -22,7 +25,12 @@ import java.util.stream.StreamSupport;
 import static java.util.stream.Collectors.toList;
 
 @Slf4j
-public class TradeServiceImpl<T extends Trade> extends GenericService<T, TradeId> implements TradeService<T> {
+public class TradeServiceImpl<T extends Trade> extends AbstractService<T, TradeId> implements TradeService<T> {
+
+    @Inject
+    public TradeServiceImpl(Provider<Session> session) {
+        super(session);
+    }
 
     @Override
     @Transactional
@@ -36,7 +44,7 @@ public class TradeServiceImpl<T extends Trade> extends GenericService<T, TradeId
                         "-[:POSITIONS_ON]-> (trade:Trade) " +
                         "WITH trade " +
                         "MATCH p=(trade)-[r*0..1]-() RETURN trade, nodes(p), relationships(p)";
-        return sessionProvider.get().query(getEntityType(), query, ImmutableMap.of("id",clientId.toString()));
+        return dao.getSession().query(getEntityType(), query, ImmutableMap.of("id",clientId.toString()));
     }
 
     @Override
@@ -55,7 +63,7 @@ public class TradeServiceImpl<T extends Trade> extends GenericService<T, TradeId
                 "MATCH p=()-[*0..1]-(t:Trade)-[r:BELONGS_TO]->(portfolio:Portfolio)-[:FOLLOWS]->(a:Agreement) " +
                 "WHERE portfolio.id IN {ids} " +
                 "RETURN p, nodes(p), relationships(p)";
-        return sessionProvider.get().query(getEntityType(), query, ImmutableMap.of("ids", ids));
+        return dao.getSession().query(getEntityType(), query, ImmutableMap.of("ids", ids));
     }
 
     @Override
@@ -64,7 +72,7 @@ public class TradeServiceImpl<T extends Trade> extends GenericService<T, TradeId
         if (log.isDebugEnabled()) {
             log.debug("findAllIRS");
         }
-        return sessionProvider.get().loadAll(IRS.class, new SortOrder().add("tradeType"),1);
+        return dao.getSession().loadAll(IRS.class, new SortOrder().add("tradeType"),1);
     }
 
     @Override
@@ -77,7 +85,7 @@ public class TradeServiceImpl<T extends Trade> extends GenericService<T, TradeId
                 "MATCH p=(t:Trade)-[*0..1]-() " +
                 "WHERE t.id IN {ids}" +
                 "RETURN p, nodes(p), relationships(p)";
-        return sessionProvider.get().query(getEntityType(), query, ImmutableMap.of("ids", ids));
+        return dao.getSession().query(getEntityType(), query, ImmutableMap.of("ids", ids));
     }
 
     @Transactional

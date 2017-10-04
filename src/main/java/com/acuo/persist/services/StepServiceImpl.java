@@ -1,14 +1,22 @@
 package com.acuo.persist.services;
 
 import com.acuo.common.model.results.MSError;
-import com.acuo.persist.entity.StepError;
 import com.acuo.persist.entity.Step;
+import com.acuo.persist.entity.StepError;
 import com.acuo.persist.entity.enums.StatementStatus;
 import com.google.inject.persist.Transactional;
+import org.neo4j.ogm.session.Session;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
 import java.time.LocalDateTime;
 
-public class StepServiceImpl extends GenericService<Step, String> implements StepService {
+public class StepServiceImpl extends AbstractService<Step, String> implements StepService {
+
+    @Inject
+    public StepServiceImpl(Provider<Session> session) {
+        super(session);
+    }
 
     @Override
     public Class<Step> getEntityType() {

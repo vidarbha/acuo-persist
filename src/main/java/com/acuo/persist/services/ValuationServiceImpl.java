@@ -18,22 +18,26 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
+import org.neo4j.ogm.session.Session;
 
+import javax.inject.Provider;
 import java.time.LocalDate;
 import java.util.stream.StreamSupport;
 
 import static com.acuo.common.util.ArgChecker.notNull;
 
-public class ValuationServiceImpl extends GenericService<Valuation, String> implements ValuationService {
+public class ValuationServiceImpl extends AbstractService<Valuation, String> implements ValuationService {
 
     private final PortfolioService portfolioService;
     private final AssetService assetService;
     private final TradeService<Trade> tradeService;
 
     @Inject
-    public ValuationServiceImpl(PortfolioService portfolioService,
+    public ValuationServiceImpl(Provider<Session> session,
+                                PortfolioService portfolioService,
                                 AssetService assetService,
                                 TradeService<Trade> tradeService) {
+        super(session);
         this.portfolioService = portfolioService;
         this.assetService = assetService;
         this.tradeService = tradeService;
@@ -53,7 +57,7 @@ public class ValuationServiceImpl extends GenericService<Valuation, String> impl
                         "RETURN p, nodes(p), relationships(p)";
         final String id = tradeId.toString();
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", id);
-        return sessionProvider.get().queryForObject(TradeValuation.class, query, parameters);
+        return dao.getSession().queryForObject(TradeValuation.class, query, parameters);
     }
 
     @Override
@@ -78,7 +82,7 @@ public class ValuationServiceImpl extends GenericService<Valuation, String> impl
                         "RETURN p, nodes(p), relationships(p)";
         final String pId = portfolioId.toString();
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", pId, "callType", callType.name());
-        return sessionProvider.get().queryForObject(MarginValuation.class, query, parameters);
+        return dao.getSession().queryForObject(MarginValuation.class, query, parameters);
     }
 
     @Override
@@ -103,7 +107,7 @@ public class ValuationServiceImpl extends GenericService<Valuation, String> impl
                         "RETURN p, nodes(p), relationships(p)";
         final String aId = assetId.toString();
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", aId);
-        return sessionProvider.get().queryForObject(AssetValuation.class, query, parameters);
+        return dao.getSession().queryForObject(AssetValuation.class, query, parameters);
     }
 
     @Override
@@ -132,7 +136,7 @@ public class ValuationServiceImpl extends GenericService<Valuation, String> impl
                 "MATCH p=(portfolio:Portfolio {id:{id}})<-[:BELONGS_TO]-(trade:Trade)<-[:VALUATED]-(valuation:TradeValuation)-[:VALUE]->(value:TradeValue) " +
                 "RETURN valuation, nodes(p), relationships(p)";
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", portfolioId.toString());
-        Iterable<TradeValuation> valuations = sessionProvider.get().query(TradeValuation.class, query, parameters);
+        Iterable<TradeValuation> valuations = dao.getSession().query(TradeValuation.class, query, parameters);
         return StreamSupport.stream(valuations.spliterator(), true)
                 .filter(valuation -> valuation.isValuedFor(valuationDate))
                 .count();
@@ -146,7 +150,7 @@ public class ValuationServiceImpl extends GenericService<Valuation, String> impl
                 "RETURN value";
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", tradeId.toString(),
                 "date", new LocalDateConverter().toGraphProperty(valuationDate));
-        Iterable<TradeValue> values = sessionProvider.get().query(TradeValue.class, query, parameters);
+        Iterable<TradeValue> values = dao.getSession().query(TradeValue.class, query, parameters);
         return values != null && !Iterables.isEmpty(values);
     }
 
@@ -159,7 +163,7 @@ public class ValuationServiceImpl extends GenericService<Valuation, String> impl
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", portfolioId.toString(),
                 "callType", callType.name(),
                 "date", new LocalDateConverter().toGraphProperty(valuationDate));
-        Iterable<MarginValue> values = sessionProvider.get().query(MarginValue.class, query, parameters);
+        Iterable<MarginValue> values = dao.getSession().query(MarginValue.class, query, parameters);
         return values != null && !Iterables.isEmpty(values);
     }
 }

@@ -1,11 +1,19 @@
 package com.acuo.persist.services;
 
 import com.acuo.persist.entity.AssetPledgeValue;
+import org.neo4j.ogm.session.Session;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
 import java.time.Instant;
 import java.time.LocalDate;
 
-public class AssetPledgeValueServiceImpl extends GenericService<AssetPledgeValue, Long> implements AssetPledgeValueService {
+public class AssetPledgeValueServiceImpl extends AbstractService<AssetPledgeValue, Long> implements AssetPledgeValueService {
+
+    @Inject
+    public AssetPledgeValueServiceImpl(Provider<Session> session) {
+        super(session);
+    }
 
     @Override
     public Class<AssetPledgeValue> getEntityType() {

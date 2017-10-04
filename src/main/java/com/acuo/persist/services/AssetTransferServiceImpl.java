@@ -12,14 +12,16 @@ import com.acuo.persist.entity.enums.AssetTransferStatus;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 import org.neo4j.ogm.model.Result;
+import org.neo4j.ogm.session.Session;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import java.time.LocalDateTime;
 import java.util.Collections;
 
 import static com.acuo.persist.entity.enums.AssetTransferStatus.*;
 
-public class AssetTransferServiceImpl extends GenericService<AssetTransfer, String> implements AssetTransferService {
+public class AssetTransferServiceImpl extends AbstractService<AssetTransfer, String> implements AssetTransferService {
 
     private final MarginCallService marginCallService;
     private final AssetService assetService;
@@ -29,12 +31,14 @@ public class AssetTransferServiceImpl extends GenericService<AssetTransfer, Stri
     private final CollateralService collateralService;
 
     @Inject
-    public AssetTransferServiceImpl(MarginCallService marginCallService,
+    public AssetTransferServiceImpl(Provider<Session> session,
+                                    MarginCallService marginCallService,
                                     AssetService assetService,
                                     CustodianAccountService custodianAccountService,
                                     AssetValuationService assetValuationService,
                                     FXRateService fxRateService,
                                     CollateralService collateralService) {
+        super(session);
         this.marginCallService = marginCallService;
         this.assetService = assetService;
         this.custodianAccountService = custodianAccountService;
@@ -76,14 +80,14 @@ public class AssetTransferServiceImpl extends GenericService<AssetTransfer, Stri
     @Transactional
     public Iterable<AssetTransfer> findArrivingAssetTransferByClientId(ClientId clientId) {
         final ImmutableMap<String, String> parameters = ImmutableMap.of("clientId", clientId.toString());
-        return sessionProvider.get().query(getEntityType(), ARRIVING_ASSET_TRANSFER, parameters);
+        return dao.getSession().query(getEntityType(), ARRIVING_ASSET_TRANSFER, parameters);
     }
 
     @Override
     @Transactional
     public Iterable<AssetTransfer> findDepartedAssetTransferByClientId(ClientId clientId) {
         final ImmutableMap<String, String> parameters = ImmutableMap.of("clientId", clientId.toString());
-        return sessionProvider.get().query(getEntityType(), DEPARTED_ASSET_TRANSFER, parameters);
+        return dao.getSession().query(getEntityType(), DEPARTED_ASSET_TRANSFER, parameters);
     }
 
     @Override
@@ -171,7 +175,6 @@ public class AssetTransferServiceImpl extends GenericService<AssetTransfer, Stri
                 "MATCH (l1:LegalEntity)-[:CLIENT_SIGNS]->(a)<-[:COUNTERPARTY_SIGNS]-(l2:LegalEntity) " +
                 "MATCH (c1:Custodian)-[:MANAGES]->(ca1:CustodianAccount)<-[:FROM]-(at)-[:TO]->(ca2:CustodianAccount)<-[:MANAGES]-(c2:Custodian) " +
                 "RETURN at.id, at.pledgeTime, a.name, l1.name, l2.name, a.currency, at.subStatus, c1.name, c2.name, ca1.name, ca2.name, at.quantities, assets.currency,assets.name, assets.id, assets.settlementTime";
-
-        return sessionProvider.get().query(query, Collections.emptyMap());
+        return dao.getSession().query(query, Collections.emptyMap());
     }
 }

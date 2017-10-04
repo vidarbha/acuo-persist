@@ -8,22 +8,25 @@ import com.acuo.persist.entity.Collateral;
 import com.acuo.persist.entity.CollateralValue;
 import com.acuo.persist.entity.MarginCall;
 import com.acuo.persist.entity.MarginStatement;
-import com.acuo.persist.entity.enums.AssetTransferStatus;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
+import org.neo4j.ogm.session.Session;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import static com.google.common.collect.ImmutableMap.of;
 
-public class CollateralServiceImpl extends GenericService<Collateral, Long> implements CollateralService {
+public class CollateralServiceImpl extends AbstractService<Collateral, Long> implements CollateralService {
 
     private final MarginStatementService marginStatementService;
     private final CollateralValueService collateralValueService;
 
     @Inject
-    public CollateralServiceImpl(MarginStatementService marginStatementService,
+    public CollateralServiceImpl(Provider<Session> session,
+                                 MarginStatementService marginStatementService,
                                  CollateralValueService collateralValueService) {
+        super(session);
         this.marginStatementService = marginStatementService;
         this.collateralValueService = collateralValueService;
     }
@@ -47,7 +50,7 @@ public class CollateralServiceImpl extends GenericService<Collateral, Long> impl
                 "marginType", marginType.name(),
                 "assetType", assetType.name(),
                 "status", status.name());
-        return sessionProvider.get().queryForObject(Collateral.class, query, parameters);
+        return dao.getSession().queryForObject(Collateral.class, query, parameters);
     }
 
     @Override
@@ -105,7 +108,7 @@ public class CollateralServiceImpl extends GenericService<Collateral, Long> impl
                 of("assetType", assetType.name(),
                    "marginType", marginType.name(),
                    "status", status.name());
-        return sessionProvider.get().queryForObject(Double.class, query, parameters);
+        return dao.getSession().queryForObject(Double.class, query, parameters);
     }
 
 }

@@ -7,20 +7,28 @@ import com.acuo.persist.entity.Asset;
 import com.acuo.persist.entity.Portfolio;
 import com.acuo.persist.entity.ServiceError;
 import com.acuo.persist.entity.Trade;
-import com.google.inject.Inject;
+import org.neo4j.ogm.session.Session;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
 import java.util.List;
 
-public class ErrorServiceImpl extends GenericService<ServiceError, String> implements ErrorService {
+public class ErrorServiceImpl extends AbstractService<ServiceError, String> implements ErrorService {
+
+    private final TradeService<Trade> tradeService;
+    private final AssetService assetService;
+    private final PortfolioService portfolioService;
 
     @Inject
-    private TradeService<Trade> tradeService;
-
-    @Inject
-    private AssetService assetService;
-
-    @Inject
-    private PortfolioService portfolioService;
+    public ErrorServiceImpl(Provider<Session> session,
+                            TradeService<Trade> tradeService,
+                            AssetService assetService,
+                            PortfolioService portfolioService) {
+        super(session);
+        this.tradeService = tradeService;
+        this.assetService = assetService;
+        this.portfolioService = portfolioService;
+    }
 
     @Override
     public Class<ServiceError> getEntityType() {

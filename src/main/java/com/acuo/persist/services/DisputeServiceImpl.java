@@ -1,12 +1,21 @@
 package com.acuo.persist.services;
 
+import com.acuo.common.model.ids.MarginStatementId;
 import com.acuo.persist.entity.Dispute;
 import com.acuo.persist.entity.MarginStatement;
-import com.acuo.common.model.ids.MarginStatementId;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
+import org.neo4j.ogm.session.Session;
 
-public class DisputeServiceImpl extends GenericService<Dispute, String> implements DisputeService {
+import javax.inject.Inject;
+import javax.inject.Provider;
+
+public class DisputeServiceImpl extends AbstractService<Dispute, String> implements DisputeService {
+
+    @Inject
+    public DisputeServiceImpl(Provider<Session> session) {
+        super(session);
+    }
 
     @Override
     public Class<Dispute> getEntityType() {
@@ -18,7 +27,7 @@ public class DisputeServiceImpl extends GenericService<Dispute, String> implemen
     public Dispute relatedTo(MarginStatementId marginStatementId) {
         String query = "MATCH (dispute:Dispute)-[:ON]->(:MarginStatement {id:{id}}) RETURN dispute";
         ImmutableMap<String, String> parameters = ImmutableMap.of("id", marginStatementId.toString());
-        return sessionProvider.get().queryForObject(Dispute.class, query, parameters);
+        return dao.getSession().queryForObject(Dispute.class, query, parameters);
     }
 
     @Override

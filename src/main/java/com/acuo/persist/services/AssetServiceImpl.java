@@ -6,12 +6,15 @@ import com.acuo.persist.entity.Asset;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 import org.neo4j.ogm.model.Result;
+import org.neo4j.ogm.session.Session;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
 import java.util.Map;
 
-public class AssetServiceImpl extends GenericService<Asset, AssetId> implements AssetService {
+public class AssetServiceImpl extends AbstractService<Asset, AssetId> implements AssetService {
 
-    private final static String AVAILABLE_ASSET =
+    final static String AVAILABLE_ASSET =
             "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:CLIENT_SIGNS]->(agreement:Agreement)-[:IS_COMPOSED_OF]->(rule:Rule)-[:APPLIES_TO]->(asset:Asset) " +
             "WITH asset, client, rule " +
             "MATCH h=(:Custodian)-[:MANAGES]->(ca:CustodianAccount)-[holds:HOLDS]->(asset) " +
@@ -20,7 +23,7 @@ public class AssetServiceImpl extends GenericService<Asset, AssetId> implements 
             "nodes(h), relationships(h), " +
             "nodes(v), relationships(v)";
 
-    private final static String ELIGIBLE_ASSET_BY_CLIENT_AND_CALLID =
+    final static String ELIGIBLE_ASSET_BY_CLIENT_AND_CALLID =
             "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:CLIENT_SIGNS]->(agreement:Agreement)-[:IS_COMPOSED_OF]->(rule:Rule)-[:APPLIES_TO]->(asset:Asset) " +
             "WITH asset, client, agreement, entity, rule " +
             "MATCH (agreement)<-[:STEMS_FROM]-(ms:MarginStatement)<-[*1..2]-(marginCall:MarginCall {id:{callId}}),(ms)-[:SENT_FROM|DIRECTED_TO]->(entity) " +
@@ -35,17 +38,22 @@ public class AssetServiceImpl extends GenericService<Asset, AssetId> implements 
             "nodes(v), relationships(v), " +
             "nodes(r), relationships(r)";
 
-    private final static String TOTAL_HAIRCUT =
+    final static String TOTAL_HAIRCUT =
             "MATCH (si:StatementItem {id:{callId}})-[:PART_OF]->(:MarginStatement)-[:STEMS_FROM]->(agr:Agreement) " +
             "MATCH (a:Asset {id:{assetId}})-[:IS_IN]->(:AssetCategory)-[eu:IS_ELIGIBLE_UNDER]->(agr) " +
             "WITH eu.haircut + eu.FXHaircut as totalHaircut " +
             "RETURN totalHaircut";
 
+    @Inject
+    public AssetServiceImpl(Provider<Session> session) {
+        super(session);
+    }
+
     @Override
     @Transactional
     public Iterable<Asset> findAvailableAssetByClientId(ClientId clientId) {
         final ImmutableMap<String, String> parameters = ImmutableMap.of("clientId", clientId.toString());
-        return sessionProvider.get().query(getEntityType(), AVAILABLE_ASSET, parameters);
+        return dao.getSession().query(getEntityType(), AVAILABLE_ASSET, parameters);
     }
 
     @Override
@@ -53,7 +61,7 @@ public class AssetServiceImpl extends GenericService<Asset, AssetId> implements 
     public Iterable<Asset> findAvailableAssetByClientIdAndCallId(ClientId clientId, String callId) {
         final ImmutableMap<String, String> parameters = ImmutableMap.of("clientId", clientId.toString(),
                 "callId", callId);
-        return sessionProvider.get().query(getEntityType(), ELIGIBLE_ASSET_BY_CLIENT_AND_CALLID, parameters);
+        return dao.getSession().query(getEntityType(), ELIGIBLE_ASSET_BY_CLIENT_AND_CALLID, parameters);
     }
 
     @Override
@@ -61,7 +69,7 @@ public class AssetServiceImpl extends GenericService<Asset, AssetId> implements 
     public Double totalHaircut(AssetId assetId, String callId) {
         final ImmutableMap<String, String> parameters = ImmutableMap.of("assetId", assetId.toString(),
                 "callId", callId);
-        Result result = sessionProvider.get().query(TOTAL_HAIRCUT, parameters);
+        Result result = dao.getSession().query(TOTAL_HAIRCUT, parameters);
         Map<String, Object> next = result.iterator().next();
         return (Double) next.get("totalHaircut");
     }

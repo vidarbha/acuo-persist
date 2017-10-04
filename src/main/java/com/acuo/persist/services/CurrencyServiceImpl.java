@@ -4,15 +4,18 @@ import com.acuo.persist.entity.CurrencyEntity;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 import com.opengamma.strata.basics.currency.Currency;
+import org.neo4j.ogm.session.Session;
 
+import javax.inject.Provider;
 import java.util.Map;
 
-public class CurrencyServiceImpl extends GenericService<CurrencyEntity, String> implements CurrencyService {
+public class CurrencyServiceImpl extends AbstractService<CurrencyEntity, String> implements CurrencyService {
 
     private final FXRateService fxRateService;
 
     @Inject
-    public CurrencyServiceImpl(FXRateService fxRateService) {
+    public CurrencyServiceImpl(Provider<Session> session, FXRateService fxRateService) {
+        super(session);
         this.fxRateService = fxRateService;
     }
 
@@ -21,22 +24,22 @@ public class CurrencyServiceImpl extends GenericService<CurrencyEntity, String> 
         return CurrencyEntity.class;
     }
 
-    @Transactional
-    @Override
-    @Deprecated
     /**
      * @deprecated use {@link FXRateService#getFXValue(Currency)}
      */
+    @Transactional
+    @Override
+    @Deprecated
     public Double getFXValue(Currency currency) {
         return fxRateService.getFXValue(currency);
     }
 
-    @Transactional
-    @Override
-    @Deprecated
     /**
      * @deprecated use {@link FXRateService#getAllFX()}
      */
+    @Transactional
+    @Override
+    @Deprecated
     public Map<Currency, Double> getAllFX() {
         return fxRateService.getAllFX();
     }

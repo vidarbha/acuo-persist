@@ -1,6 +1,6 @@
 package com.acuo.persist.learning;
 
-import com.acuo.persist.services.GenericService;
+import com.acuo.persist.services.AbstractService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,10 +26,10 @@ public class TestDeleteAcuo {
     public Neo4jRule neo4jRule = new Neo4jRule()
             .withConfig("dbms.security.auth_enabled", "false");
 
-    public static class PersonService extends GenericService<Person, Long> {
+    public static class PersonService extends AbstractService<Person, Long> {
 
-        public PersonService(Session session) {
-            this.sessionProvider = () -> session;
+        PersonService(Session session) {
+            super(() -> session);
         }
 
         @Override
@@ -38,10 +38,10 @@ public class TestDeleteAcuo {
         }
     }
 
-    public static class CarService extends GenericService<Car, Long> {
+    public static class CarService extends AbstractService<Car, Long> {
 
-        public CarService(Session session) {
-            this.sessionProvider = () -> session;
+        CarService(Session session) {
+            super(() -> session);
         }
 
         @Override
@@ -104,7 +104,7 @@ public class TestDeleteAcuo {
         ogmTransaction = neo4jSession.beginTransaction();
     }
 
-    public void endTransaciton() {
+    private void endTransaciton() {
         ogmTransaction.commit();
         ogmTransaction.close();
     }
@@ -113,9 +113,9 @@ public class TestDeleteAcuo {
         Configuration configuration = new Configuration();
         configuration
                 .driverConfiguration()
-                .setDriverClassName("org.neo4j.ogm.drivers.bolt.driver.BoltDriver")
-                .setEncryptionLevel("NONE")
-                .setURI("bolt://localhost:5001");
+                .setDriverClassName("org.neo4j.ogm.drivers.embedded.driver.EmbeddedDriver");
+                //.setEncryptionLevel("NONE")
+                //.setURI("bolt://localhost:5001");
         /*Configuration configuration = new Configuration.Builder()
                 .uri("bolt://localhost:5001")
                 .connectionPoolSize(150)
