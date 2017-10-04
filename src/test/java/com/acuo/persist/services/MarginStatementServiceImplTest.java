@@ -18,6 +18,7 @@ import com.acuo.persist.modules.DataLoaderModule;
 import com.acuo.persist.modules.Neo4jPersistModule;
 import com.acuo.persist.modules.RepositoryModule;
 import com.opengamma.strata.basics.currency.Currency;
+import org.assertj.core.api.AbstractObjectAssert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -38,6 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         DataLoaderModule.class,
         DataImporterModule.class,
         RepositoryModule.class})
+@Ignore
 public class MarginStatementServiceImplTest {
 
     @Inject
@@ -151,7 +153,11 @@ public class MarginStatementServiceImplTest {
         Agreement agreement = agreementService.agreementFor(PortfolioId.fromString("p2"));
         LocalDate callDate = LocalDate.of(2017, 1, 13);
         MarginStatement marginStatement = marginStatementService.getMarginStatement(agreement, callDate);
-        assertThat(marginStatement).isNotNull()
+        assertSatisfies(callDate, marginStatement);
+    }
+
+    private AbstractObjectAssert<?, MarginStatement> assertSatisfies(LocalDate callDate, MarginStatement marginStatement) {
+        return assertThat(marginStatement).isNotNull()
                 .satisfies(statement -> {
                     assertThat(statement).extracting("date").containsOnly(callDate);
                     assertThat(statement).extracting("agreement").isNotEmpty().doesNotContainNull();
@@ -165,13 +171,7 @@ public class MarginStatementServiceImplTest {
         Agreement agreement = agreementService.agreementFor(PortfolioId.fromString("p2"));
         LocalDate callDate = LocalDate.of(2017, 1, 13);
         MarginStatement marginStatement = marginStatementService.getOrCreateMarginStatement(agreement, callDate);
-        assertThat(marginStatement).isNotNull()
-                .satisfies(statement -> {
-                    assertThat(statement).extracting("date").containsOnly(callDate);
-                    assertThat(statement).extracting("agreement").isNotEmpty().doesNotContainNull();
-                    assertThat(statement).extracting("directedTo").isNotEmpty().doesNotContainNull();
-                    assertThat(statement).extracting("sentFrom").isNotEmpty().doesNotContainNull();
-                });
+        assertSatisfies(callDate, marginStatement);
     }
 
     @Test

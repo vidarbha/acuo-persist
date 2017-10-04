@@ -28,6 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         DataLoaderModule.class,
         DataImporterModule.class,
         RepositoryModule.class})
+@Ignore
 public class AssetTransferServiceImplTest {
 
     @Inject

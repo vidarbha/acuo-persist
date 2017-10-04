@@ -31,9 +31,9 @@ public interface MarginStatementService extends Service<MarginStatement, String>
 
     void match(MarginStatementId fromId, MarginStatementId toId);
 
-    MarginStatement getMarginStatement(Agreement agreement, LocalDate callDate/*, StatementDirection direction*/);
+    MarginStatement getMarginStatement(Agreement agreement, LocalDate callDate);
 
-    MarginStatement getOrCreateMarginStatement(Agreement agreement, LocalDate callDate/*, StatementDirection direction*/);
+    MarginStatement getOrCreateMarginStatement(Agreement agreement, LocalDate callDate);
 
     /**
      * @deprecated  {@link StatementItemService#setStatus(String, StatementStatus)}

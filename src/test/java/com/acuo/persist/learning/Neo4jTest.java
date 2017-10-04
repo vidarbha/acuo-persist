@@ -31,9 +31,9 @@ public class Neo4jTest {
         Configuration configuration = new Configuration();
         configuration
                 .driverConfiguration()
-                .setDriverClassName("org.neo4j.ogm.drivers.bolt.driver.BoltDriver")
-                .setEncryptionLevel( "NONE" )
-                .setURI("bolt://localhost:5001");
+                .setDriverClassName("org.neo4j.ogm.drivers.embedded.driver.EmbeddedDriver");
+                //.setEncryptionLevel( "NONE" )
+                //.setURI("bolt://localhost:5001");
         return new SessionFactory( configuration, "com.acuo.persist.entity").openSession();
     }
 }

@@ -14,6 +14,7 @@ import com.acuo.persist.modules.RepositoryModule;
 import com.acuo.persist.utils.ValuationHelper;
 import com.opengamma.strata.basics.currency.Currency;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -30,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         DataLoaderModule.class,
         DataImporterModule.class,
         RepositoryModule.class})
+@Ignore
 public class AssetServiceImplTest {
 
     @Inject
