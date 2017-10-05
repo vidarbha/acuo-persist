@@ -43,6 +43,7 @@ dependencies {
     testCompile(
             "com.acuo.collateral:acuo-common:${versions.common}:tests",
             "com.vmlens:concurrent-junit:1.0.0",
-            "com.googlecode.junit-toolbox:junit-toolbox:2.2"
+            "com.googlecode.junit-toolbox:junit-toolbox:2.2",
+            "com.netflix.governator:governator-test-spock:latest.release"
     )
 }
