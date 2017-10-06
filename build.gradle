@@ -1,5 +1,4 @@
-//apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/root/buildscript.gradle"
-apply from: "file://home/hicham/Projects/acuo/gradle-plugins/root/buildscript.gradle"
+apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/root/buildscript.gradle"
 apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/root/gradle-wrapper.gradle"
 apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/root/profiles-config.gradle"
 apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/root/deployment.gradle"
@@ -15,10 +14,6 @@ apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/ja
         url "http://repo.spring.io/libs-snapshot"
     }
 }*/
-
-repositories {
-    mavenLocal()
-}
 
 group = 'com.acuo.collateral'
 
@@ -45,9 +40,6 @@ dependencies {
     )*/
 
     testCompile(
-            "com.acuo.collateral:acuo-common:${versions.common}:tests",
-            "com.vmlens:concurrent-junit:1.0.0",
-            "com.googlecode.junit-toolbox:junit-toolbox:2.2",
-            "com.netflix.governator:governator-test-spock:latest.release"
+            "com.acuo.collateral:acuo-common:${versions.common}:tests"
     )
 }
