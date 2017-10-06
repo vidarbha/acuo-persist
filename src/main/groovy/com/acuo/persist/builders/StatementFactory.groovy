@@ -7,11 +7,11 @@ import javax.inject.Inject
 
 class StatementFactory extends AbstractFactory implements BuilderFactory{
 
-    private final MarginStatementService marginStatementService
+    private final MarginStatementService service
 
     @Inject
-    StatementFactory(MarginStatementService marginStatementService) {
-        this.marginStatementService = marginStatementService
+    StatementFactory(MarginStatementService service) {
+        this.service = service
     }
 
     @Override
@@ -19,6 +19,7 @@ class StatementFactory extends AbstractFactory implements BuilderFactory{
         return "statement"
     }
 
+    @Override
     boolean isLeaf() {
         return false
     }
@@ -28,28 +29,30 @@ class StatementFactory extends AbstractFactory implements BuilderFactory{
                        Object name,
                        Object value,
                        Map attributes) throws InstantiationException, IllegalAccessException {
-        def statement
-        if (attributes != null)
-            statement = getOrCreate(attributes)
-        else
-            statement = new MarginStatement()
-        return statement
+        return getOrCreate(attributes)
     }
 
+    @Override
     void onNodeCompleted(FactoryBuilderSupport builder,
-                         Object parent, Object statement) {
-        marginStatementService.save(statement)
+                         Object parent,
+                         Object statement) {
+        service.save(statement)
     }
 
-    MarginStatement getOrCreate(Map attributes) {
-        String id = attributes["statementId"]
+    private MarginStatement getOrCreate(Map attributes) {
         MarginStatement statement
-        if(id != null) {
-            statement = marginStatementService.find(id)
+        if (attributes != null) {
+            String id = attributes["statementId"]
+            if (id != null) {
+                statement = service.find(id)
+            }
+            if (statement == null) {
+                return new MarginStatement(attributes)
+            } else
+                return statement
+        } else {
+            statement = new MarginStatement()
         }
-        if(statement == null) {
-            return new MarginStatement(attributes)
-        } else
-            return statement
+        return statement
     }
 }

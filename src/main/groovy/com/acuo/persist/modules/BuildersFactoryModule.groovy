@@ -15,5 +15,6 @@ class BuildersFactoryModule extends AbstractModule {
         binder.addBinding().to(StatementsFactory)
         binder.addBinding().to(StatementFactory)
         binder.addBinding().to(AgreementFactory)
+        binder.addBinding().to(VariationMarginFactory)
     }
 }

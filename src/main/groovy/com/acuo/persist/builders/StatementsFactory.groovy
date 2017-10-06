@@ -11,6 +11,7 @@ class StatementsFactory extends AbstractFactory implements BuilderFactory {
         return new ArrayList()
     }
 
+    @Override
     void setChild(FactoryBuilderSupport builder, Object parent, Object child) {
         parent << child
     }
