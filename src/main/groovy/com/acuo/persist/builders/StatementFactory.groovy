@@ -14,6 +14,11 @@ class StatementFactory extends AbstractFactory implements BuilderFactory{
         this.marginStatementService = marginStatementService
     }
 
+    @Override
+    String name() {
+        return "statement"
+    }
+
     boolean isLeaf() {
         return false
     }
@@ -23,9 +28,9 @@ class StatementFactory extends AbstractFactory implements BuilderFactory{
                        Object name,
                        Object value,
                        Map attributes) throws InstantiationException, IllegalAccessException {
-        MarginStatement statement = null
+        def statement
         if (attributes != null)
-            statement = new MarginStatement(attributes)
+            statement = getOrCreate(attributes)
         else
             statement = new MarginStatement()
         return statement
@@ -36,8 +41,15 @@ class StatementFactory extends AbstractFactory implements BuilderFactory{
         marginStatementService.save(statement)
     }
 
-    @Override
-    String name() {
-        return "statement"
+    MarginStatement getOrCreate(Map attributes) {
+        String id = attributes["statementId"]
+        MarginStatement statement
+        if(id != null) {
+            statement = marginStatementService.find(id)
+        }
+        if(statement == null) {
+            return new MarginStatement(attributes)
+        } else
+            return statement
     }
 }

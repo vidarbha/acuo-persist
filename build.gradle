@@ -16,6 +16,10 @@ apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/ja
     }
 }*/
 
+repositories {
+    mavenLocal()
+}
+
 group = 'com.acuo.collateral'
 
 ext.versions += [
