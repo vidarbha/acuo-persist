@@ -3,7 +3,9 @@ package com.acuo.persist.core;
 import com.acuo.common.app.ServiceManagerModule;
 import com.acuo.common.util.GuiceJUnitRunner;
 import com.acuo.persist.entity.Client;
-import com.acuo.persist.modules.*;
+import com.acuo.persist.modules.ConfigurationIntegrationTestModule;
+import com.acuo.persist.modules.Neo4jIntegrationTestModule;
+import com.acuo.persist.modules.RepositoryTestModule;
 import com.acuo.persist.services.ClientService;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ServiceManager;
@@ -26,8 +28,6 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(GuiceJUnitRunner.class)
 @GuiceJUnitRunner.GuiceModules({
         ConfigurationIntegrationTestModule.class,
-        Neo4jPersistModule.class,
-        DataLoaderModule.class,
         RepositoryTestModule.class,
         ServiceManagerModule.class,
         Neo4jIntegrationTestModule.class})

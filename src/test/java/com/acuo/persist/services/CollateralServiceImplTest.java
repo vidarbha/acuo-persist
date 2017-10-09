@@ -14,9 +14,7 @@ import com.acuo.persist.entity.MarginCall;
 import com.acuo.persist.entity.MarginStatement;
 import com.acuo.persist.entity.enums.AssetTransferStatus;
 import com.acuo.persist.modules.ConfigurationTestModule;
-import com.acuo.persist.modules.DataImporterModule;
-import com.acuo.persist.modules.DataLoaderModule;
-import com.acuo.persist.modules.Neo4jPersistModule;
+import com.acuo.persist.modules.ImportServiceModule;
 import com.acuo.persist.modules.RepositoryModule;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,9 +36,7 @@ import static org.mockito.Mockito.when;
 @RunWith(GuiceJUnitRunner.class)
 @GuiceJUnitRunner.GuiceModules({
         ConfigurationTestModule.class,
-        Neo4jPersistModule.class,
-        DataLoaderModule.class,
-        DataImporterModule.class,
+        ImportServiceModule.class,
         RepositoryModule.class})
 public class CollateralServiceImplTest {
 

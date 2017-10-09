@@ -2,6 +2,7 @@ package com.acuo.persist.factories
 
 import com.acuo.persist.entity.Client
 import com.acuo.persist.entity.ClientSignsRelation
+import com.acuo.persist.entity.CounterpartSignsRelation
 import com.acuo.persist.entity.LegalEntity
 import com.acuo.persist.services.LegalEntityService
 
@@ -42,6 +43,7 @@ class LegalEntityFactory extends AbstractFactory implements BuilderFactory {
                     }
                     break
                 case ClientSignsRelation:
+                case CounterpartSignsRelation:
                     parent.legalEntity = entity
                     break
             }

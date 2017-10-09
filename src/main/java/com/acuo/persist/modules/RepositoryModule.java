@@ -11,6 +11,9 @@ public class RepositoryModule extends AbstractModule {
 
     @Override
     protected void configure() {
+
+        install(new Neo4jPersistModule());
+
         bind(TradingAccountService.class).to(TradingAccountServiceImpl.class);
         bind(new TypeLiteral<TradeService<Trade>>(){}).to(new TypeLiteral<TradeServiceImpl<Trade>>(){});
         bind(new TypeLiteral<TradeService<IRS>>(){}).to(new TypeLiteral<TradeServiceImpl<IRS>>(){});
@@ -43,6 +46,7 @@ public class RepositoryModule extends AbstractModule {
         bind(AssetPledgeService.class).to(AssetPledgeServiceImpl.class);
         bind(AssetPledgeValueService.class).to(AssetPledgeValueServiceImpl.class);
         bind(ClientSignsRelationService.class).to(ClientSignsRelationServiceImpl.class);
+        bind(CounterpartSignsRelationService.class).to(CounterpartSignsRelationServiceImpl.class);
     }
 
 }

@@ -3,7 +3,6 @@ package com.acuo.persist.modules;
 import com.acuo.persist.configuration.PropertiesHelper;
 import com.acuo.persist.core.Neo4jPersistService;
 import com.acuo.persist.core.Neo4jSessionFactory;
-import com.acuo.persist.transaction.Neo4jLocalTxnInterceptor;
 import com.acuo.persist.transaction.TransactionInterceptor;
 import com.google.common.util.concurrent.Service;
 import com.google.inject.multibindings.Multibinder;
@@ -20,7 +19,7 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.util.Arrays;
 
-public class Neo4jPersistModule extends PersistModule {
+class Neo4jPersistModule extends PersistModule {
 
     private final MethodInterceptor transactionInterceptor = new TransactionInterceptor();//new Neo4jLocalTxnInterceptor();
 
@@ -43,11 +42,6 @@ public class Neo4jPersistModule extends PersistModule {
     @Override
     protected MethodInterceptor getTransactionInterceptor() {
         return this.transactionInterceptor;
-    }
-
-    public interface Packages {
-
-        String[] value();
     }
 
     public static class PackagesProvider implements Provider<Packages> {

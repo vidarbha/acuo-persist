@@ -2,6 +2,7 @@ package com.acuo.persist.factories
 
 import com.acuo.persist.entity.Agreement
 import com.acuo.persist.entity.ClientSignsRelation
+import com.acuo.persist.entity.CounterpartSignsRelation
 import com.acuo.persist.entity.MarginStatement
 import com.acuo.persist.services.AgreementService
 
@@ -35,6 +36,7 @@ class AgreementFactory extends AbstractFactory implements BuilderFactory {
             switch (parent) {
                 case MarginStatement:
                 case ClientSignsRelation:
+                case CounterpartSignsRelation:
                     parent.agreement = agreement as Agreement
                     break
             }

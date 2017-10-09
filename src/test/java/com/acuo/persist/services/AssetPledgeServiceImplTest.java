@@ -1,7 +1,6 @@
 package com.acuo.persist.services;
 
 import com.acuo.common.model.ids.AssetId;
-import com.acuo.common.model.margin.Types;
 import com.acuo.common.util.GuiceJUnitRunner;
 import com.acuo.persist.core.ImportService;
 import com.acuo.persist.entity.Asset;
@@ -10,9 +9,7 @@ import com.acuo.persist.entity.AssetTransfer;
 import com.acuo.persist.entity.MarginCall;
 import com.acuo.persist.entity.enums.AssetTransferStatus;
 import com.acuo.persist.modules.ConfigurationTestModule;
-import com.acuo.persist.modules.DataImporterModule;
-import com.acuo.persist.modules.DataLoaderModule;
-import com.acuo.persist.modules.Neo4jPersistModule;
+import com.acuo.persist.modules.ImportServiceModule;
 import com.acuo.persist.modules.RepositoryModule;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,12 +19,9 @@ import org.mockito.MockitoAnnotations;
 
 import javax.inject.Inject;
 
-import static com.acuo.common.model.margin.Types.*;
-import static com.acuo.common.model.margin.Types.AssetType.*;
-import static com.acuo.common.model.margin.Types.BalanceStatus.*;
+import static com.acuo.common.model.margin.Types.AssetType.Cash;
 import static com.acuo.common.model.margin.Types.BalanceStatus.Pending;
 import static com.acuo.common.model.margin.Types.BalanceStatus.Settled;
-import static com.acuo.common.model.margin.Types.MarginType.*;
 import static com.acuo.common.model.margin.Types.MarginType.Variation;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -35,9 +29,7 @@ import static org.mockito.Mockito.when;
 @RunWith(GuiceJUnitRunner.class)
 @GuiceJUnitRunner.GuiceModules({
         ConfigurationTestModule.class,
-        Neo4jPersistModule.class,
-        DataLoaderModule.class,
-        DataImporterModule.class,
+        ImportServiceModule.class,
         RepositoryModule.class})
 public class AssetPledgeServiceImplTest {
 

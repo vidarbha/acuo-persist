@@ -2,7 +2,7 @@ package com.acuo.persist.spring;
 
 import com.acuo.common.util.GuiceJUnitRunner;
 import com.acuo.persist.modules.ConfigurationTestModule;
-import com.acuo.persist.modules.Neo4jPersistModule;
+import com.acuo.persist.modules.RepositoryModule;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +13,7 @@ import javax.inject.Inject;
 @RunWith(GuiceJUnitRunner.class)
 @GuiceJUnitRunner.GuiceModules({
         ConfigurationTestModule.class,
-        Neo4jPersistModule.class,
+        RepositoryModule.class,
         SpringGuiceModule.class
 })
 public class ClientRepositoryTest {

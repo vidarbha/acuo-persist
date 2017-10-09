@@ -13,9 +13,7 @@ import com.acuo.persist.entity.VariationMargin;
 import com.acuo.persist.entity.enums.Side;
 import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.modules.ConfigurationTestModule;
-import com.acuo.persist.modules.DataImporterModule;
-import com.acuo.persist.modules.DataLoaderModule;
-import com.acuo.persist.modules.Neo4jPersistModule;
+import com.acuo.persist.modules.ImportServiceModule;
 import com.acuo.persist.modules.RepositoryModule;
 import com.opengamma.strata.basics.currency.Currency;
 import org.assertj.core.api.AbstractObjectAssert;
@@ -28,16 +26,12 @@ import org.neo4j.helpers.collection.Iterables;
 import javax.inject.Inject;
 import java.time.LocalDate;
 
-import static com.acuo.persist.entity.enums.StatementDirection.IN;
-import static com.acuo.persist.entity.enums.StatementDirection.OUT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(GuiceJUnitRunner.class)
 @GuiceJUnitRunner.GuiceModules({
         ConfigurationTestModule.class,
-        Neo4jPersistModule.class,
-        DataLoaderModule.class,
-        DataImporterModule.class,
+        ImportServiceModule.class,
         RepositoryModule.class})
 @Ignore
 public class MarginStatementServiceImplTest {

@@ -1,6 +1,6 @@
 package com.acuo.persist.spring;
 
-import com.acuo.persist.modules.Neo4jPersistModule;
+import com.acuo.persist.modules.RepositoryModule;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +18,8 @@ public class MyConfiguration extends AbstractModule {
     private Injector injector;
 
     //@Bean
-    public Neo4jPersistModule neo4jPersistModule() {
-        return new Neo4jPersistModule();
+    public RepositoryModule neo4jPersistModule() {
+        return new RepositoryModule();
     }
 
     //@Bean

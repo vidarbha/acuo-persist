@@ -28,7 +28,11 @@ public class ImportService {
     }
 
     public void reload() {
-        loader.purgeDatabase();
+        deleteAll();
         importer.importFiles(branch, importer.filesToImport());
+    }
+
+    public void deleteAll() {
+        loader.purgeDatabase();
     }
 }

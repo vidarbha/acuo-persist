@@ -6,9 +6,7 @@ import com.acuo.persist.core.ImportService;
 import com.acuo.persist.entity.FRA;
 import com.acuo.persist.entity.Leg;
 import com.acuo.persist.modules.ConfigurationTestModule;
-import com.acuo.persist.modules.DataImporterModule;
-import com.acuo.persist.modules.DataLoaderModule;
-import com.acuo.persist.modules.Neo4jPersistModule;
+import com.acuo.persist.modules.ImportServiceModule;
 import com.acuo.persist.modules.RepositoryModule;
 import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
@@ -22,9 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(GuiceJUnitRunner.class)
 @GuiceJUnitRunner.GuiceModules({
         ConfigurationTestModule.class,
-        Neo4jPersistModule.class,
-        DataLoaderModule.class,
-        DataImporterModule.class,
+        ImportServiceModule.class,
         RepositoryModule.class})
 public class TradeServiceImplTest {
 

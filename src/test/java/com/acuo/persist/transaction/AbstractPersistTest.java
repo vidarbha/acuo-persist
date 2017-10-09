@@ -2,7 +2,7 @@ package com.acuo.persist.transaction;
 
 import com.acuo.persist.entity.Foo;
 import com.acuo.persist.modules.ConfigurationTestModule;
-import com.acuo.persist.modules.Neo4jPersistModule;
+import com.acuo.persist.modules.RepositoryModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.persist.PersistService;
@@ -21,7 +21,7 @@ public abstract class AbstractPersistTest {
 
   @Before
   public void setUp() {
-    injector = Guice.createInjector(new ConfigurationTestModule(), new Neo4jPersistModule());
+    injector = Guice.createInjector(new ConfigurationTestModule(), new RepositoryModule());
     injector.getInstance(PersistService.class).start();
   }
 

@@ -95,7 +95,10 @@ public class MarginStatementServiceImpl extends AbstractService<MarginStatement,
                 "(m) <-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step) " +
                 "WHERE NOT exists((mc)-[:MATCHED_TO]->()) " +
                 "AND step.status in ['Unrecon','Expected'] " +
-                "RETURN p, nodes(p), relationships(p)";
+                "MATCH v=(m)<-[:BALANCE]-(:Collateral)-[:LATEST]->(value:CollateralValue) " +
+                "RETURN m, " +
+                "nodes(p), relationships(p), " +
+                "nodes(v), relationships(v) ";
         return dao.getSession().query(MarginStatement.class, query, ImmutableMap.of("clientId", clientId.toString()));
     }
 
@@ -103,9 +106,10 @@ public class MarginStatementServiceImpl extends AbstractService<MarginStatement,
     @Transactional
     public MarginStatement statementForRecon(MarginStatementId marginStatementId) {
         String query =
-                "MATCH (m:MarginStatement {id:{marginStatementId}})<-[]-(mc:MarginCall)-[:LAST]->(step:Step {status:'Unrecon'}) " +
+                "MATCH (m:MarginStatement {id:{marginStatementId}})<-[]-(mc:StatementItem)-[:LAST]->(step:Step) " +
+                "WHERE step.status in ['Unrecon','Expected','MatchedToReceived']" +
                 "WITH m " +
-                "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m)<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
+                "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m)<-[]-(mc)-[:LAST]->(step:Step) " +
                 "RETURN m, mc, nodes(p), relationships(p)";
         return dao.getSession().queryForObject(MarginStatement.class, query, ImmutableMap.of("marginStatementId", marginStatementId.toString()));
     }

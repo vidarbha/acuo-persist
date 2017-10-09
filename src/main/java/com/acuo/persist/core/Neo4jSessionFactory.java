@@ -1,7 +1,7 @@
 package com.acuo.persist.core;
 
 import com.acuo.persist.configuration.PropertiesHelper;
-import com.acuo.persist.modules.Neo4jPersistModule;
+import com.acuo.persist.modules.Packages;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.ogm.authentication.UsernamePasswordCredentials;
 import org.neo4j.ogm.config.Configuration;
@@ -24,7 +24,7 @@ public class Neo4jSessionFactory implements Provider<SessionFactory> {
                         @Named(PropertiesHelper.NEO4J_OGM_URL) String url,
                         @Named(PropertiesHelper.NEO4J_OGM_USERNAME) String userName,
                         @Named(PropertiesHelper.NEO4J_OGM_PASSWORD) String password,
-                        Neo4jPersistModule.Packages packages) {
+                        Packages packages) {
         log.info("Creating a Neo4j Session Factory using driver [{}] and url[{}]", driver, url);
         if ("".equals(url)) url = null;
         this.persistencePackages = packages.value();

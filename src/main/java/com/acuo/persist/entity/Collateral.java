@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @NodeEntity
@@ -26,5 +27,5 @@ public class Collateral extends Entity<Collateral>{
     private CollateralValue latestValue;
 
     @Relationship(type = "VALUE")
-    private Set<CollateralValue> values;
+    private Set<CollateralValue> values = new HashSet<>();
 }

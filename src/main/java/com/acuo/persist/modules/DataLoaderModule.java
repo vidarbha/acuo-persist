@@ -5,7 +5,7 @@ import com.acuo.persist.core.SessionDataLoader;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 
-public class DataLoaderModule extends AbstractModule {
+class DataLoaderModule extends AbstractModule {
 
     @Override
     protected void configure() {

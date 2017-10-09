@@ -7,9 +7,7 @@ import com.acuo.persist.core.ImportService;
 import com.acuo.persist.entity.Asset;
 import com.acuo.persist.entity.AssetTransfer;
 import com.acuo.persist.modules.ConfigurationTestModule;
-import com.acuo.persist.modules.DataImporterModule;
-import com.acuo.persist.modules.DataLoaderModule;
-import com.acuo.persist.modules.Neo4jPersistModule;
+import com.acuo.persist.modules.ImportServiceModule;
 import com.acuo.persist.modules.RepositoryModule;
 import com.acuo.persist.utils.ValuationHelper;
 import com.opengamma.strata.basics.currency.Currency;
@@ -27,9 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(GuiceJUnitRunner.class)
 @GuiceJUnitRunner.GuiceModules({
         ConfigurationTestModule.class,
-        Neo4jPersistModule.class,
-        DataLoaderModule.class,
-        DataImporterModule.class,
+        ImportServiceModule.class,
         RepositoryModule.class})
 @Ignore
 public class AssetServiceImplTest {

@@ -5,11 +5,13 @@ import com.acuo.persist.core.Neo4jDataImporter;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 
-public class DataImporterModule extends AbstractModule {
+class DataImporterModule extends AbstractModule {
 
     @Override
     protected void configure() {
+
+        install(new DataLoaderModule());
+
         bind(DataImporter.class).to(Neo4jDataImporter.class).in(Singleton.class);
     }
-
 }
