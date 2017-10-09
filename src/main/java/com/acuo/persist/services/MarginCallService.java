@@ -2,6 +2,7 @@ package com.acuo.persist.services;
 
 import com.acuo.common.model.ids.MarginStatementId;
 import com.acuo.persist.entity.MarginCall;
+import com.acuo.persist.entity.enums.Side;
 import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.spring.Call;
 
@@ -13,7 +14,10 @@ public interface MarginCallService extends Service<MarginCall, String> {
 
     Iterable<MarginCall> callFor(String marginStatementId, StatementStatus... statuses);
 
+    @Deprecated
     MarginCall callByAmpId(String ampId);
+
+    MarginCall callByAmpIdAndSide(String ampId, Side side);
 
     MarginCall callById(String callId);
 

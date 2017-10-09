@@ -1,7 +1,7 @@
-package com.acuo.persist.builders
+package com.acuo.persist.factories
 
 
-class StatementsFactory extends AbstractFactory implements BuilderFactory {
+class ListFactory extends AbstractFactory implements BuilderFactory {
 
     @Override
     Object newInstance(FactoryBuilderSupport builder,
@@ -18,6 +18,6 @@ class StatementsFactory extends AbstractFactory implements BuilderFactory {
 
     @Override
     String name() {
-        return "statements"
+        return "list"
     }
 }

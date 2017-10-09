@@ -1,4 +1,4 @@
-package com.acuo.persist.builders
+package com.acuo.persist.factories
 
 import com.acuo.persist.entity.MarginStatement
 import com.acuo.persist.services.MarginStatementService

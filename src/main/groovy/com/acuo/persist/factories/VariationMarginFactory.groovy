@@ -1,4 +1,4 @@
-package com.acuo.persist.builders
+package com.acuo.persist.factories
 
 import com.acuo.persist.entity.MarginStatement
 import com.acuo.persist.entity.VariationMargin
@@ -40,7 +40,7 @@ class VariationMarginFactory extends AbstractFactory implements BuilderFactory {
                    Object call) {
         if (parent != null && parent instanceof MarginStatement) {
             def margin = call as VariationMargin
-        if (parent.statementItems != null) {
+            if (parent.statementItems != null) {
                 parent.statementItems << margin
             } else {
                 parent.statementItems = [margin]
