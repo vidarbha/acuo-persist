@@ -3,7 +3,6 @@ package com.acuo.persist.services;
 import com.acuo.common.model.ids.MarginStatementId;
 import com.acuo.common.model.margin.Dispute;
 import com.acuo.common.model.margin.Types;
-import com.acuo.persist.entity.ChildOf;
 import com.acuo.persist.entity.MarginCall;
 import com.acuo.persist.entity.StatementItem;
 import com.acuo.persist.entity.enums.Side;
@@ -176,7 +175,12 @@ public class MarginCallServiceImpl extends AbstractService<MarginCall, String> i
             if (expected.isPresent()) {
                 cptyCall.setMatchedItem(expected.get());
                 cptyCall = save(cptyCall);
-                statementItemService.setStatus(expected.get().getItemId(), StatementStatus.MatchedToReceived);
+
+                MarginCall clientMC = expected.get();
+                clientMC.setAmpId(cptyCall.getAmpId());
+                clientMC = save(clientMC);
+
+                statementItemService.setStatus(clientMC.getItemId(), StatementStatus.MatchedToReceived);
             }
             cptyCall = statementItemService.setStatus(cptyCall.getItemId(), StatementStatus.Unrecon);
         }
@@ -199,7 +203,12 @@ public class MarginCallServiceImpl extends AbstractService<MarginCall, String> i
             if (expected.isPresent()) {
                 cptyCall.setMatchedItem(expected.get());
                 cptyCall = save(cptyCall);
-                statementItemService.setStatus(expected.get().getItemId(), StatementStatus.Reconciled);
+
+                MarginCall clientMC = expected.get();
+                clientMC.setAmpId(cptyCall.getAmpId());
+                clientMC = save(clientMC);
+
+                statementItemService.setStatus(clientMC.getItemId(), StatementStatus.Reconciled);
             }
             cptyCall = statementItemService.setStatus(cptyCall.getItemId(), StatementStatus.MatchedToSent);
         }
@@ -263,17 +272,6 @@ public class MarginCallServiceImpl extends AbstractService<MarginCall, String> i
 
         }
         return marginCall;
-    }
-
-    @Override
-    @Transactional
-    public MarginCall link(MarginCall parent, MarginCall child) {
-        ChildOf childOf = new ChildOf();
-        childOf.setTime(LocalDateTime.now());
-        childOf.setChild(child);
-        childOf.setParent(parent);
-        child.setParent(childOf);
-        return this.save(child);
     }
 
     @Override

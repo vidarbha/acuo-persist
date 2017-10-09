@@ -17,14 +17,13 @@ import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 import static com.acuo.common.model.margin.Types.MarginType;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"marginStatement", "matchedItem", "parent"})
-@ToString(exclude = {"marginStatement", "matchedItem", "parent"})
+@EqualsAndHashCode(callSuper = false, exclude = {"marginStatement", "matchedItem", "parentItem"})
+@ToString(exclude = {"marginStatement", "matchedItem", "parentItem"})
 public class StatementItem<T extends StatementItem> extends Entity<T> {
 
     @Property(name = "id")
@@ -58,5 +57,5 @@ public class StatementItem<T extends StatementItem> extends Entity<T> {
     private StatementItem matchedItem;
 
     @Relationship(type = "CHILD_OF")
-    private ChildOf parent;
+    private StatementItem parentItem;
 }
