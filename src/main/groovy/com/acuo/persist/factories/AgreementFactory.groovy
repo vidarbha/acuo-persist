@@ -1,6 +1,7 @@
-package com.acuo.persist.builders
+package com.acuo.persist.factories
 
 import com.acuo.persist.entity.Agreement
+import com.acuo.persist.entity.ClientSignsRelation
 import com.acuo.persist.entity.MarginStatement
 import com.acuo.persist.services.AgreementService
 
@@ -21,27 +22,23 @@ class AgreementFactory extends AbstractFactory implements BuilderFactory {
     }
 
     @Override
-    boolean isLeaf() {
-        return false
-    }
-
-    @Override
     Object newInstance(FactoryBuilderSupport builder,
                        Object name, Object value, Map attributes
     ) throws InstantiationException, IllegalAccessException {
-        def agreement
-        if (attributes != null)
-            agreement = getOrCreate(attributes)
-        else
-            agreement = new Agreement()
-        return agreement
+        return getOrCreate(attributes)
     }
 
     @Override
     void setParent(FactoryBuilderSupport builder,
                    Object parent, Object agreement) {
-        if (parent != null && parent instanceof MarginStatement)
-            parent.setAgreement(agreement as Agreement)
+        if (parent != null) {
+            switch (parent) {
+                case MarginStatement:
+                case ClientSignsRelation:
+                    parent.agreement = agreement as Agreement
+                    break
+            }
+        }
     }
 
     @Override

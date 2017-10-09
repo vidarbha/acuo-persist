@@ -6,6 +6,7 @@ import com.acuo.common.model.margin.Types;
 import com.acuo.persist.entity.ChildOf;
 import com.acuo.persist.entity.MarginCall;
 import com.acuo.persist.entity.StatementItem;
+import com.acuo.persist.entity.enums.Side;
 import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.spring.Call;
 import com.google.common.collect.ImmutableMap;
@@ -16,6 +17,7 @@ import org.neo4j.ogm.model.Result;
 import org.neo4j.ogm.session.Session;
 
 import javax.inject.Provider;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,28 +51,32 @@ public class MarginCallServiceImpl extends AbstractService<MarginCall, String> i
     @Transactional
     public Iterable<MarginCall> allCallsFor(String clientId, StatementStatus... statuses) {
         String query =
-                "MATCH p=(:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[r:CLIENT_SIGNS]->(a:Agreement)<-[:STEMS_FROM]-" +
-                "(m:MarginStatement)<-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step) " +
+                "MATCH p=(:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[r:CLIENT_SIGNS]->" +
+                "(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement)<-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step) " +
                 "WHERE step.status IN {statuses} " +
                 "RETURN mc, nodes(p), relationships(p)";
-        return dao.getSession().query(MarginCall.class, query, ImmutableMap.of("clientId", clientId, "statuses", statuses));
+        ImmutableMap<String, Serializable> parameters = ImmutableMap.of("clientId", clientId, "statuses", statuses);
+        return dao.getSession().query(MarginCall.class, query, parameters);
     }
 
     @Override
     @Transactional
     public Iterable<MarginCall> callFor(String marginStatementId, StatementStatus... statuses) {
         String query =
-                "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement {id:{msId}})<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
+                "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement {id:{msId}})" +
+                "<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
                 "WHERE step.status IN {statuses} " +
                 "RETURN mc, nodes(p), relationships(p)";
-        return dao.getSession().query(MarginCall.class, query, ImmutableMap.of("msId", marginStatementId, "statuses", statuses));
+        ImmutableMap<String, Serializable> parameters = ImmutableMap.of("msId", marginStatementId, "statuses", statuses);
+        return dao.getSession().query(MarginCall.class, query, parameters);
     }
 
     @Override
     @Transactional
     public MarginCall callByAmpId(String ampId) {
         String query =
-                "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement)<-[]-(mc:MarginCall {ampId:{id}})-[:LAST]->(step:Step) " +
+                "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement)" +
+                "<-[]-(mc:MarginCall {ampId:{id}})-[:LAST]->(step:Step) " +
                 "WITH mc, m, p " +
                 "MATCH a=(m)-[:SENT_FROM|DIRECTED_TO]->()-[:ACCESSES]->() " +
                 "RETURN mc, nodes(p), relationships(p), nodes(a), relationships(a)";
@@ -79,9 +85,23 @@ public class MarginCallServiceImpl extends AbstractService<MarginCall, String> i
 
     @Override
     @Transactional
+    public MarginCall callByAmpIdAndSide(String ampId, Side side) {
+        String query =
+                "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement)" +
+                "<-[]-(mc:MarginCall {ampId:{id}, side:{side}})-[:LAST]->(step:Step) " +
+                "WITH mc, m, p " +
+                "MATCH a=(m)-[:SENT_FROM|DIRECTED_TO]->()-[:ACCESSES]->() " +
+                "RETURN mc, nodes(p), relationships(p), nodes(a), relationships(a)";
+        ImmutableMap<String, String> parameters = ImmutableMap.of("id", ampId, "side", side.name());
+        return dao.getSession().queryForObject(MarginCall.class, query, parameters);
+    }
+
+    @Override
+    @Transactional
     public MarginCall callById(String callId) {
         String query =
-                "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement)<-[]-(mc:MarginCall {id:{id}})-[:LAST]->(step:Step) " +
+                "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement)" +
+                "<-[]-(mc:MarginCall {id:{id}})-[:LAST]->(step:Step) " +
                 "WITH mc, m, p " +
                 "MATCH a=(m)-[:SENT_FROM|DIRECTED_TO]->()-[:ACCESSES]->() " +
                 "RETURN mc, nodes(p), relationships(p), nodes(a), relationships(a)";
@@ -104,7 +124,8 @@ public class MarginCallServiceImpl extends AbstractService<MarginCall, String> i
     @Transactional
     public Iterable<MarginCall> callsForExpected(String marginStatementId) {
         String query =
-                "MATCH (:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement {id:{msId}})<-[]-(mc1:MarginCall)-[:LAST]->(step:Step {status:'Unrecon'}) " +
+                "MATCH (:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement {id:{msId}})" +
+                "<-[]-(mc1:MarginCall)-[:LAST]->(step:Step {status:'Unrecon'}) " +
                 "MATCH (mc2:MarginCall)<-[:MATCHED_TO]-(mc1) " +
                 "return mc2";
         return dao.getSession().query(MarginCall.class, query, ImmutableMap.of("msId", marginStatementId));
@@ -113,21 +134,25 @@ public class MarginCallServiceImpl extends AbstractService<MarginCall, String> i
     @Override
     @Transactional
     public Iterable<MarginCall> allExpectedCallsFor(MarginStatementId marginStatementId) {
-        String query = "MATCH (m:MarginStatement {id:{msId}})<-[]-(mc:MarginCall)-[:LAST]->(step:Step {status:'Expected'}) " +
+        String query =
+                "MATCH (m:MarginStatement {id:{msId}})<-[]-(mc:MarginCall)-[:LAST]->(step:Step {status:'Expected'}) " +
                 "return mc";
-        return dao.getSession().query(MarginCall.class, query, ImmutableMap.of("msId", marginStatementId.toString()));
+        ImmutableMap<String, String> parameters = ImmutableMap.of("msId", marginStatementId.toString());
+        return dao.getSession().query(MarginCall.class, query, parameters);
     }
 
     @Override
     @Transactional
     public Iterable<Call> notToUseYetallCallsFor(String clientId, String dateTime) {
         String query =
-                "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[r:CLIENT_SIGNS]->(a:Agreement)<-[:STEMS_FROM]-(m:MarginStatement {date:{dateTime}}) " +
-                        "WITH a, m " +
-                        "MATCH (m)<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
-                        "WITH {category:a.type, type:mc.callType, status:step.status, balance: mc.balanceAmount, excess: mc.excessAmount} AS Call " +
-                        "RETURN Call";
-        return dao.getSession().query(Call.class, query, ImmutableMap.of("clientId", clientId, "dateTime", dateTime));
+                "MATCH (:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[r:CLIENT_SIGNS]->(a:Agreement)" +
+                "<-[:STEMS_FROM]-(m:MarginStatement {date:{dateTime}}) " +
+                "WITH a, m " +
+                "MATCH (m)<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
+                "WITH {category:a.type, type:mc.callType, status:step.status, balance: mc.balanceAmount, excess: mc.excessAmount} AS Call " +
+                "RETURN Call";
+        ImmutableMap<String, String> parameters = ImmutableMap.of("clientId", clientId, "dateTime", dateTime);
+        return dao.getSession().query(Call.class, query, parameters);
     }
 
     private static final BiPredicate<MarginCall, MarginCall> MATCHING_CALLS =
@@ -221,7 +246,8 @@ public class MarginCallServiceImpl extends AbstractService<MarginCall, String> i
         com.acuo.common.model.margin.MarginCall marginCall = new com.acuo.common.model.margin.MarginCall();
         String query =
                 "MATCH (mc:MarginCall {id:{id}})<-[:GENERATED_BY]-(at:AssetTransfer)-[:OF]->(a:Asset) " +
-                "MATCH (mc)-[PART_OF]->(:MarginStatement)-[:STEMS_FROM]->(:Agreement)-[IS_COMPOSED_OF]->(r:Rule)-[:APPLIES_TO]->(a) " +
+                "MATCH (mc)-[PART_OF]->(:MarginStatement)-[:STEMS_FROM]->(:Agreement)-[IS_COMPOSED_OF]->" +
+                "(r:Rule)-[:APPLIES_TO]->(a) " +
                 "MATCH (ca:CustodianAccount)<-[:FROM]-(at) " +
                 "RETURN mc.ampId, a.id, a.idType, a.currency, at.quantities, at.value, r.haircut + r.FXHaircut as haircut";
 
