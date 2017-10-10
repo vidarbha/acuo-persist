@@ -15,6 +15,7 @@ import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @NodeEntity
@@ -70,6 +71,6 @@ public class Agreement extends Entity<Agreement> {
     private CounterpartSignsRelation counterpartSignsRelation;
 
     @Relationship(type = "IS_COMPOSED_OF")
-    private Set<Rule> rules;
+    private Set<Rule> rules = new HashSet<>();
 
 }

@@ -33,7 +33,7 @@ class CounterpartySignsFactory extends AbstractFactory implements BuilderFactory
         service.save(child)
     }
 
-    private CounterpartSignsRelation getOrCreate(Map attributes) {
+    private static CounterpartSignsRelation getOrCreate(Map attributes) {
         CounterpartSignsRelation entity
         if (attributes != null) {
             return new CounterpartSignsRelation(attributes)

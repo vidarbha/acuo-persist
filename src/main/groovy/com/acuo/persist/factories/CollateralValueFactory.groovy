@@ -49,7 +49,7 @@ class CollateralValueFactory extends AbstractFactory implements BuilderFactory {
         service.save(child)
     }
 
-    private CollateralValue getOrCreate(Map attributes) {
+    private static CollateralValue getOrCreate(Map attributes) {
         CollateralValue collateral
         if (attributes != null) {
             return new CollateralValue(attributes)

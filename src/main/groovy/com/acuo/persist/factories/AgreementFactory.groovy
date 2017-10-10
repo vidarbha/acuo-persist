@@ -31,13 +31,13 @@ class AgreementFactory extends AbstractFactory implements BuilderFactory {
 
     @Override
     void setParent(FactoryBuilderSupport builder,
-                   Object parent, Object agreement) {
+                   Object parent, Object child) {
         if (parent != null) {
             switch (parent) {
                 case MarginStatement:
                 case ClientSignsRelation:
                 case CounterpartSignsRelation:
-                    parent.agreement = agreement as Agreement
+                    parent.agreement = child as Agreement
                     break
             }
         }
@@ -45,8 +45,8 @@ class AgreementFactory extends AbstractFactory implements BuilderFactory {
 
     @Override
     void onNodeCompleted(FactoryBuilderSupport builder,
-                         Object parent, Object agreement) {
-        service.save(agreement)
+                         Object parent, Object child) {
+        service.save(child)
     }
 
     private Agreement getOrCreate(Map attributes) {

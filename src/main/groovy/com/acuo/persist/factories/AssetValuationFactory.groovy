@@ -1,23 +1,24 @@
 package com.acuo.persist.factories
 
-import com.acuo.persist.entity.Collateral
-import com.acuo.persist.entity.MarginStatement
-import com.acuo.persist.services.CollateralService
+import com.acuo.persist.entity.Agreement
+import com.acuo.persist.entity.AssetValuation
+import com.acuo.persist.entity.Rule
+import com.acuo.persist.services.AssetValuationService
 
 import javax.inject.Inject
 
-class CollateralFactory extends AbstractFactory implements BuilderFactory {
+class AssetValuationFactory extends AbstractFactory implements BuilderFactory {
 
-    private final CollateralService service
+    private final AssetValuationService service
 
     @Inject
-    CollateralFactory(CollateralService service) {
+    AssetValuationFactory(AssetValuationService service) {
         this.service = service
     }
 
     @Override
     String name() {
-        return "collateral"
+        return "assetValuation"
     }
 
     @Override
@@ -30,11 +31,10 @@ class CollateralFactory extends AbstractFactory implements BuilderFactory {
     @Override
     void setParent(FactoryBuilderSupport builder,
                    Object parent, Object child) {
-        def entity = child as Collateral
         if (parent != null) {
             switch (parent) {
-                case MarginStatement:
-                    parent.collaterals << entity
+                case Agreement:
+                    parent.rules << child as Rule
                     break
             }
         }
@@ -42,17 +42,15 @@ class CollateralFactory extends AbstractFactory implements BuilderFactory {
 
     @Override
     void onNodeCompleted(FactoryBuilderSupport builder,
-                         Object parent, Object agreement) {
-        service.save(agreement)
+                         Object parent, Object child) {
+        service.persist(child)
     }
 
-    private static Collateral getOrCreate(Map attributes) {
-        Collateral collateral
+    private static AssetValuation getOrCreate(Map attributes) {
         if (attributes != null) {
-            return new Collateral(attributes)
+            return new AssetValuation(attributes)
         } else {
-            collateral = new Collateral()
+            return new AssetValuation()
         }
-        return collateral
     }
 }

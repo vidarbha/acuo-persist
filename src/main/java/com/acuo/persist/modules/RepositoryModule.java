@@ -47,6 +47,8 @@ public class RepositoryModule extends AbstractModule {
         bind(AssetPledgeValueService.class).to(AssetPledgeValueServiceImpl.class);
         bind(ClientSignsRelationService.class).to(ClientSignsRelationServiceImpl.class);
         bind(CounterpartSignsRelationService.class).to(CounterpartSignsRelationServiceImpl.class);
+        bind(RuleService.class).to(RuleServiceImpl.class);
+        bind(CustodianService.class).to(CustodianServiceImpl.class);
     }
 
 }

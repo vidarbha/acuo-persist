@@ -33,7 +33,7 @@ class ClientSignsFactory extends AbstractFactory implements BuilderFactory {
         service.save(clientSigns)
     }
 
-    private ClientSignsRelation getOrCreate(Map attributes) {
+    private static ClientSignsRelation getOrCreate(Map attributes) {
         ClientSignsRelation entity
         if (attributes != null) {
             return new ClientSignsRelation(attributes)

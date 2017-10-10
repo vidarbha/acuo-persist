@@ -25,5 +25,8 @@ class BuildersFactoryModule extends AbstractModule {
         binder.addBinding().to(CustodianAccountFactory)
         binder.addBinding().to(CollateralFactory)
         binder.addBinding().to(CollateralValueFactory)
+        binder.addBinding().to(RuleFactory)
+        binder.addBinding().to(AssetFactory)
+        binder.addBinding().to(CustodianFactory)
     }
 }

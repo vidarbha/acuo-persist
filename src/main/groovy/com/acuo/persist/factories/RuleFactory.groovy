@@ -1,23 +1,24 @@
 package com.acuo.persist.factories
 
-import com.acuo.persist.entity.Collateral
-import com.acuo.persist.entity.MarginStatement
-import com.acuo.persist.services.CollateralService
+import com.acuo.persist.entity.Agreement
+import com.acuo.persist.entity.Asset
+import com.acuo.persist.entity.Rule
+import com.acuo.persist.services.RuleService
 
 import javax.inject.Inject
 
-class CollateralFactory extends AbstractFactory implements BuilderFactory {
+class RuleFactory extends AbstractFactory implements BuilderFactory {
 
-    private final CollateralService service
+    private final RuleService service
 
     @Inject
-    CollateralFactory(CollateralService service) {
+    RuleFactory(RuleService service) {
         this.service = service
     }
 
     @Override
     String name() {
-        return "collateral"
+        return "rule"
     }
 
     @Override
@@ -30,11 +31,11 @@ class CollateralFactory extends AbstractFactory implements BuilderFactory {
     @Override
     void setParent(FactoryBuilderSupport builder,
                    Object parent, Object child) {
-        def entity = child as Collateral
         if (parent != null) {
             switch (parent) {
-                case MarginStatement:
-                    parent.collaterals << entity
+                case Agreement:
+                case Asset:
+                    parent.rules << child as Rule
                     break
             }
         }
@@ -42,17 +43,17 @@ class CollateralFactory extends AbstractFactory implements BuilderFactory {
 
     @Override
     void onNodeCompleted(FactoryBuilderSupport builder,
-                         Object parent, Object agreement) {
-        service.save(agreement)
+                         Object parent, Object child) {
+        service.save(child)
     }
 
-    private static Collateral getOrCreate(Map attributes) {
-        Collateral collateral
+    private static Rule getOrCreate(Map attributes) {
+        Rule rule
         if (attributes != null) {
-            return new Collateral(attributes)
+            return new Rule(attributes)
         } else {
-            collateral = new Collateral()
+            rule = new Rule()
         }
-        return collateral
+        return rule
     }
 }

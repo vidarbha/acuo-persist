@@ -1,5 +1,6 @@
 package com.acuo.persist.factories
 
+import com.acuo.persist.entity.Custodian
 import com.acuo.persist.entity.CustodianAccount
 import com.acuo.persist.services.CustodianAccountService
 
@@ -32,7 +33,8 @@ class CustodianAccountFactory extends AbstractFactory implements BuilderFactory 
         def entity = child as CustodianAccount
         if (parent != null) {
             switch (parent) {
-                default:
+                case Custodian:
+                    parent.custodianAccounts << entity
                     break
             }
         }

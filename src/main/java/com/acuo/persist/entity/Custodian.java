@@ -7,6 +7,7 @@ import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @NodeEntity
@@ -21,6 +22,6 @@ public class Custodian extends Entity<Custodian> {
     private String countryShortName;
 
     @Relationship(type = "MANAGES")
-    private Set<CustodianAccount> custodianAccounts;
+    private Set<CustodianAccount> custodianAccounts = new HashSet<>();
 
 }

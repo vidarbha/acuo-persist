@@ -40,8 +40,8 @@ class StepFactory extends AbstractFactory implements BuilderFactory {
                     } else if (parent.lastStep == null) {
                         parent.lastStep = step
                         Next next = new Next()
-                        next.start = parent.firstStep
-                        next.end = parent.lastStep
+                        next.setStart parent.firstStep
+                        next.setEnd parent.lastStep
                         parent.firstStep.next = next
                     }
                     break
@@ -51,11 +51,11 @@ class StepFactory extends AbstractFactory implements BuilderFactory {
 
     @Override
     void onNodeCompleted(FactoryBuilderSupport builder,
-                         Object parent, Object agreement) {
-        service.save(agreement)
+                         Object parent, Object child) {
+        service.save(child)
     }
 
-    private Step getOrCreate(Map attributes) {
+    private static Step getOrCreate(Map attributes) {
         Step step
         if (attributes != null) {
             return new Step(attributes)
