@@ -20,10 +20,11 @@ class AssetValuationServiceImplSpec extends Specification {
         subject =  new AssetValuationServiceImpl(valuationService, valueService)
     }
 
-    def "persist a new asset value"() {
+    def "persist a new asset value and not deleting a previous value with 5 days"() {
         given:
         def assetId = AssetId.fromString("TEST")
         AssetValue value = Mock()
+        AssetValue oldValue = Mock()
         AssetValuation valuation = Mock()
 
         when:
@@ -32,10 +33,13 @@ class AssetValuationServiceImplSpec extends Specification {
         then:
         1 * valuationService.getOrCreateAssetValuationFor(assetId) >> valuation
         1 * valuation.setLatestValue(value)
-        1 * valuation.getValues() >> [value]
+        1 * valuation.getValues() >> [value, oldValue]
         1 * value.getValuationDate() >> LocalDate.now()
+        1 * oldValue.getValuationDate() >> LocalDate.now().minusDays(4)
+        0 * valuation.setValues([value])
         0 * valueService.delete(_)
         1 * value.setValuation(valuation)
+        1 * valuationService.save(valuation)
         1 * valueService.save(value, 1)
     }
 
@@ -43,6 +47,7 @@ class AssetValuationServiceImplSpec extends Specification {
         given:
         def assetId = AssetId.fromString("TEST")
         AssetValue value = Mock()
+        AssetValue oldValue = Mock()
         AssetValuation valuation = Mock()
 
         when:
@@ -51,10 +56,13 @@ class AssetValuationServiceImplSpec extends Specification {
         then:
         1 * valuationService.getOrCreateAssetValuationFor(assetId) >> valuation
         1 * valuation.setLatestValue(value)
-        1 * valuation.getValues() >> [value]
-        1 * value.getValuationDate() >> LocalDate.now().minusDays(6)
-        1 * valueService.delete(_)
+        1 * valuation.getValues() >> [value, oldValue]
+        1 * value.getValuationDate() >> LocalDate.now()
+        1 * oldValue.getValuationDate() >> LocalDate.now().minusDays(6)
+        1 * valuation.setValues({ it -> it.size() == 1 && it.contains(value)})
+        1 * valueService.delete([oldValue])
         1 * value.setValuation(valuation)
+        1 * valuationService.save(valuation)
         1 * valueService.save(value, 1)
     }
 }

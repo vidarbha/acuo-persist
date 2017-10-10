@@ -48,9 +48,11 @@ public class AssetValuationServiceImpl implements AssetValuationService {
 
         assetValuation.setLatestValue(value);
 
-        deleteLatestValue(assetValuation);
+        deleteOldestValues(assetValuation);
 
         value.setValuation(assetValuation);
+
+        valuationService.save(assetValuation);
 
         return valueService.save(value, 1);
     }
@@ -89,12 +91,15 @@ public class AssetValuationServiceImpl implements AssetValuationService {
         return valueService.save(assetValue);
     }
 
-    private void deleteLatestValue(AssetValuation assetValuation) {
+    private void deleteOldestValues(AssetValuation assetValuation) {
         final Set<AssetValue> values = assetValuation.getValues();
         if (values == null) return;
         final List<AssetValue> toDelete = values.stream()
                 .filter(assetValuePredicate)
                 .collect(toList());
+        if(values.removeAll(toDelete)) {
+            assetValuation.setValues(values);
+        }
         if(!toDelete.isEmpty()) {
             valueService.delete(toDelete);
         }
