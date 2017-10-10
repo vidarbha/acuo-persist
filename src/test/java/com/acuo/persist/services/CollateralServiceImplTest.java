@@ -111,8 +111,8 @@ public class CollateralServiceImplTest {
 
         when(transfer.getStatus()).thenReturn(AssetTransferStatus.Departed);
 
-        when(transfer.getQuantities()).thenReturn(10000d);
-        when(transfer.getTransferValue()).thenReturn(2d);
+        when(transfer.getQuantity()).thenReturn(10000d);
+        when(transfer.getUnitValue()).thenReturn(2d);
 
         Collateral collateral = collateralService.handle(transfer);
 

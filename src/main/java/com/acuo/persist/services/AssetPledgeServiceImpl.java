@@ -76,7 +76,7 @@ public class AssetPledgeServiceImpl extends AbstractService<AssetPledge, Long> i
 
         BalanceStatus status = AssetTransfer.status(transfer.getStatus());
 
-        double amount = transfer.getQuantities() * transfer.getTransferValue();//transfer.getUnitValue();
+        double amount = transfer.getQuantity() * transfer.getUnitValue();
         AssetPledge assetPledge = getOrCreateFor(asset.getAssetId(), marginType, status);
         AssetPledgeValue value = assetPledgeValueService.createValue(amount);
         value.setAssetPledge(assetPledge);

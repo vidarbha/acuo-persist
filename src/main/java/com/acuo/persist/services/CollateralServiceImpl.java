@@ -87,7 +87,7 @@ public class CollateralServiceImpl extends AbstractService<Collateral, Long> imp
 
         Types.BalanceStatus status = AssetTransfer.status(transfer.getStatus());
 
-        double amount = transfer.getQuantities() * transfer.getTransferValue();//transfer.getUnitValue();
+        double amount = transfer.getQuantity() * transfer.getUnitValue();
         Collateral collateral = getOrCreateCollateralFor(MarginStatementId.fromString(statementId), marginType, assetType, status);
         CollateralValue value = collateralValueService.createValue(amount);
         value.setCollateral(collateral);

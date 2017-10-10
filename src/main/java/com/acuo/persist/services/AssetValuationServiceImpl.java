@@ -1,18 +1,19 @@
 package com.acuo.persist.services;
 
+import com.acuo.common.model.ids.AssetId;
 import com.acuo.persist.entity.AssetValuation;
 import com.acuo.persist.entity.AssetValue;
-import com.acuo.common.model.ids.AssetId;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.toList;
 
@@ -21,6 +22,9 @@ public class AssetValuationServiceImpl implements AssetValuationService {
 
     private final ValuationService valuationService;
     private final ValueService valueService;
+
+    private static final Predicate<AssetValue> assetValuePredicate = assetValue -> assetValue.getValuationDate()
+                                                                                    .isBefore(LocalDate.now().minusDays(5));
 
     @Inject
     public AssetValuationServiceImpl(ValuationService valuationService, ValueService valueService) {
@@ -41,6 +45,8 @@ public class AssetValuationServiceImpl implements AssetValuationService {
             log.warn("unable to retrieve or create an asset valuation for the asset {}", assetId);
             return value;
         }
+
+        assetValuation.setLatestValue(value);
 
         deleteLatestValue(assetValuation);
 
@@ -86,7 +92,11 @@ public class AssetValuationServiceImpl implements AssetValuationService {
     private void deleteLatestValue(AssetValuation assetValuation) {
         final Set<AssetValue> values = assetValuation.getValues();
         if (values == null) return;
-        valueService.delete(new ArrayList<>(values));
-        assetValuation.setValues(null);
+        final List<AssetValue> toDelete = values.stream()
+                .filter(assetValuePredicate)
+                .collect(toList());
+        if(!toDelete.isEmpty()) {
+            valueService.delete(toDelete);
+        }
     }
 }

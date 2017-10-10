@@ -24,7 +24,7 @@ public class AssetTransfer extends Entity<AssetTransfer> {
     @Index(primary = true)
     private String assertTransferId;
 
-    private Double quantities;
+    private Double quantity;
     private Double earmarkedQuuantities;
     private AssetTransferStatus status;
     private AssetTransferStatus subStatus;
@@ -33,7 +33,6 @@ public class AssetTransfer extends Entity<AssetTransfer> {
     @Convert(LocalDateTimeConverter.class)
     private LocalDateTime pledgeTime;
 
-    private Double transferValue;
     private Double unitValue;
     private Double totalHaircut;
 

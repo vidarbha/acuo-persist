@@ -258,7 +258,7 @@ public class MarginCallServiceImpl extends AbstractService<MarginCall, String> i
                 "MATCH (mc)-[PART_OF]->(:MarginStatement)-[:STEMS_FROM]->(:Agreement)-[IS_COMPOSED_OF]->" +
                 "(r:Rule)-[:APPLIES_TO]->(a) " +
                 "MATCH (ca:CustodianAccount)<-[:FROM]-(at) " +
-                "RETURN mc.ampId, a.id, a.idType, a.currency, at.quantities, at.value, r.haircut + r.FXHaircut as haircut";
+                "RETURN mc.ampId, a.id, a.idType, a.currency, at.quantity, at.value, r.haircut + r.FXHaircut as haircut";
 
         ImmutableMap<String, String> parameters = ImmutableMap.of("id", marginCallId);
         Result result = dao.getSession().query(query, parameters);

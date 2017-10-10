@@ -133,7 +133,7 @@ public class AssetTransferServiceImpl extends AbstractService<AssetTransfer, Str
                                               AssetTransferStatus subStaus) {
         AssetTransfer assetTransfer = new AssetTransfer();
         assetTransfer.setAssertTransferId(call.getItemId() + "-" + assetId);
-        assetTransfer.setQuantities(quantity);
+        assetTransfer.setQuantity(quantity);
         assetTransfer.setStatus(status);
         assetTransfer.setSubStatus(subStaus);
         assetTransfer.setPledgeTime(LocalDateTime.now());
@@ -143,7 +143,6 @@ public class AssetTransferServiceImpl extends AbstractService<AssetTransfer, Str
         assetTransfer.setOf(asset);
 
         // UnitValue
-        assetTransfer.setTransferValue(asset.getParValue());
         assetValuationService.latest(asset.getAssetId())
                 .ifPresent(assetValue -> assetTransfer.setUnitValue(assetValue.getUnitValue()));
 
@@ -174,7 +173,7 @@ public class AssetTransferServiceImpl extends AbstractService<AssetTransfer, Str
                 "WHERE at.status = 'Departed' " +
                 "MATCH (l1:LegalEntity)-[:CLIENT_SIGNS]->(a)<-[:COUNTERPARTY_SIGNS]-(l2:LegalEntity) " +
                 "MATCH (c1:Custodian)-[:MANAGES]->(ca1:CustodianAccount)<-[:FROM]-(at)-[:TO]->(ca2:CustodianAccount)<-[:MANAGES]-(c2:Custodian) " +
-                "RETURN at.id, at.pledgeTime, a.name, l1.name, l2.name, a.currency, at.subStatus, c1.name, c2.name, ca1.name, ca2.name, at.quantities, assets.currency,assets.name, assets.id, assets.settlementTime";
+                "RETURN at.id, at.pledgeTime, a.name, l1.name, l2.name, a.currency, at.subStatus, c1.name, c2.name, ca1.name, ca2.name, at.quantity, assets.currency,assets.name, assets.id, assets.settlementTime";
         return dao.getSession().query(query, Collections.emptyMap());
     }
 }
