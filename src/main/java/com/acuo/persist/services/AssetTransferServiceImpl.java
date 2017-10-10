@@ -8,6 +8,7 @@ import com.acuo.persist.entity.CustodianAccount;
 import com.acuo.persist.entity.Holds;
 import com.acuo.persist.entity.LegalEntity;
 import com.acuo.persist.entity.MarginCall;
+import com.acuo.persist.entity.SettlementDate;
 import com.acuo.persist.entity.enums.AssetTransferStatus;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
@@ -18,6 +19,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Optional;
 
 import static com.acuo.persist.entity.enums.AssetTransferStatus.*;
 
@@ -141,6 +143,8 @@ public class AssetTransferServiceImpl extends AbstractService<AssetTransfer, Str
 
         Asset asset = assetService.find(assetId, 2);
         assetTransfer.setOf(asset);
+        final Optional<SettlementDate> settlementDate = assetService.settlementDate(assetId);
+        settlementDate.ifPresent(s -> assetTransfer.setSettlementDate(s.getSettlementDate()));
 
         // UnitValue
         assetValuationService.latest(asset.getAssetId())
@@ -169,11 +173,13 @@ public class AssetTransferServiceImpl extends AbstractService<AssetTransfer, Str
     }
 
     public Result getPledgedAssets() {
-        String query = "MATCH (assets:Asset)<-[:OF]-(at:AssetTransfer)-[:GENERATED_BY]->(:MarginCall)-[:PART_OF]->(:MarginStatement)-[:STEMS_FROM]->(a:Agreement) " +
-                "WHERE at.status = 'Departed' " +
-                "MATCH (l1:LegalEntity)-[:CLIENT_SIGNS]->(a)<-[:COUNTERPARTY_SIGNS]-(l2:LegalEntity) " +
-                "MATCH (c1:Custodian)-[:MANAGES]->(ca1:CustodianAccount)<-[:FROM]-(at)-[:TO]->(ca2:CustodianAccount)<-[:MANAGES]-(c2:Custodian) " +
-                "RETURN at.id, at.pledgeTime, a.name, l1.name, l2.name, a.currency, at.subStatus, c1.name, c2.name, ca1.name, ca2.name, at.quantity, assets.currency,assets.name, assets.id, assets.settlementTime";
+        String query =
+        "MATCH (asset:Asset)<-[:OF]-(at:AssetTransfer {status:'Departed'})-[:GENERATED_BY]->(call:MarginCall)\n" +
+        "MATCH (call)-[:PART_OF]->(:MarginStatement)-[:STEMS_FROM]->(a:Agreement) \n" +
+        "MATCH (l1:LegalEntity)-[:CLIENT_SIGNS]->(a)<-[:COUNTERPARTY_SIGNS]-(l2:LegalEntity) \n" +
+        "MATCH (c1:Custodian)-[:MANAGES]->(ca1:CustodianAccount)<-[:FROM]-(at)-[:TO]->(ca2:CustodianAccount)<-[:MANAGES]-(c2:Custodian)\n" +
+        "RETURN at.id, at.pledgeTime, a.name, l1.name, l2.name, a.currency, at.subStatus, c1.name, " +
+        "c2.name, ca1.name, ca2.name, at.quantity, asset.currency,asset.name, asset.id, asset.settlementTime, at.settlementDate";
         return dao.getSession().query(query, Collections.emptyMap());
     }
 }

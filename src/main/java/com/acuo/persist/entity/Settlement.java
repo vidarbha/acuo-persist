@@ -23,6 +23,9 @@ public class Settlement extends Entity<Settlement> {
     @Relationship(type = "SETTLEMENT", direction = Relationship.INCOMING)
     private Asset asset;
 
+    @Relationship(type = "LATEST")
+    private SettlementDate latestSettlementDate;
+
     @Relationship(type = "SETTLEMENT_DATE")
     private Set<SettlementDate> settlementDates;
 }

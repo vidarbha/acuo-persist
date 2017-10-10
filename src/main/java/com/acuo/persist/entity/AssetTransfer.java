@@ -2,6 +2,7 @@ package com.acuo.persist.entity;
 
 import com.acuo.common.model.margin.Types;
 import com.acuo.persist.entity.enums.AssetTransferStatus;
+import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import com.acuo.persist.neo4j.converters.LocalDateTimeConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,6 +13,7 @@ import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @NodeEntity
@@ -32,6 +34,9 @@ public class AssetTransfer extends Entity<AssetTransfer> {
 
     @Convert(LocalDateTimeConverter.class)
     private LocalDateTime pledgeTime;
+
+    @Convert(LocalDateConverter.class)
+    private LocalDate settlementDate;
 
     private Double unitValue;
     private Double totalHaircut;

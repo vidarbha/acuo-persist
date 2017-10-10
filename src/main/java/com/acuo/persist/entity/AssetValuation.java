@@ -12,7 +12,7 @@ import java.util.Set;
 @Data
 @ToString(callSuper = true, exclude = {"latestValue","values"})
 @EqualsAndHashCode(callSuper = true, exclude = {"latestValue","values"})
-public class AssetValuation extends Valuation<AssetValue> {
+public class     AssetValuation extends Valuation<AssetValue> {
 
     @Relationship(type = "VALUATED")
     private Asset asset;

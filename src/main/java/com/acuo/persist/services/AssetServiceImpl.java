@@ -3,6 +3,7 @@ package com.acuo.persist.services;
 import com.acuo.common.model.ids.AssetId;
 import com.acuo.common.model.ids.ClientId;
 import com.acuo.persist.entity.Asset;
+import com.acuo.persist.entity.SettlementDate;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 import org.neo4j.ogm.model.Result;
@@ -11,6 +12,7 @@ import org.neo4j.ogm.session.Session;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.Map;
+import java.util.Optional;
 
 public class AssetServiceImpl extends AbstractService<Asset, AssetId> implements AssetService {
 
@@ -72,6 +74,15 @@ public class AssetServiceImpl extends AbstractService<Asset, AssetId> implements
         Result result = dao.getSession().query(TOTAL_HAIRCUT, parameters);
         Map<String, Object> next = result.iterator().next();
         return (Double) next.get("totalHaircut");
+    }
+
+    @Override
+    public Optional<SettlementDate> settlementDate(AssetId assetId) {
+        String query =  "MATCH (asset:Asset {id:{assetId}})-[:SETTLEMENT]->(:Settlement)-[:SETTLEMENT_DATE]->" +
+                "(date:SettlementDate) RETURN date";
+        final ImmutableMap<String, String> parameters = ImmutableMap.of("assetId", assetId.toString());
+        final SettlementDate settlementDate = dao.getSession().queryForObject(SettlementDate.class, query, parameters);
+        return Optional.ofNullable(settlementDate);
     }
 
     @Override
