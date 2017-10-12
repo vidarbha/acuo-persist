@@ -93,7 +93,7 @@ class EntityStoreFixture {
     def calls(now, prefix) {
         return builder.list {
             variation(itemId: prefix+"1",
-                    ampId: "123456789",
+                    ampId: prefix+"1",
                     currency: Currency.USD,
                     side: Side.Client,
                     marginAmount: 1_000_000,
@@ -103,7 +103,7 @@ class EntityStoreFixture {
                 step(status: StatementStatus.Expected)
             }
             def matched = variation(itemId: prefix+"2",
-                    ampId: "0000000",
+                    ampId: prefix+"2",
                     currency: Currency.USD,
                     side: Side.Client,
                     marginAmount: 1_100_000,
@@ -113,7 +113,7 @@ class EntityStoreFixture {
                 step(status: StatementStatus.MatchedToReceived)
             }
             variation(itemId: prefix+"3",
-                    ampId: "0000000",
+                    ampId: prefix+"3",
                     currency: Currency.USD,
                     side: Side.Cpty,
                     marginAmount: 1_110_000,
