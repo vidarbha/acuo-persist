@@ -4,6 +4,7 @@ import com.acuo.common.model.margin.Types
 import com.acuo.persist.builders.FactoryBuilder
 import com.acuo.persist.core.ImportService
 import com.acuo.persist.entity.enums.Side
+import com.acuo.persist.entity.enums.StatementDirection
 import com.acuo.persist.entity.enums.StatementStatus
 import com.opengamma.strata.basics.currency.Currency
 
@@ -30,17 +31,103 @@ class EntityStoreFixture {
 
         def now = LocalDate.now()
 
-        def account = builder.account(accountId: "act1")
+        def client = builder.client(firmId: 999)
 
-        def sentFrom = builder.entity(legalEntityId: "l2", custodianAccounts: [account])
+        def cpty = builder.client(firmId: 888)
 
-        def a1 = builder.agreement(agreementId: "a1",
+        def clearedAcct = builder.account(accountId: "cleared-acct")
+
+        def bilateralAcct = builder.account(accountId: "cleared-acct")
+
+        def directedTo = builder.entity(legalEntityId: "client-entity", name: "clientEntity", firm: client)
+
+        def sentFrom = builder.entity(legalEntityId: "cpty-entity", name: "cptyEntity",
+                custodianAccounts: [bilateralAcct, clearedAcct], firm: cpty)
+
+        def bilateral = bilateral(now, directedTo, sentFrom)
+        def cleared = cleared(now, directedTo, sentFrom)
+
+        [bilateral, cleared].each {
+            builder.clientSigns(rounding: 10, MTA: 10, threshold: 10, agreement: it, legalEntity: directedTo)
+            builder.counterpartSigns(rounding: 9, MTA: 9, agreement: it, legalEntity: sentFrom)
+        }
+    }
+
+    def cleared(now, directedTo, sentFrom) {
+        def agreement = agreement("cleared-agreement", "cleared")
+
+        builder.statement(statementId: "cleared-statement",
+                directedTo: directedTo,
+                sentFrom: sentFrom,
                 currency: Currency.USD,
-                notificationTime: LocalTime.of(10,0),
-                type: "bilateral",
-                tolerance: 10)
+                date: now,
+                agreement: agreement,
+                collaterals: collaterals(now),
+                statementItems: calls(now, "c"))
+        return agreement
+    }
 
-        def collaterals = builder.list {
+    def bilateral(now, directedTo, sentFrom) {
+        def agreement = agreement("bilateral-agreement", "bilateral")
+
+        builder.statement(statementId: "bilateral-statement",
+                directedTo: directedTo,
+                sentFrom: sentFrom,
+                currency: Currency.USD,
+                date: now,
+                agreement: agreement,
+                collaterals: collaterals(now),
+                statementItems: calls(now, "b"))
+
+        return agreement
+    }
+
+    def agreement(id, type) {
+        builder.agreement(agreementId: id,
+                currency: Currency.USD,
+                notificationTime: LocalTime.of(10, 0),
+                type: type,
+                tolerance: 10)
+    }
+
+    def calls(now, prefix) {
+        return builder.list {
+            variation(itemId: prefix+"1",
+                    ampId: "123456789",
+                    currency: Currency.USD,
+                    side: Side.Client,
+                    marginAmount: 1_000_000,
+                    marginType: MarginType.Variation,
+                    callDate: now.plusDays(1),
+                    direction: StatementDirection.IN) {
+                step(status: StatementStatus.Expected)
+            }
+            def matched = variation(itemId: prefix+"2",
+                    ampId: "0000000",
+                    currency: Currency.USD,
+                    side: Side.Client,
+                    marginAmount: 1_100_000,
+                    marginType: MarginType.Variation,
+                    callDate: now.plusDays(1),
+                    direction: StatementDirection.OUT) {
+                step(status: StatementStatus.MatchedToReceived)
+            }
+            variation(itemId: prefix+"3",
+                    ampId: "0000000",
+                    currency: Currency.USD,
+                    side: Side.Cpty,
+                    marginAmount: 1_110_000,
+                    marginType: MarginType.Variation,
+                    callDate: now.plusDays(1),
+                    matchedItem: matched,
+                    direction: StatementDirection.OUT) {
+                step(status: StatementStatus.Unrecon)
+            }
+        }
+    }
+
+    def collaterals(now) {
+        return builder.list {
             collateral(marginType: MarginType.Initial,
                     assetType: Types.AssetType.Cash,
                     status: Types.BalanceStatus.Pending) {
@@ -65,58 +152,6 @@ class EntityStoreFixture {
                         valuationDate: now,
                         timestamp: Instant.now(),)
             }
-        }
-
-        def statement = builder.statement(statementId: "ms1",
-                sentFrom: sentFrom,
-                currency: Currency.USD,
-                date: now,
-                agreement: a1,
-                collaterals: collaterals) {
-            variation(itemId: "c1",
-                    ampId: "123456789",
-                    currency: Currency.USD,
-                    side: Side.Client,
-                    marginAmount: 1_000_000,
-                    marginType: MarginType.Variation,
-                    callDate: now.plusDays(1)) {
-                step(status: StatementStatus.Expected)
-            }
-            def c2 = variation(itemId: "c2",
-                        ampId: "0000000",
-                        currency: Currency.USD,
-                        side: Side.Client,
-                        marginAmount: 1_100_000,
-                        marginType: MarginType.Variation,
-                        callDate: now.plusDays(1)) {
-                step(status: StatementStatus.MatchedToReceived)
-            }
-            variation(itemId: "c3",
-                        ampId: "0000000",
-                        currency: Currency.USD,
-                        side: Side.Cpty,
-                        marginAmount: 1_110_000,
-                        marginType: MarginType.Variation,
-                        callDate: now.plusDays(1),
-                        matchedItem: c2) {
-                step(status: StatementStatus.Unrecon)
-            }
-        }
-
-        builder.client(firmId: 999) {
-            entity(legalEntityId: "l1", name: "clientEntity")
-        }
-
-        builder.client(firmId: 888) {
-            entity(legalEntityId: "l2", name: "cptyEntity")
-        }
-
-        builder.clientSigns(rounding: 10, MTA: 10, threshold:10, agreement: a1) {
-            entity(legalEntityId: "l1")
-        }
-
-        builder.counterpartSigns(rounding: 9, MTA: 9, agreement: a1) {
-            entity(legalEntityId: "l2")
         }
     }
 }
