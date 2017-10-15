@@ -29,6 +29,9 @@ public class SettlementDate extends Entity<SettlementDate>{
     @Convert(LocalDateTimeConverter.class)
     private LocalDateTime queryDateTime;
 
+    @Convert(LocalDateTimeConverter.class)
+    private LocalDateTime creationDateTime;
+
     @Convert(LocalDateConverter.class)
     private LocalDate settlementDate;
 }
