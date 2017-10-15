@@ -23,6 +23,7 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,6 +46,9 @@ public class ValuationServiceTest {
 
     @Inject
     private TradeService<IRS> tradeService = null;
+
+    @Inject
+    private AssetValuationService assetValuationService = null;
 
     @Before
     public void setUp() {
@@ -72,19 +76,21 @@ public class ValuationServiceTest {
     @Test
     public void testAssetValuationService() {
 
-        AssetValuation valuation = valuationService.getOrCreateAssetValuationFor(AssetId.fromString("USD"));
-
+        final AssetId usd = AssetId.fromString("USD");
         AssetValue newValue = createAssetValue(Currency.USD, 1.0d, "Reuters");
-        newValue.setValuation(valuation);
 
-        AssetValue value = valueService.save(newValue);
+        assetValuationService.persist(usd, newValue);
 
-        assertThat(value).isNotNull();
+        newValue = createAssetValue(Currency.USD, 1.1d, "Reuters");
+        assetValuationService.persist(usd, newValue);
 
-        valuation = valuationService.getAssetValuationFor(AssetId.fromString("USD"));
+        AssetValuation valuation = assetValuationService.getAssetValuationFor(usd);
 
         Set<AssetValue> values = valuation.getValues();
         assertThat(values).isNotEmpty();
+
+        final AssetValue latestValue = valuation.getLatestValue();
+        assertThat(latestValue).isNotNull();
     }
 
     @Test
@@ -125,6 +131,7 @@ public class ValuationServiceTest {
         newValue.setNominalCurrency(currency);
         newValue.setReportCurrency(currency);
         newValue.setTimestamp(Instant.now());
+        newValue.setValuationDate(LocalDate.now());
         return newValue;
     }
 

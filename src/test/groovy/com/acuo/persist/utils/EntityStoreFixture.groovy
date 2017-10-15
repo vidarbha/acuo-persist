@@ -1,5 +1,6 @@
 package com.acuo.persist.utils
 
+import com.acuo.common.model.ids.AssetId
 import com.acuo.common.model.margin.Types
 import com.acuo.persist.builders.FactoryBuilder
 import com.acuo.persist.core.ImportService
@@ -51,6 +52,8 @@ class EntityStoreFixture {
             builder.clientSigns(rounding: 10, MTA: 10, threshold: 10, agreement: it, legalEntity: directedTo)
             builder.counterpartSigns(rounding: 9, MTA: 9, agreement: it, legalEntity: sentFrom)
         }
+
+        builder.asset(assetId: AssetId.fromString("USD"))
     }
 
     def cleared(now, directedTo, sentFrom) {

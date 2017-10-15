@@ -52,9 +52,12 @@ class AssetFactory extends AbstractFactory implements BuilderFactory {
         if (attributes != null) {
             String id = attributes["assetId"]
             if (id != null) {
-                return service.find(AssetId.fromString(id))
-            } else {
+                asset = service.find(AssetId.fromString(id))
+            }
+            if (asset == null) {
                 return new Asset(attributes)
+            } else {
+                return asset
             }
         } else {
             asset = new Asset()

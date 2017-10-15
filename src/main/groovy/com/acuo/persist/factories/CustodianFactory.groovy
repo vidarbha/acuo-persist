@@ -1,8 +1,6 @@
 package com.acuo.persist.factories
 
-import com.acuo.common.model.ids.AssetId
 import com.acuo.persist.entity.Agreement
-import com.acuo.persist.entity.Asset
 import com.acuo.persist.entity.Custodian
 import com.acuo.persist.entity.Rule
 import com.acuo.persist.services.CustodianService
@@ -48,14 +46,17 @@ class CustodianFactory extends AbstractFactory implements BuilderFactory {
         service.save(child)
     }
 
-    private Asset getOrCreate(Map attributes) {
+    private Custodian getOrCreate(Map attributes) {
         Custodian custodian
         if (attributes != null) {
             String id = attributes["custodianId"]
             if (id != null) {
-                return service.find(AssetId.fromString(id))
-            } else {
+                custodian = service.find(id)
+            }
+            if (custodian == null) {
                 return new Custodian(attributes)
+            } else {
+                return custodian
             }
         } else {
             custodian = new Custodian()

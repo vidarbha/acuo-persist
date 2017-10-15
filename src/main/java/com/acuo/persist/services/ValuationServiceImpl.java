@@ -1,11 +1,8 @@
 package com.acuo.persist.services;
 
-import com.acuo.common.model.ids.AssetId;
 import com.acuo.common.model.ids.PortfolioId;
 import com.acuo.common.model.ids.TradeId;
 import com.acuo.common.model.margin.Types;
-import com.acuo.persist.entity.Asset;
-import com.acuo.persist.entity.AssetValuation;
 import com.acuo.persist.entity.MarginValuation;
 import com.acuo.persist.entity.MarginValue;
 import com.acuo.persist.entity.Portfolio;
@@ -95,30 +92,6 @@ public class ValuationServiceImpl extends AbstractService<Valuation, String> imp
             valuation.setPortfolio(notNull(portfolio, "portfolio"));
             valuation.setCallType(callType);
             valuation = createOrUpdate(valuation);
-        }
-        return valuation;
-    }
-
-    @Override
-    @Transactional
-    public AssetValuation getAssetValuationFor(AssetId assetId) {
-        String query =
-                "MATCH p=(value:AssetValue)<-[:VALUE*0..1]-(valuation:AssetValuation)-[:VALUATED]->(asset:Asset {id:{id}})-[*0..1]-(n) " +
-                        "RETURN p, nodes(p), relationships(p)";
-        final String aId = assetId.toString();
-        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", aId);
-        return dao.getSession().queryForObject(AssetValuation.class, query, parameters);
-    }
-
-    @Override
-    @Transactional
-    public AssetValuation getOrCreateAssetValuationFor(AssetId assetId) {
-        AssetValuation valuation = getAssetValuationFor(assetId);
-        if (valuation == null) {
-            valuation = new AssetValuation();
-            Asset asset = assetService.find(assetId);
-            valuation.setAsset(notNull(asset, "asset"));
-            valuation = save(valuation, 1);
         }
         return valuation;
     }
