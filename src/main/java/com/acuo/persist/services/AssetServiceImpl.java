@@ -16,16 +16,16 @@ import java.util.Optional;
 
 public class AssetServiceImpl extends AbstractService<Asset, AssetId> implements AssetService {
 
-    final static String AVAILABLE_ASSET =
+    private final static String AVAILABLE_ASSET =
             "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:CLIENT_SIGNS]->(agreement:Agreement)-[:IS_COMPOSED_OF]->(rule:Rule)-[:APPLIES_TO]->(asset:Asset) " +
             "WITH asset, client, rule " +
             "MATCH h=(:Custodian)-[:MANAGES]->(ca:CustodianAccount)-[holds:HOLDS]->(asset) " +
-            "MATCH v=(asset)<-[:VALUATED]-(:AssetValuation)-[:LATEST]->(:AssetValue) " +
+            "MATCH s=(asset)-[:SETTLEMENT*0..1]->(settlement)-[:LATEST*0..1]->(settlementDate) " +
             "RETURN asset, " +
             "nodes(h), relationships(h), " +
-            "nodes(v), relationships(v)";
+            "nodes(s), relationships(s)";
 
-    final static String ELIGIBLE_ASSET_BY_CLIENT_AND_CALLID =
+    private final static String ELIGIBLE_ASSET_BY_CLIENT_AND_CALLID =
             "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:CLIENT_SIGNS]->(agreement:Agreement)-[:IS_COMPOSED_OF]->(rule:Rule)-[:APPLIES_TO]->(asset:Asset) " +
             "WITH asset, agreement, entity, rule " +
             "MATCH (agreement)<-[:STEMS_FROM]-(ms:MarginStatement)<-[*1..2]-(marginCall:MarginCall {id:{callId}}),(ms)-[:SENT_FROM|DIRECTED_TO]->(entity) " +
@@ -33,14 +33,14 @@ public class AssetServiceImpl extends AbstractService<Asset, AssetId> implements
             "AND NOT (asset)-[:EXCLUDED]->(marginCall) " +
             "WITH DISTINCT asset, rule " +
             "MATCH h=(:Custodian)-[:MANAGES]->(ca:CustodianAccount)-[:HOLDS]->(asset) " +
-            "MATCH v=(asset)<-[:VALUATED]-(:AssetValuation)-[:LATEST]->(:AssetValue) " +
+            "MATCH s=(asset)-[:SETTLEMENT*0..1]->(settlement)-[:LATEST*0..1]->(settlementDate) " +
             "MATCH r=(rule)-[:APPLIES_TO]->(asset) " +
             "RETURN asset, " +
             "nodes(h), relationships(h), " +
-            "nodes(v), relationships(v), " +
+            "nodes(s), relationships(s), " +
             "nodes(r), relationships(r)";
 
-    final static String TOTAL_HAIRCUT =
+    private final static String TOTAL_HAIRCUT =
             "MATCH (si:StatementItem {id:{callId}})-[:PART_OF]->(:MarginStatement)-[:STEMS_FROM]->(agr:Agreement) " +
             "MATCH (a:Asset {id:{assetId}})-[:IS_IN]->(:AssetCategory)-[eu:IS_ELIGIBLE_UNDER]->(agr) " +
             "WITH eu.haircut + eu.FXHaircut as totalHaircut " +

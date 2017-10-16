@@ -2,6 +2,7 @@ package com.acuo.persist.services;
 
 import com.acuo.common.model.ids.AssetId;
 import com.acuo.common.model.ids.ClientId;
+import com.acuo.common.util.LocalDateUtils;
 import com.acuo.persist.entity.Asset;
 import com.acuo.persist.entity.AssetTransfer;
 import com.acuo.persist.entity.CustodianAccount;
@@ -17,6 +18,7 @@ import org.neo4j.ogm.session.Session;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Optional;
@@ -143,9 +145,13 @@ public class AssetTransferServiceImpl extends AbstractService<AssetTransfer, Str
 
         Asset asset = assetService.find(assetId, 2);
         assetTransfer.setOf(asset);
-        final Optional<SettlementDate> settlementDate = assetService.settlementDate(assetId);
-        settlementDate.ifPresent(s -> assetTransfer.setSettlementDate(s.getSettlementDate()));
-
+        if ("CASH".equals(asset.getType())) {
+            LocalDate settlementDate = LocalDateUtils.adjustForWeekend(LocalDate.now());
+            assetTransfer.setSettlementDate(settlementDate);
+        } else {
+            final Optional<SettlementDate> settlementDate = assetService.settlementDate(assetId);
+            settlementDate.ifPresent(s -> assetTransfer.setSettlementDate(s.getSettlementDate()));
+        }
         // UnitValue
         assetValuationService.latest(asset.getAssetId())
                 .ifPresent(assetValue -> assetTransfer.setUnitValue(assetValue.getUnitValue()));
