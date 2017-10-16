@@ -20,20 +20,20 @@ public class AssetServiceImpl extends AbstractService<Asset, AssetId> implements
             "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:CLIENT_SIGNS]->(agreement:Agreement)-[:IS_COMPOSED_OF]->(rule:Rule)-[:APPLIES_TO]->(asset:Asset) " +
             "WITH asset, client, rule " +
             "MATCH h=(:Custodian)-[:MANAGES]->(ca:CustodianAccount)-[holds:HOLDS]->(asset) " +
-            "MATCH v=(asset)<-[:VALUATED]-(:AssetValuation)-[:VALUE]->(:AssetValue) " +
+            "MATCH v=(asset)<-[:VALUATED]-(:AssetValuation)-[:LATEST]->(:AssetValue) " +
             "RETURN asset, " +
             "nodes(h), relationships(h), " +
             "nodes(v), relationships(v)";
 
     final static String ELIGIBLE_ASSET_BY_CLIENT_AND_CALLID =
             "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:CLIENT_SIGNS]->(agreement:Agreement)-[:IS_COMPOSED_OF]->(rule:Rule)-[:APPLIES_TO]->(asset:Asset) " +
-            "WITH asset, client, agreement, entity, rule " +
+            "WITH asset, agreement, entity, rule " +
             "MATCH (agreement)<-[:STEMS_FROM]-(ms:MarginStatement)<-[*1..2]-(marginCall:MarginCall {id:{callId}}),(ms)-[:SENT_FROM|DIRECTED_TO]->(entity) " +
             "WHERE marginCall.marginType IN rule.marginType " +
             "AND NOT (asset)-[:EXCLUDED]->(marginCall) " +
             "WITH DISTINCT asset, rule " +
             "MATCH h=(:Custodian)-[:MANAGES]->(ca:CustodianAccount)-[:HOLDS]->(asset) " +
-            "MATCH v=(asset)<-[:VALUATED]-(:AssetValuation)-[:VALUE]->(:AssetValue) " +
+            "MATCH v=(asset)<-[:VALUATED]-(:AssetValuation)-[:LATEST]->(:AssetValue) " +
             "MATCH r=(rule)-[:APPLIES_TO]->(asset) " +
             "RETURN asset, " +
             "nodes(h), relationships(h), " +
