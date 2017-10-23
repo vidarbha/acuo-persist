@@ -185,7 +185,7 @@ public class AssetTransferServiceImpl extends AbstractService<AssetTransfer, Str
         "MATCH (l1:LegalEntity)-[:CLIENT_SIGNS]->(a)<-[:COUNTERPARTY_SIGNS]-(l2:LegalEntity) " +
         "MATCH (c1:Custodian)-[:MANAGES]->(ca1:CustodianAccount)<-[:FROM]-(at)-[:TO]->(ca2:CustodianAccount)<-[:MANAGES]-(c2:Custodian) " +
         "RETURN a.name, a.currency, l1.name, l2.name, c1.name, c2.name, ca1.name, ca2.name, " +
-        "at.id, at.pledgeTime, at.unitValue, at.quantity, at.subStatus, at.settlementDate, at.assetFxRate, at.callFxRate " +
+        "at.id, at.pledgeTime, at.unitValue, at.quantity, at.subStatus, at.settlementDate, at.assetFxRate, at.callFxRate, " +
         "asset.currency, asset.name, asset.id, asset.settlementTime";
         return dao.getSession().query(query, Collections.emptyMap());
     }
