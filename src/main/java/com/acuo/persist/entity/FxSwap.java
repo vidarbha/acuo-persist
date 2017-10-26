@@ -1,6 +1,6 @@
 package com.acuo.persist.entity;
 
-import com.acuo.common.model.ids.TradeId;
+import com.acuo.common.ids.TradeId;
 import com.acuo.persist.neo4j.converters.CurrencyAmountConverter;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import com.acuo.persist.neo4j.converters.TypedStringConverter;

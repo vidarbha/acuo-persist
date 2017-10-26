@@ -1,7 +1,7 @@
 package com.acuo.persist.services
 
-import com.acuo.common.model.ids.AssetId
-import com.acuo.common.model.ids.ClientId
+import com.acuo.common.ids.AssetId
+import com.acuo.common.ids.ClientId
 import com.acuo.persist.entity.*
 import org.neo4j.ogm.session.Session
 import spock.lang.Specification

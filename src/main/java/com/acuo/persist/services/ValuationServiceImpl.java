@@ -1,7 +1,7 @@
 package com.acuo.persist.services;
 
-import com.acuo.common.model.ids.PortfolioId;
-import com.acuo.common.model.ids.TradeId;
+import com.acuo.common.ids.PortfolioId;
+import com.acuo.common.ids.TradeId;
 import com.acuo.common.model.margin.Types;
 import com.acuo.persist.entity.MarginValuation;
 import com.acuo.persist.entity.MarginValue;

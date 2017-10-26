@@ -1,6 +1,6 @@
 package com.acuo.persist.entity;
 
-import com.acuo.common.model.ids.BookId;
+import com.acuo.common.ids.BookId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.Index;

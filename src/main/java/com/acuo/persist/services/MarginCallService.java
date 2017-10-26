@@ -1,6 +1,6 @@
 package com.acuo.persist.services;
 
-import com.acuo.common.model.ids.MarginStatementId;
+import com.acuo.common.ids.MarginStatementId;
 import com.acuo.persist.entity.MarginCall;
 import com.acuo.persist.entity.enums.Side;
 import com.acuo.persist.entity.enums.StatementStatus;

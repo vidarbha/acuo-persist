@@ -1,6 +1,6 @@
 package com.acuo.persist.services;
 
-import com.acuo.common.model.ids.AssetId;
+import com.acuo.common.ids.AssetId;
 import com.acuo.persist.entity.Settlement;
 import com.google.common.collect.ImmutableMap;
 import org.neo4j.ogm.session.Session;

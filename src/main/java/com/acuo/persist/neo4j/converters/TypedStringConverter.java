@@ -1,12 +1,12 @@
 package com.acuo.persist.neo4j.converters;
 
 import com.acuo.common.type.TypedString;
-import com.acuo.common.model.ids.AssetId;
-import com.acuo.common.model.ids.BookId;
-import com.acuo.common.model.ids.ClientId;
-import com.acuo.common.model.ids.MarginStatementId;
-import com.acuo.common.model.ids.PortfolioId;
-import com.acuo.common.model.ids.TradeId;
+import com.acuo.common.ids.AssetId;
+import com.acuo.common.ids.BookId;
+import com.acuo.common.ids.ClientId;
+import com.acuo.common.ids.MarginStatementId;
+import com.acuo.common.ids.PortfolioId;
+import com.acuo.common.ids.TradeId;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.ogm.typeconversion.AttributeConverter;
 

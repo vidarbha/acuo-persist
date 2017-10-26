@@ -1,6 +1,6 @@
 package com.acuo.persist.services
 
-import com.acuo.common.model.ids.AssetId
+import com.acuo.common.ids.AssetId
 import com.acuo.persist.entity.Asset
 import com.acuo.persist.entity.AssetValuation
 import com.acuo.persist.entity.AssetValue

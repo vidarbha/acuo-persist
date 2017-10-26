@@ -4,6 +4,7 @@ import com.acuo.persist.services.AbstractService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.neo4j.harness.junit.EnterpriseNeo4jRule;
 import org.neo4j.harness.junit.Neo4jRule;
 import org.neo4j.helpers.collection.Iterators;
 import org.neo4j.ogm.config.Configuration;
@@ -23,7 +24,7 @@ public class TestDeleteAcuo {
     private Transaction ogmTransaction;
 
     @Rule
-    public Neo4jRule neo4jRule = new Neo4jRule()
+    public Neo4jRule neo4jRule = new EnterpriseNeo4jRule()
             .withConfig("dbms.security.auth_enabled", "false");
 
     public static class PersonService extends AbstractService<Person, Long> {

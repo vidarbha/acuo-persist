@@ -19,27 +19,74 @@ group = 'com.acuo.collateral'
 
 ext.versions += [
         common  : '0.14.0-SNAPSHOT',
-        strata  : '1.3.3'
+        model   : '0.1.0-SNAPSHOT'
 ]
-
-configurations {
-    all*.exclude group: 'org.neo4j.3rdparty.javax.ws.rs', module: 'jsr311-api'
-    all*.exclude group: 'javax.ws.rs', module: 'jsr311-api'
-}
 
 dependencies {
 
-    compile (
+    implementation (
             "com.acuo.collateral:acuo-common:${versions.common}"
     ) { changing = true }
 
-    compile ("com.opengamma.strata:strata-collect:${versions.strata}")
-    /*compile (
+    implementation (
+            "com.acuo.collateral:acuo-model:${versions.model}"
+    ) { changing = true }
+
+    implementation ("org.neo4j:neo4j-enterprise:${versions.neo4j}") {
+        exclude group: 'org.slf4j'
+        exclude group: 'org.neo4j', module: 'neo4j-cypher-compiler-2.3'
+        exclude group: 'org.neo4j', module: 'neo4j-cypher-compiler-3.0'
+        exclude group: 'org.neo4j', module: 'neo4j-cypher-frontend-2.3'
+        exclude group: 'org.neo4j', module: 'neo4j-cypher-frontend-3.0'
+    }
+
+    implementation (
+            "org.neo4j:neo4j-ogm-core:${versions.neo4jOgm}",
+            "org.neo4j:neo4j-ogm-http-driver:${versions.neo4jOgm}",
+            "org.neo4j:neo4j-ogm-bolt-driver:${versions.neo4jOgm}",
+            "org.neo4j:neo4j-ogm-embedded-driver:${versions.neo4jOgm}"
+    )
+
+    implementation (
+            "com.google.inject.extensions:guice-persist:${versions.guice}",
+            "commons-lang:commons-lang:${versions.commons_lang}",
+    )
+
+    testImplementation (
+            "com.acuo.collateral:acuo-common:${versions.common}:tests"
+    )  { changing = true }
+
+    testImplementation (
+            "com.acuo.collateral:acuo-model:${versions.model}:tests"
+    )  { changing = true }
+
+    testImplementation ("org.neo4j.test:neo4j-harness-enterprise:${versions.neo4j}"){
+        exclude group: 'org.slf4j'
+        exclude group: 'org.neo4j', module: 'neo4j-cypher-compiler-2.3'
+        exclude group: 'org.neo4j', module: 'neo4j-cypher-compiler-3.0'
+        exclude group: 'org.neo4j', module: 'neo4j-cypher-frontend-2.3'
+        exclude group: 'org.neo4j', module: 'neo4j-cypher-frontend-3.0'
+    }
+
+    testImplementation (
+            "org.neo4j:neo4j-ogm-test:${versions.neo4jOgm}"
+    )
+
+    testImplementation (
+            "com.googlecode.junit-toolbox:junit-toolbox:${versions.junit_toolbox}"
+    )
+
+    testImplementation (
+            "com.netflix.governator:governator-test-spock:${versions.governator}"
+    ) {
+        exclude group: 'com.cyrusinnovation', module: 'mockito-groovy-support'
+    }
+
+    /*implementation (
         "org.springframework.data:spring-data-neo4j:4.2.0.RC1",
         "org.springframework.guice:spring-guice:1.0.0.BUILD-SNAPSHOT",
     )*/
-
-    testCompile(
-            "com.acuo.collateral:acuo-common:${versions.common}:tests"
-    )
 }
+
+
+

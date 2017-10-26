@@ -1,7 +1,7 @@
 package com.acuo.persist.services
 
-import com.acuo.common.model.ids.AssetId
-import com.acuo.common.model.ids.ClientId
+import com.acuo.common.ids.AssetId
+import com.acuo.common.ids.ClientId
 import com.acuo.persist.modules.BuildersFactoryModule
 import com.acuo.persist.modules.ConfigurationTestModule
 import com.acuo.persist.modules.ImportServiceModule

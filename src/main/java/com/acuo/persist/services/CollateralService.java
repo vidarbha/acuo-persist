@@ -1,6 +1,6 @@
 package com.acuo.persist.services;
 
-import com.acuo.common.model.ids.MarginStatementId;
+import com.acuo.common.ids.MarginStatementId;
 import com.acuo.common.model.margin.Types;
 import com.acuo.persist.entity.AssetTransfer;
 import com.acuo.persist.entity.Collateral;

@@ -1,6 +1,6 @@
 package com.acuo.persist.utils
 
-import com.acuo.common.model.ids.AssetId
+import com.acuo.common.ids.AssetId
 import com.acuo.common.model.margin.Types
 import com.acuo.persist.builders.FactoryBuilder
 import com.acuo.persist.core.ImportService

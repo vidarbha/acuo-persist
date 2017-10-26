@@ -1,7 +1,7 @@
 package com.acuo.persist.services;
 
-import com.acuo.common.model.ids.MarginStatementId;
-import com.acuo.common.model.ids.PortfolioId;
+import com.acuo.common.ids.MarginStatementId;
+import com.acuo.common.ids.PortfolioId;
 import com.acuo.common.model.margin.Types;
 import com.acuo.common.util.GuiceJUnitRunner;
 import com.acuo.persist.core.ImportService;

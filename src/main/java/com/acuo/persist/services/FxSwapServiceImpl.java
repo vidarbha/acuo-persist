@@ -1,6 +1,6 @@
 package com.acuo.persist.services;
 
-import com.acuo.common.model.ids.TradeId;
+import com.acuo.common.ids.TradeId;
 import com.acuo.persist.entity.FxSwap;
 import org.neo4j.ogm.session.Session;
 

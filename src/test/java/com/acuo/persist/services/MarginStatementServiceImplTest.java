@@ -1,8 +1,8 @@
 package com.acuo.persist.services;
 
-import com.acuo.common.model.ids.ClientId;
-import com.acuo.common.model.ids.MarginStatementId;
-import com.acuo.common.model.ids.PortfolioId;
+import com.acuo.common.ids.ClientId;
+import com.acuo.common.ids.MarginStatementId;
+import com.acuo.common.ids.PortfolioId;
 import com.acuo.common.util.GuiceJUnitRunner;
 import com.acuo.persist.core.ImportService;
 import com.acuo.persist.entity.Agreement;

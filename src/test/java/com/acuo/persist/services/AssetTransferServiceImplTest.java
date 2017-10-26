@@ -1,7 +1,7 @@
 package com.acuo.persist.services;
 
-import com.acuo.common.model.ids.AssetId;
-import com.acuo.common.model.ids.ClientId;
+import com.acuo.common.ids.AssetId;
+import com.acuo.common.ids.ClientId;
 import com.acuo.common.util.GuiceJUnitRunner;
 import com.acuo.persist.core.ImportService;
 import com.acuo.persist.entity.AssetTransfer;

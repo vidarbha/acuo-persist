@@ -1,6 +1,6 @@
 package com.acuo.persist.entity;
 
-import com.acuo.common.model.ids.PortfolioId;
+import com.acuo.common.ids.PortfolioId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
