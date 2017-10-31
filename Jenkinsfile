@@ -1,28 +1,5 @@
-pipeline {
+@Library('github.com/pbuditi/pipeline-library@patch-1') _
 
-    agent { label 'ubuntu_agent' }
-    triggers {
-        pollSCM("")
-    }
-    
-
-    stages {
-        stage("checkout") {
-            steps {
-                    checkout scm
-                    withCredentials([string(credentialsId: 'acuo_nexusPassword', variable: 'nexusPassword')]) {
-                                   sh '''echo "nexusUrl=https://nexus.acuo.com" > gradle.properties
-                        echo "nexusUsername=deployer" >> gradle.properties
-                        echo "nexusPassword=$nexusPassword"  >> gradle.properties '''
-                    }
-                }
-        }
-        stage("Build") {
-            steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'acuo_aws_dev', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-                        sh './gradlew snapshot -x test -x integrationTest'
-                }
-            }  
-        }
-   }
+packagePipeline {
+    projectName = "acuo-persist"
 }
