@@ -2,6 +2,7 @@ package com.acuo.persist.utils
 
 import com.acuo.common.ids.AssetId
 import com.acuo.common.model.margin.Types
+import com.acuo.common.util.LocalDateUtils
 import com.acuo.persist.builders.FactoryBuilder
 import com.acuo.persist.core.ImportService
 import com.acuo.persist.entity.enums.Side
@@ -12,6 +13,7 @@ import com.opengamma.strata.basics.currency.Currency
 import javax.inject.Inject
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 import static com.acuo.common.model.margin.Types.MarginType
@@ -36,28 +38,50 @@ class EntityStoreFixture {
 
         def cpty = builder.client(firmId: 888)
 
-        def clearedAcct = builder.account(accountId: "cleared-acct")
+        def clearedAcct = builder.account(accountId: "cleared-acct") {
+            custodian(custodianId: "GS")
+        }
 
-        def bilateralAcct = builder.account(accountId: "cleared-acct")
+        def bilateralAcct = builder.account(accountId: "cleared-acct") {
+            custodian(custodianId: "JPM")
+        }
 
         def directedTo = builder.entity(legalEntityId: "client-entity", name: "clientEntity", firm: client)
 
         def sentFrom = builder.entity(legalEntityId: "cpty-entity", name: "cptyEntity",
                 custodianAccounts: [bilateralAcct, clearedAcct], firm: cpty)
 
-        def bilateral = bilateral(now, directedTo, sentFrom)
-        def cleared = cleared(now, directedTo, sentFrom)
+        def clearedRules = [rule()]
+        def usd = builder.asset(assetId: AssetId.fromString("USD"), rules: clearedRules) {
+            settlement(settlementId: "s1") {
+                settlementDate(queryDateTime: LocalDateTime.now(),
+                        creationDateTime: LocalDateTime.now(),
+                        settlementDate: LocalDateUtils.valuationDate())
+            }
+            holds(custodianAccount: clearedAcct)
+        }
+        def cleared = cleared(now, directedTo, sentFrom, clearedRules)
+
+        def bilateralRules = [rule()]
+        def jpy = builder.asset(assetId: AssetId.fromString("JPY"), rules: bilateralRules) {
+            settlement(settlementId: "s2") {
+                settlementDate(queryDateTime: LocalDateTime.now(),
+                        creationDateTime: LocalDateTime.now(),
+                        settlementDate: LocalDateUtils.valuationDate())
+            }
+            holds(custodianAccount: bilateralAcct)
+        }
+        def bilateral = bilateral(now, directedTo, sentFrom, bilateralRules)
 
         [bilateral, cleared].each {
             builder.clientSigns(rounding: 10, MTA: 10, threshold: 10, agreement: it, legalEntity: directedTo)
             builder.counterpartSigns(rounding: 9, MTA: 9, agreement: it, legalEntity: sentFrom)
         }
 
-        builder.asset(assetId: AssetId.fromString("USD"))
     }
 
-    def cleared(now, directedTo, sentFrom) {
-        def agreement = agreement("cleared-agreement", "cleared")
+    def cleared(now, directedTo, sentFrom, rules) {
+        def agreement = agreement("cleared-agreement", "cleared", rules)
 
         builder.statement(statementId: "cleared-statement",
                 directedTo: directedTo,
@@ -70,8 +94,8 @@ class EntityStoreFixture {
         return agreement
     }
 
-    def bilateral(now, directedTo, sentFrom) {
-        def agreement = agreement("bilateral-agreement", "bilateral")
+    def bilateral(now, directedTo, sentFrom, rules) {
+        def agreement = agreement("bilateral-agreement", "bilateral", rules)
 
         builder.statement(statementId: "bilateral-statement",
                 directedTo: directedTo,
@@ -85,12 +109,13 @@ class EntityStoreFixture {
         return agreement
     }
 
-    def agreement(id, type) {
+    def agreement(id, type, rules) {
         builder.agreement(agreementId: id,
                 currency: Currency.USD,
                 notificationTime: LocalTime.of(10, 0),
                 type: type,
-                tolerance: 10)
+                tolerance: 10,
+                rules: rules)
     }
 
     def calls(now, prefix) {
@@ -156,5 +181,15 @@ class EntityStoreFixture {
                         timestamp: Instant.now(),)
             }
         }
+    }
+
+    def rule() {
+        return builder.rule(marginTypes: [Types.MarginType.Variation],
+                haircut: 0,
+                fxHaircut: 0,
+                externalCost: 0,
+                interestRate: 0,
+                fxRate: 0
+        )
     }
 }

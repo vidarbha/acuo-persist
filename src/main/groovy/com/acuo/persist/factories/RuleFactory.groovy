@@ -1,7 +1,6 @@
 package com.acuo.persist.factories
 
 import com.acuo.persist.entity.Agreement
-import com.acuo.persist.entity.Asset
 import com.acuo.persist.entity.Rule
 import com.acuo.persist.services.RuleService
 
@@ -34,7 +33,6 @@ class RuleFactory extends AbstractFactory implements BuilderFactory {
         if (parent != null) {
             switch (parent) {
                 case Agreement:
-                case Asset:
                     parent.rules << child as Rule
                     break
             }

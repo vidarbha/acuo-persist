@@ -1,8 +1,7 @@
 package com.acuo.persist.factories
 
-import com.acuo.persist.entity.Agreement
 import com.acuo.persist.entity.Custodian
-import com.acuo.persist.entity.Rule
+import com.acuo.persist.entity.CustodianAccount
 import com.acuo.persist.services.CustodianService
 
 import javax.inject.Inject
@@ -29,12 +28,12 @@ class CustodianFactory extends AbstractFactory implements BuilderFactory {
     }
 
     @Override
-    void setParent(FactoryBuilderSupport builder,
-                   Object parent, Object child) {
+    void setParent(FactoryBuilderSupport builder, Object parent, Object child) {
+        Custodian custodian = child as Custodian
         if (parent != null) {
             switch (parent) {
-                case Agreement:
-                    parent.rules << child as Rule
+                case CustodianAccount:
+                    parent.custodian = custodian
                     break
             }
         }

@@ -19,7 +19,6 @@ import javax.inject.Inject
         ImportServiceModule,
         BuildersFactoryModule
 ])
-@Ignore
 class AssetServiceImplSpec extends Specification {
 
     @Delegate
@@ -43,14 +42,14 @@ class AssetServiceImplSpec extends Specification {
         then:
         assets != null
         with(assets) {
-            size == 1
+            size == 2
         }
 
     }
 
     def "find available asset by client id and call id"() {
         given:
-        def callId = "mcp1"
+        def callId = "c1"
 
         when:
         def assets = assetService.findAvailableAssetByClientIdAndCallId(clientId, callId)
@@ -62,6 +61,7 @@ class AssetServiceImplSpec extends Specification {
         }
     }
 
+    @Ignore
     def "total haircut"() {
         given:
         def assetId = AssetId.fromString("USD")

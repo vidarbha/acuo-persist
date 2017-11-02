@@ -3,7 +3,6 @@ package com.acuo.persist.factories
 import com.acuo.common.ids.AssetId
 import com.acuo.persist.entity.Agreement
 import com.acuo.persist.entity.Asset
-import com.acuo.persist.entity.Rule
 import com.acuo.persist.services.AssetService
 
 import javax.inject.Inject
@@ -35,7 +34,6 @@ class AssetFactory extends AbstractFactory implements BuilderFactory {
         if (parent != null) {
             switch (parent) {
                 case Agreement:
-                    parent.rules << child as Rule
                     break
             }
         }
