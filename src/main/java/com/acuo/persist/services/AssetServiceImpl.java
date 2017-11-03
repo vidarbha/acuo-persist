@@ -78,7 +78,7 @@ public class AssetServiceImpl extends AbstractService<Asset, AssetId> implements
 
     @Override
     public Optional<SettlementDate> settlementDate(AssetId assetId) {
-        String query =  "MATCH (asset:Asset {id:{assetId}})-[:SETTLEMENT]->(:Settlement)-[:SETTLEMENT_DATE]->" +
+        String query =  "MATCH (asset:Asset {id:{assetId}})-[:SETTLEMENT]->(:Settlement)-[:LATEST]->" +
                 "(date:SettlementDate) RETURN date";
         final ImmutableMap<String, String> parameters = ImmutableMap.of("assetId", assetId.toString());
         final SettlementDate settlementDate = dao.getSession().queryForObject(SettlementDate.class, query, parameters);
