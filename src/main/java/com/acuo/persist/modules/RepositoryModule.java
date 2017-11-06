@@ -50,6 +50,7 @@ public class RepositoryModule extends AbstractModule {
         bind(RuleService.class).to(RuleServiceImpl.class);
         bind(CustodianService.class).to(CustodianServiceImpl.class);
         bind(HoldsService.class).to(HoldsServiceImpl.class);
+        bind(FxSwapService.class).to(FxSwapServiceImpl.class);
     }
 
 }

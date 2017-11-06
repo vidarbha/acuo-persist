@@ -1,7 +1,7 @@
 package com.acuo.persist.services;
 
 import com.acuo.common.ids.TradeId;
-import com.acuo.persist.entity.FxSwap;
+import com.acuo.persist.entity.trades.fx.FxSwap;
 import org.neo4j.ogm.session.Session;
 
 import javax.inject.Inject;
@@ -17,5 +17,6 @@ public class FxSwapServiceImpl extends AbstractService<FxSwap, TradeId> implemen
     public Class<FxSwap> getEntityType() {
         return FxSwap.class;
     }
+
 }
 
