@@ -1,8 +1,8 @@
 package com.acuo.persist.entity.trades.fx;
 
 import com.acuo.common.ids.TradeId;
+import com.acuo.common.model.trade.FxSwapTrade;
 import com.acuo.common.model.trade.TradeInfo;
-import com.acuo.common.model.trade.fx.FxSwapTrade;
 import com.acuo.persist.entity.Entity;
 import com.acuo.persist.entity.PricingSource;
 import com.acuo.persist.entity.Trade;
@@ -52,7 +52,10 @@ public class FxSwap extends Trade<FxSwap> {
         com.acuo.common.model.product.fx.FxSwap product = new com.acuo.common.model.product.fx.FxSwap();
         product.setNearLeg(nearLeg.model());
         product.setFarLeg(farLeg.model());
-        return new FxSwapTrade(info, product);
+        final FxSwapTrade fxSwapTrade = new FxSwapTrade();
+        fxSwapTrade.setInfo(info);
+        fxSwapTrade.setProduct(product);
+        return fxSwapTrade;
     }
 
     @Relationship(type = "NEAR")

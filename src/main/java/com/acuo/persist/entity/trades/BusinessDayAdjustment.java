@@ -21,13 +21,13 @@ public class BusinessDayAdjustment extends Entity<BusinessDayAdjustment> {
     public BusinessDayAdjustment() {}
 
     public BusinessDayAdjustment(com.acuo.common.model.BusinessDayAdjustment model) {
-        this.convention = model.getConvention();
+        this.convention = model.getBusinessDayConvention();
         this.holidays = model.getHolidays().stream().map(HolidayCalendarId::toString).collect(toSet());
     }
 
     public com.acuo.common.model.BusinessDayAdjustment model() {
         com.acuo.common.model.BusinessDayAdjustment model = new com.acuo.common.model.BusinessDayAdjustment();
-        model.setConvention(convention);
+        model.setBusinessDayConvention(convention);
         model.setHolidays(holidays.stream().map(HolidayCalendarId::of).collect(toSet()));
         return model;
     }

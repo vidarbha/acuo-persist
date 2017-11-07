@@ -3,8 +3,8 @@ package com.acuo.persist.services
 import com.acuo.common.model.AdjustableDate
 import com.acuo.common.model.BusinessDayAdjustment
 import com.acuo.common.model.product.fx.FxSingle
+import com.acuo.common.model.trade.FxSwapTrade
 import com.acuo.common.model.trade.TradeInfo
-import com.acuo.common.model.trade.fx.FxSwapTrade
 import com.acuo.persist.entity.trades.fx.FxSwap
 import com.acuo.persist.modules.ConfigurationTestModule
 import com.acuo.persist.modules.RepositoryModule
@@ -55,6 +55,7 @@ class FxSwapServiceImplSpec extends Specification {
     private FxSwapTrade fxSwapTrade() {
         TradeInfo info = new TradeInfo()
         info.setTradeId("dummyFxSwap")
+        info.setClearedTradeId("dummyFxSwap")
 
         com.acuo.common.model.product.fx.FxSwap product = new com.acuo.common.model.product.fx.FxSwap()
         FxSingle nearLeg = fxSingle(1_000_000, 1_200_000, Period.ofMonths(6) )
@@ -63,14 +64,14 @@ class FxSwapServiceImplSpec extends Specification {
         FxSingle farLeg = fxSingle(1_000_000, 1_200_000, Period.ofYears(1) )
         product.setFarLeg(farLeg)
 
-        return new FxSwapTrade(info, product)
+        return new FxSwapTrade(info: info, product: product)
     }
 
     private FxSingle fxSingle(double baseAmount, double counterAmount, Period payPeriod) {
         FxSingle single = new FxSingle()
         single.setBaseCurrencyAmount(CurrencyAmount.of(Currency.USD, baseAmount))
         single.setCounterCurrencyAmount(CurrencyAmount.of(Currency.EUR, counterAmount))
-        BusinessDayAdjustment dayAdjustment = new BusinessDayAdjustment(convention: MODIFIED_FOLLOWING, holidays: [GBLO])
+        BusinessDayAdjustment dayAdjustment = new BusinessDayAdjustment(businessDayConvention: MODIFIED_FOLLOWING, holidays: [GBLO])
         def payDate = LocalDate.now().plus(payPeriod)
         AdjustableDate paymentDate = new AdjustableDate(date: payDate, adjustment: dayAdjustment)
         AdjustableDate fixingDate = new AdjustableDate(date: payDate.minusDays(2), adjustment: dayAdjustment)
