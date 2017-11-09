@@ -5,6 +5,7 @@ import com.acuo.common.model.BusinessDayAdjustment
 import com.acuo.common.model.product.fx.FxSingle
 import com.acuo.common.model.trade.FxSwapTrade
 import com.acuo.common.model.trade.TradeInfo
+import com.acuo.persist.entity.Trade
 import com.acuo.persist.entity.trades.fx.FxSwap
 import com.acuo.persist.modules.ConfigurationTestModule
 import com.acuo.persist.modules.RepositoryModule
@@ -29,7 +30,7 @@ class FxSwapServiceImplSpec extends Specification {
 
     @Subject
     @Inject
-    FxSwapService fxSwapService
+    TradeService<Trade> tradeService
 
     void "Compare an fx swap trade with its persisted version"(){
         given:
@@ -37,10 +38,10 @@ class FxSwapServiceImplSpec extends Specification {
         FxSwap entity = new FxSwap(original)
 
         when:
-        fxSwapService.save(entity)
+        tradeService.createOrUpdate([entity])
 
         and:
-        def persisted = fxSwapService.find(entity.tradeId, 4)
+        FxSwap persisted = tradeService.find(entity.tradeId) as FxSwap
 
         then:
         persisted != null
@@ -52,7 +53,7 @@ class FxSwapServiceImplSpec extends Specification {
         converted == original
     }
 
-    private FxSwapTrade fxSwapTrade() {
+    private static FxSwapTrade fxSwapTrade() {
         TradeInfo info = new TradeInfo()
         info.setTradeId("dummyFxSwap")
         info.setClearedTradeId("dummyFxSwap")
@@ -67,7 +68,7 @@ class FxSwapServiceImplSpec extends Specification {
         return new FxSwapTrade(info: info, product: product)
     }
 
-    private FxSingle fxSingle(double baseAmount, double counterAmount, Period payPeriod) {
+    private static FxSingle fxSingle(double baseAmount, double counterAmount, Period payPeriod) {
         FxSingle single = new FxSingle()
         single.setBaseCurrencyAmount(CurrencyAmount.of(Currency.USD, baseAmount))
         single.setCounterCurrencyAmount(CurrencyAmount.of(Currency.EUR, counterAmount))

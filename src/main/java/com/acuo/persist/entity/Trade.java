@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import static com.acuo.persist.neo4j.converters.TypedStringConverter.TradeIdConverter;
 
@@ -27,6 +28,8 @@ import static com.acuo.persist.neo4j.converters.TypedStringConverter.TradeIdConv
 @EqualsAndHashCode(callSuper = false, exclude = {"account", "errors"})
 @ToString(exclude = {"account", "errors"})
 public abstract class Trade<T extends Trade> extends Entity<T> implements Comparable<T> {
+
+    public Function<T, String> findQuery() { return (swap) -> "";}
 
     @Property(name = "id")
     @Index(primary = true)

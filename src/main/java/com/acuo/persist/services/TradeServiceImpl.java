@@ -55,6 +55,15 @@ public class TradeServiceImpl<T extends Trade> extends AbstractService<T, TradeI
 
     @Override
     @Transactional
+    public T find(TradeId id) {
+        String query =
+                "MATCH p=()-[*0..1]-(t:Trade {id:{id}}) " +
+                "RETURN p, nodes(p), relationships(p)";
+        return dao.getSession().queryForObject(getEntityType(), query, ImmutableMap.of("id", id));
+    }
+
+    @Override
+    @Transactional
     public Iterable<T> findByPortfolioId(PortfolioId... ids) {
         if (log.isDebugEnabled()) {
             log.debug("findByPortfolioId for {}", Arrays.asList(ids));
@@ -103,7 +112,7 @@ public class TradeServiceImpl<T extends Trade> extends AbstractService<T, TradeI
     @Transactional
     public <S extends T> Iterable<S> createOrUpdate(Iterable<S> trades) {
         long start = System.nanoTime();
-        final Iterable<S> saved = save(trades, 1);
+        final Iterable<S> saved = save(trades);
         long end = System.nanoTime();
         log.info("Save time: " + TimeUnit.NANOSECONDS.toSeconds(end - start));
         final Iterable<T> all = findAll();
