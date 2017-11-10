@@ -1,4 +1,4 @@
-/**
+/*
  * The MIT License (MIT)
  * <p>
  * Copyright (c) 2014-2015 the original author or authors.
@@ -156,7 +156,7 @@ public final class CollectionRepository<V>
      * 
      * @return the entities being stored.
      */
-    private final Collection<V> getData() {
+    private Collection<V> getData() {
         return data;
     }
 

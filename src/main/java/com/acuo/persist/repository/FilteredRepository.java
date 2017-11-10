@@ -1,4 +1,4 @@
-/**
+/*
  * The MIT License (MIT)
  * <p>
  * Copyright (c) 2015 the original author or authors.
@@ -62,7 +62,7 @@ public interface FilteredRepository<V, F> extends Repository<V> {
      *            the filter which discriminates the entities to be returned
      * @return the filtered subset of entities
      */
-    public Collection<V> getCollection(final F filter);
+    Collection<V> getCollection(final F filter);
 
     /**
      * Queries the entities in the repository and returns only one.
@@ -85,6 +85,6 @@ public interface FilteredRepository<V, F> extends Repository<V> {
      * @return a single entity found by the filter, or {@code null} is no entity
      *         is found
      */
-    public V getEntity(final F filter);
+    V getEntity(final F filter);
 
 }
