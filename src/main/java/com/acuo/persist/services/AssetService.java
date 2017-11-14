@@ -9,6 +9,8 @@ import java.util.Optional;
 
 public interface AssetService extends Service<Asset, AssetId>  {
 
+    Iterable<Asset> findAssets(ClientId clientId);
+
     Iterable<Asset> findAvailableAssetByClientId(ClientId clientId);
 
     Iterable<Asset> findAvailableAssetByClientIdAndCallId(ClientId clientId, String callId);

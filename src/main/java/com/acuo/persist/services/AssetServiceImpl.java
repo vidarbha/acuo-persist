@@ -46,9 +46,19 @@ public class AssetServiceImpl extends AbstractService<Asset, AssetId> implements
             "WITH eu.haircut + eu.FXHaircut as totalHaircut " +
             "RETURN totalHaircut";
 
+    private final static String ASSET_INVENTORY =
+            "MATCH (client:Client {id:{clientId}})-[:HAS]->(ca:CustodianAccount)-[:HOLDS]->(asset:Asset)";
+
     @Inject
     public AssetServiceImpl(Provider<Session> session) {
         super(session);
+    }
+
+    @Override
+    @Transactional
+    public Iterable<Asset> findAssets(ClientId clientId) {
+        final ImmutableMap<String, String> parameters = ImmutableMap.of("clientId", clientId.toString());
+        return dao.getSession().query(getEntityType(), ASSET_INVENTORY, parameters);
     }
 
     @Override

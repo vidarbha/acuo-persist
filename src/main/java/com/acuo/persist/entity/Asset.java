@@ -1,6 +1,7 @@
 package com.acuo.persist.entity;
 
 import com.acuo.common.ids.AssetId;
+import com.acuo.common.model.assets.Assets;
 import com.acuo.persist.neo4j.converters.CurrencyConverter;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import com.acuo.persist.neo4j.converters.TypedStringConverter.AssetIdConverter;
@@ -24,6 +25,45 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = false, exclude = {"holds", "transfers", "settlement", "errors"})
 @ToString(exclude = {"holds", "transfers", "settlement", "errors"})
 public class Asset extends Entity<Asset> {
+
+    public Asset() {
+    }
+
+    public Asset(Assets model) {
+        setAssetId(AssetId.fromString(model.getAssetId()));
+        setIdType(model.getIdType());
+        setName(model.getName());
+        setCurrency(model.getCurrency());
+        //setYield();
+        setType(model.getType());
+        setICADCode(model.getICADCode());
+        //setACUOCategory();
+        //setPrice();
+        setParValue(model.getParValue());
+        setMinUnit(model.getMinUnit());
+        //setMinUnitValue();
+        setIssueDate(model.getIssueDate());
+        setMaturityDate(model.getMaturityDate());
+        //setTimeToMaturityDays();
+        //setTimeToMaturityYears();
+        //setRating();
+        //setSettlementTime();
+    }
+
+    public Assets model() {
+        Assets asset = new Assets();
+        asset.setAssetId(assetId.toString());
+        asset.setIdType(idType);
+        asset.setName(name);
+        asset.setCurrency(currency);
+        asset.setType(type);
+        asset.setICADCode(ICADCode);
+        asset.setParValue(parValue);
+        asset.setMinUnit(minUnit);
+        asset.setIssueDate(issueDate);
+        asset.setMaturityDate(maturityDate);
+        return asset;
+    }
 
     @Property(name = "id")
     @Index(primary = true)

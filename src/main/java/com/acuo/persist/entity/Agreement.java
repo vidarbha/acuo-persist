@@ -1,5 +1,6 @@
 package com.acuo.persist.entity;
 
+import com.acuo.common.model.margin.Types;
 import com.acuo.persist.neo4j.converters.CurrencyConverter;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import com.acuo.persist.neo4j.converters.LocalTimeConverter;
@@ -23,6 +24,39 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = false, exclude = {"clientSignsRelation", "counterpartSignsRelation"})
 @ToString(exclude = {"clientSignsRelation", "counterpartSignsRelation"})
 public class Agreement extends Entity<Agreement> {
+
+    public Agreement() {
+    }
+
+    public Agreement(com.acuo.common.model.agreements.Agreement model) {
+        setAgreementId(model.getId());
+        setAmpId(model.getAmpId());
+        setName(model.getLongName()); //TODO: to check
+        //setDate(); //TODO: to many dates on the model
+        setType(model.getAgreementType().name());
+        //setLaw();
+        //setNotificationTime();
+        //setCurrency(); //TODO: to many currencies on the model
+        //setFCMCustodian();
+        //setCounterpartCustodian();
+        //setTolerance();
+        setThreshold(model.getThreshold());
+        //setInterestTransfer();
+        //setInterestPaymentNetting();
+        //setInterestAdjustment();
+        //setNegativeInterest();
+        //setDailyInterestCompounding();
+    }
+
+    public com.acuo.common.model.agreements.Agreement model() {
+        com.acuo.common.model.agreements.Agreement model = new com.acuo.common.model.agreements.Agreement();
+        model.setId(agreementId);
+        model.setAmpId(ampId);
+        model.setLongName(name);
+        model.setAgreementType(Types.AgreementType.valueOf(type));
+        model.setThreshold(threshold);
+        return model;
+    }
 
     @Property(name="id")
     @Index(primary = true)
