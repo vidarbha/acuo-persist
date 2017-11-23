@@ -4,6 +4,7 @@ import com.acuo.common.ids.PortfolioId;
 import com.acuo.common.util.GuiceJUnitRunner;
 import com.acuo.persist.entity.Portfolio;
 import com.acuo.persist.modules.ConfigurationTestModule;
+import com.acuo.persist.modules.InProcessNeo4jServerModule;
 import com.acuo.persist.modules.RepositoryModule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +17,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(GuiceJUnitRunner.class)
 @GuiceJUnitRunner.GuiceModules({
         ConfigurationTestModule.class,
-        RepositoryModule.class})
+        InProcessNeo4jServerModule.class,
+        RepositoryModule.class
+})
 public class PortfolioServiceImplTest {
 
     @Inject

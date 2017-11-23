@@ -5,6 +5,7 @@ import com.acuo.common.ids.ClientId
 import com.acuo.persist.modules.BuildersFactoryModule
 import com.acuo.persist.modules.ConfigurationTestModule
 import com.acuo.persist.modules.ImportServiceModule
+import com.acuo.persist.modules.InProcessNeo4jServerModule
 import com.acuo.persist.utils.EntityStoreFixture
 import org.neo4j.ogm.model.Result
 import spock.guice.UseModules
@@ -16,6 +17,7 @@ import javax.inject.Inject
 
 @UseModules([
         ConfigurationTestModule,
+        InProcessNeo4jServerModule,
         ImportServiceModule,
         BuildersFactoryModule
 ])

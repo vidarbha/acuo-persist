@@ -6,6 +6,7 @@ import com.acuo.persist.entity.VariationMargin
 import com.acuo.persist.entity.enums.StatementStatus
 import com.acuo.persist.modules.BuildersFactoryModule
 import com.acuo.persist.modules.ConfigurationTestModule
+import com.acuo.persist.modules.InProcessNeo4jServerModule
 import com.acuo.persist.modules.RepositoryModule
 import com.netflix.governator.guice.test.InjectorCreationMode
 import com.netflix.governator.guice.test.ModulesForTesting
@@ -19,6 +20,7 @@ import static com.acuo.common.model.margin.Types.*
 
 @ModulesForTesting(value=[
         ConfigurationTestModule,
+        InProcessNeo4jServerModule,
         RepositoryModule,
         BuildersFactoryModule
 ], injectorCreation=InjectorCreationMode.BEFORE_TEST_CLASS)

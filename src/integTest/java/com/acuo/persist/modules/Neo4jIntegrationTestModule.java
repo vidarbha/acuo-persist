@@ -5,7 +5,8 @@ import com.google.common.util.concurrent.Service;
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 import org.neo4j.ogm.config.Configuration;
-import org.neo4j.ogm.service.Components;
+import org.neo4j.ogm.driver.Driver;
+import org.neo4j.ogm.exception.core.ConfigurationException;
 import org.neo4j.ogm.testutil.TestServer;
 
 import javax.inject.Provider;
@@ -20,27 +21,23 @@ public class Neo4jIntegrationTestModule extends AbstractModule {
 
         @Override
         protected void doStart() {
-            /*Configuration.Builder builder = new Configuration.Builder();
+            Configuration.Builder builder = new Configuration.Builder();
             Configuration configuration = builder
                     .uri("bolt://localhost:7687")
                     .connectionPoolSize(150)
                     .encryptionLevel("NONE")
                     .build();
             Driver driver = newDriverInstance(configuration.getDriverClassName());
-            driver.configure(configuration);*/
-            Configuration configuration = new Configuration();
+            driver.configure(configuration);
+            /*Configuration configuration = new Configuration();
             configuration.set("driver", "org.neo4j.ogm.drivers.bolt.driver.BoltDriver");
             configuration.set("compiler", "org.neo4j.ogm.compiler.MultiStatementCypherCompiler");
             configuration.set("URI", "bolt://localhost:7687");
             configuration.set("connection.pool.size", "150");
             configuration.set("encryption.level", "NONE");
-            Components.configure(configuration);
+            Components.configure(configuration);*/
 
-            server = new TestServer.Builder()
-                    .enableAuthentication(false)
-                    .enableBolt(true)
-                    .transactionTimeoutSeconds(2)
-                    .build();
+            server = new TestServer(false, true,2);
             notifyStarted();
         }
 
@@ -55,14 +52,14 @@ public class Neo4jIntegrationTestModule extends AbstractModule {
             return server;
         }
 
-        /*private Driver newDriverInstance(String driverClassName) {
+        private Driver newDriverInstance(String driverClassName) {
             try {
                 final Class<?> driverClass = Class.forName(driverClassName);
                 return (Driver) driverClass.newInstance();
             } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
                 throw new ConfigurationException("Could not load driver class " + driverClassName, e);
             }
-        }*/
+        }
     }
 
     @Override

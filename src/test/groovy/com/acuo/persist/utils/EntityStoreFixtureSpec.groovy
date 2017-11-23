@@ -1,9 +1,9 @@
 package com.acuo.persist.utils
 
-import com.acuo.persist.entity.MarginCall
 import com.acuo.persist.modules.BuildersFactoryModule
 import com.acuo.persist.modules.ConfigurationTestModule
 import com.acuo.persist.modules.ImportServiceModule
+import com.acuo.persist.modules.InProcessNeo4jServerModule
 import com.acuo.persist.services.ClientService
 import com.acuo.persist.services.ClientSignsRelationService
 import com.acuo.persist.services.MarginCallService
@@ -14,9 +14,10 @@ import spock.lang.Subject
 import javax.inject.Inject
 
 @UseModules([
-    ConfigurationTestModule,
-    ImportServiceModule,
-    BuildersFactoryModule
+        ConfigurationTestModule,
+        InProcessNeo4jServerModule,
+        ImportServiceModule,
+        BuildersFactoryModule
 ])
 class EntityStoreFixtureSpec extends Specification {
 

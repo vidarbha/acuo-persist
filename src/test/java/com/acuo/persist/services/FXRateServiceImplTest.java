@@ -4,6 +4,7 @@ import com.acuo.common.util.GuiceJUnitRunner;
 import com.acuo.persist.entity.CurrencyEntity;
 import com.acuo.persist.entity.FXRate;
 import com.acuo.persist.modules.ConfigurationTestModule;
+import com.acuo.persist.modules.InProcessNeo4jServerModule;
 import com.acuo.persist.modules.RepositoryModule;
 import com.opengamma.strata.basics.currency.Currency;
 import org.junit.Before;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 @RunWith(GuiceJUnitRunner.class)
 @GuiceJUnitRunner.GuiceModules({
         ConfigurationTestModule.class,
+        InProcessNeo4jServerModule.class,
         RepositoryModule.class})
 public class FXRateServiceImplTest {
 

@@ -8,6 +8,7 @@ import com.acuo.common.model.trade.TradeInfo
 import com.acuo.persist.entity.Trade
 import com.acuo.persist.entity.trades.fx.FxSwap
 import com.acuo.persist.modules.ConfigurationTestModule
+import com.acuo.persist.modules.InProcessNeo4jServerModule
 import com.acuo.persist.modules.RepositoryModule
 import com.opengamma.strata.basics.currency.Currency
 import com.opengamma.strata.basics.currency.CurrencyAmount
@@ -24,6 +25,7 @@ import static com.opengamma.strata.basics.date.HolidayCalendarIds.GBLO
 
 @UseModules([
         ConfigurationTestModule,
+        InProcessNeo4jServerModule,
         RepositoryModule
 ])
 class FxSwapServiceImplSpec extends Specification {

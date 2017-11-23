@@ -5,6 +5,7 @@ import com.acuo.persist.entity.InterestPayment;
 import com.acuo.persist.entity.StatementItem;
 import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.modules.ConfigurationTestModule;
+import com.acuo.persist.modules.InProcessNeo4jServerModule;
 import com.acuo.persist.modules.RepositoryModule;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +18,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(GuiceJUnitRunner.class)
 @GuiceJUnitRunner.GuiceModules({
         ConfigurationTestModule.class,
-        RepositoryModule.class})
+        InProcessNeo4jServerModule.class,
+        RepositoryModule.class
+})
 public class StatementItemServiceImplTest {
 
     @Inject

@@ -7,7 +7,7 @@ import com.acuo.persist.entity.FRA;
 import com.acuo.persist.entity.Leg;
 import com.acuo.persist.modules.ConfigurationTestModule;
 import com.acuo.persist.modules.ImportServiceModule;
-import com.acuo.persist.modules.RepositoryModule;
+import com.acuo.persist.modules.InProcessNeo4jServerModule;
 import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,8 +20,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(GuiceJUnitRunner.class)
 @GuiceJUnitRunner.GuiceModules({
         ConfigurationTestModule.class,
-        ImportServiceModule.class,
-        RepositoryModule.class})
+        InProcessNeo4jServerModule.class,
+        ImportServiceModule.class
+})
 public class TradeServiceImplTest {
 
     @Inject

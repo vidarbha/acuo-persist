@@ -111,17 +111,11 @@ public class TestDeleteAcuo {
     }
 
     private Session createSession() {
-        Configuration configuration = new Configuration();
-        configuration
-                .driverConfiguration()
-                .setDriverClassName("org.neo4j.ogm.drivers.embedded.driver.EmbeddedDriver");
-                //.setEncryptionLevel("NONE")
-                //.setURI("bolt://localhost:5001");
-        /*Configuration configuration = new Configuration.Builder()
-                .uri("bolt://localhost:5001")
+        Configuration configuration = new Configuration.Builder()
+                .uri(neo4jRule.boltURI().toString())
                 .connectionPoolSize(150)
                 .encryptionLevel("NONE")
-                .build();*/
+                .build();
         return new SessionFactory(configuration, "com.acuo.persist.learning", "com.acuo.persist.entity").openSession();
     }
 }

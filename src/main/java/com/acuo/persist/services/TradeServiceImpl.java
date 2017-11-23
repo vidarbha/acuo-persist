@@ -57,8 +57,7 @@ public class TradeServiceImpl<T extends Trade> extends AbstractService<T, TradeI
     @Transactional
     public T find(TradeId id) {
         String query =
-                "MATCH p=()-[*0..1]-(t:Trade {id:{id}}) " +
-                "RETURN p, nodes(p), relationships(p)";
+                "MATCH p=()-[*0..1]-(t:Trade {id:{id}}) RETURN p";
         return dao.getSession().queryForObject(getEntityType(), query, ImmutableMap.of("id", id));
     }
 

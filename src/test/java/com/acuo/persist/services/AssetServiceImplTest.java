@@ -8,7 +8,7 @@ import com.acuo.persist.entity.Asset;
 import com.acuo.persist.entity.AssetTransfer;
 import com.acuo.persist.modules.ConfigurationTestModule;
 import com.acuo.persist.modules.ImportServiceModule;
-import com.acuo.persist.modules.RepositoryModule;
+import com.acuo.persist.modules.InProcessNeo4jServerModule;
 import com.acuo.persist.utils.ValuationHelper;
 import com.opengamma.strata.basics.currency.Currency;
 import org.junit.Before;
@@ -25,8 +25,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(GuiceJUnitRunner.class)
 @GuiceJUnitRunner.GuiceModules({
         ConfigurationTestModule.class,
-        ImportServiceModule.class,
-        RepositoryModule.class})
+        InProcessNeo4jServerModule.class,
+        ImportServiceModule.class
+})
 @Ignore
 public class AssetServiceImplTest {
 
