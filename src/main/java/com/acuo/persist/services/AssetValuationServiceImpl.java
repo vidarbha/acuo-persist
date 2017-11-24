@@ -50,8 +50,9 @@ public class AssetValuationServiceImpl extends AbstractService<AssetValuation, L
     @Transactional
     public AssetValuation getAssetValuationFor(AssetId assetId) {
         String query =
-                "MATCH p=(value:AssetValue)<-[*0..1]-(valuation:AssetValuation)-[:VALUATED]->(asset:Asset {id:{id}})-[*0..1]-(n) " +
-                        "RETURN p, nodes(p), relationships(p)";
+                "MATCH p=(value)<-[:LATEST*0..1]-(valuation)-[:VALUATED]->(asset:Asset) " +
+                        "WHERE asset.id = {id} " +
+                        "RETURN p";
         final String aId = assetId.toString();
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", aId);
         return dao.getSession().queryForObject(AssetValuation.class, query, parameters);

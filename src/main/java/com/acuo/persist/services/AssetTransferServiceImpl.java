@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static com.acuo.persist.entity.enums.AssetTransferStatus.*;
+import static com.google.common.collect.ImmutableMap.of;
 
 public class AssetTransferServiceImpl extends AbstractService<AssetTransfer, String> implements AssetTransferService {
 
@@ -56,49 +57,29 @@ public class AssetTransferServiceImpl extends AbstractService<AssetTransfer, Str
         return AssetTransfer.class;
     }
 
-    private final static String ARRIVING_ASSET_TRANSFER =
-            "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:CLIENT_SIGNS]->(agreement:Agreement)-[:IS_COMPOSED_OF]->" +
-            "(rule:Rule)-[:APPLIES_TO]->(asset:Asset) " +
-            "WITH asset, client, rule " +
-            "MATCH h=(:Custodian)-[:MANAGES]->(ca:CustodianAccount)-[holds:HOLDS]->(asset) " +
-            "MATCH v=(asset)<-[:VALUATED]-(:AssetValuation)-[:VALUE]->(:AssetValue) " +
-            "MATCH t=(asset)<-[:OF]-(transfer:AssetTransfer {status:'Arriving'})-[:TO]->(:CustodianAccount)<-[:HAS]-(client) " +
-            "RETURN transfer, " +
-            "nodes(h), relationships(h), " +
-            "nodes(v), relationships(v), " +
-            "nodes(t), relationships(t)";
-
-    private final static String DEPARTED_ASSET_TRANSFER =
-            "MATCH (client:Client {id:{clientId}})-[:MANAGES]->(entity:LegalEntity)-[:CLIENT_SIGNS]->(agreement:Agreement)-[:IS_COMPOSED_OF]->" +
-            "(rule:Rule)-[:APPLIES_TO]->(asset:Asset) " +
-            "WITH asset, client, rule " +
-            "MATCH h=(:Custodian)-[:MANAGES]->(ca:CustodianAccount)-[holds:HOLDS]->(asset) " +
-            "MATCH v=(asset)<-[:VALUATED]-(:AssetValuation)-[:VALUE]->(:AssetValue) " +
-            "MATCH t=(asset)<-[:OF]-(transfer:AssetTransfer {status:'Departed'})-[:FROM]->(:CustodianAccount)<-[:HAS]-(client) " +
-            "RETURN transfer, " +
-            "nodes(h), relationships(h), " +
-            "nodes(v), relationships(v), " +
-            "nodes(t), relationships(t)";
+    private final static String ASSET_TRANSFER =
+            "MATCH (client:Client)-[:MANAGES]->(entity)-[:CLIENT_SIGNS]->(agreement)-[:IS_COMPOSED_OF]->" +
+                    "(rule)-[:APPLIES_TO]->(asset) " +
+                    "WHERE client.id = {clientId} " +
+                    "WITH asset, client " +
+                    "MATCH h=()-[:MANAGES]->(ca)-[holds:HOLDS]->(asset) " +
+                    "MATCH v=(asset)<-[:VALUATED]-()-[:LATEST]->() " +
+                    "MATCH t=(asset)<-[:OF]-(transfer:AssetTransfer)-[:TO]->()<-[:HAS]-(client) " +
+                    "WHERE transfer.status = {status} " +
+                    "RETURN h, v, t";
 
     @Override
     @Transactional
-    public Iterable<AssetTransfer> findArrivingAssetTransferByClientId(ClientId clientId) {
-        final ImmutableMap<String, String> parameters = ImmutableMap.of("clientId", clientId.toString());
-        return dao.getSession().query(getEntityType(), ARRIVING_ASSET_TRANSFER, parameters);
-    }
-
-    @Override
-    @Transactional
-    public Iterable<AssetTransfer> findDepartedAssetTransferByClientId(ClientId clientId) {
-        final ImmutableMap<String, String> parameters = ImmutableMap.of("clientId", clientId.toString());
-        return dao.getSession().query(getEntityType(), DEPARTED_ASSET_TRANSFER, parameters);
+    public Iterable<AssetTransfer> findAssetTransferByClientIdAndStatus(ClientId clientId, AssetTransferStatus status) {
+        String clientStr = clientId.toString();
+        final ImmutableMap<String, String> parameters = of("clientId", clientStr, "status", status.name());
+        return dao.getSession().query(getEntityType(), ASSET_TRANSFER, parameters);
     }
 
     @Override
     @Transactional
     public void sendAsset(String marginCallId, AssetId assetId, Double quantity, String fromAccount) {
         MarginCall call = marginCallService.callById(marginCallId);
-
 
         AssetTransfer assetTransfer = createAssetTransfer(call, assetId, quantity, Departed, InFlight);
 

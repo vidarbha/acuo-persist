@@ -3,6 +3,7 @@ package com.acuo.persist.services
 import com.acuo.common.ids.AssetId
 import com.acuo.common.ids.ClientId
 import com.acuo.persist.entity.*
+import com.acuo.persist.entity.enums.AssetTransferStatus
 import org.neo4j.ogm.session.Session
 import spock.lang.Specification
 import spock.lang.Subject
@@ -32,7 +33,7 @@ class AssetTransferServiceImplSpec extends Specification {
         def clientId = ClientId.fromString("999")
 
         when: "we search for all asset transfer"
-        assetTransferService.findArrivingAssetTransferByClientId(clientId)
+        assetTransferService.findAssetTransferByClientIdAndStatus(clientId, AssetTransferStatus.Arriving)
 
         then: "we query the db once with the right entity type"
         1 * session.query(AssetTransfer, _ as String, {it.any {key, value -> key == 'clientId' && value == '999'} })
@@ -43,7 +44,7 @@ class AssetTransferServiceImplSpec extends Specification {
         def clientId = ClientId.fromString("999")
 
         when: "we search for all asset transfer"
-        assetTransferService.findDepartedAssetTransferByClientId(clientId)
+        assetTransferService.findAssetTransferByClientIdAndStatus(clientId, AssetTransferStatus.Departed)
 
         then: "we query the db once with the right entity type"
         1 * session.query(AssetTransfer, _ as String, {it.any {key, value -> key == 'clientId' && value == '999'} })
