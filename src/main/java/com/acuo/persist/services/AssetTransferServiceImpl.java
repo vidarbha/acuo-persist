@@ -34,6 +34,7 @@ public class AssetTransferServiceImpl extends AbstractService<AssetTransfer, Str
     private final AssetValuationService assetValuationService;
     private final FXRateService fxRateService;
     private final CollateralService collateralService;
+    private final AssetPledgeService assetPledgeService;
 
     @Inject
     public AssetTransferServiceImpl(Provider<Session> session,
@@ -42,7 +43,8 @@ public class AssetTransferServiceImpl extends AbstractService<AssetTransfer, Str
                                     CustodianAccountService custodianAccountService,
                                     AssetValuationService assetValuationService,
                                     FXRateService fxRateService,
-                                    CollateralService collateralService) {
+                                    CollateralService collateralService,
+                                    AssetPledgeService assetPledgeService) {
         super(session);
         this.marginCallService = marginCallService;
         this.assetService = assetService;
@@ -50,6 +52,7 @@ public class AssetTransferServiceImpl extends AbstractService<AssetTransfer, Str
         this.assetValuationService = assetValuationService;
         this.fxRateService = fxRateService;
         this.collateralService = collateralService;
+        this.assetPledgeService = assetPledgeService;
     }
 
     @Override
@@ -92,6 +95,7 @@ public class AssetTransferServiceImpl extends AbstractService<AssetTransfer, Str
         removeQuantity(assetId, quantity);
 
         collateralService.handle(assetTransfer);
+        assetPledgeService.handle(assetTransfer);
     }
 
     @Override
