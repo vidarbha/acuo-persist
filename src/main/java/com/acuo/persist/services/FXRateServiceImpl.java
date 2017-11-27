@@ -100,10 +100,11 @@ public class FXRateServiceImpl extends AbstractService<FXRate, Long> implements 
 
     @Override
     @Transactional
-    public void addValue(FXRate fxRate, Double value, LocalDateTime updated){
+    public void addValue(FXRate fxRate, Double value, LocalDateTime refreshed, LocalDateTime updated){
         cleanup(fxRate);
         FXValue fxValue = new FXValue();
         fxValue.setFrom(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
+        fxValue.setRefreshedOn(refreshed);
         fxValue.setLastUpdate(updated);
         fxValue.setValue(value);
         fxValue.setRate(fxRate);
