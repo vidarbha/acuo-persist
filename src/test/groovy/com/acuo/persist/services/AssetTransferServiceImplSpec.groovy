@@ -17,6 +17,7 @@ class AssetTransferServiceImplSpec extends Specification {
     AssetValuationService assetValuationService = Stub()
     FXRateService fxRateService = Stub()
     CollateralService collateralService = Stub()
+    AssetPledgeService assetPledgeService = Stub()
 
     @Subject
     AssetTransferServiceImpl assetTransferService = new AssetTransferServiceImpl(
@@ -26,7 +27,8 @@ class AssetTransferServiceImplSpec extends Specification {
             custodianAccountService,
             assetValuationService,
             fxRateService,
-            collateralService)
+            collateralService,
+            assetPledgeService)
 
     def "find arriving asset transfer by clientId"() {
         given: "a client id"
