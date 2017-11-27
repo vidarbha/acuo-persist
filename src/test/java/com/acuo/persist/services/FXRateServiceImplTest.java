@@ -48,8 +48,8 @@ public class FXRateServiceImplTest {
 
         FXRate fxRate = fxRateService.getOrCreate(Currency.USD, Currency.EUR);
 
-        fxRateService.addValue(fxRate, 1d, LocalDateTime.now());
-        fxRateService.addValue(fxRate, 2d, LocalDateTime.now());
+        fxRateService.addValue(fxRate, 1d, LocalDateTime.now(), LocalDateTime.now());
+        fxRateService.addValue(fxRate, 2d, LocalDateTime.now(), LocalDateTime.now());
     }
 
 }
