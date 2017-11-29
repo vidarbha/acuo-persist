@@ -9,7 +9,6 @@ import com.acuo.persist.modules.InProcessNeo4jServerModule
 import com.acuo.persist.utils.EntityStoreFixture
 import org.neo4j.ogm.model.Result
 import spock.guice.UseModules
-import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -63,11 +62,10 @@ class AssetServiceImplSpec extends Specification {
         }
     }
 
-    @Ignore
     def "total haircut"() {
         given:
         def assetId = AssetId.fromString("USD")
-        def callId = "mcp1"
+        def callId = "b1"
         def result = Stub(Result)
         result.iterator() >> [['totalHaircut':10d]].iterator()
 
@@ -75,6 +73,6 @@ class AssetServiceImplSpec extends Specification {
         def haircut = assetService.totalHaircut(assetId, callId)
 
         then:
-        haircut == 10d
+        haircut == 0.0d
     }
 }

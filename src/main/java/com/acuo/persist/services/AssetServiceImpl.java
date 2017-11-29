@@ -11,6 +11,7 @@ import org.neo4j.ogm.session.Session;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
@@ -40,7 +41,8 @@ public class AssetServiceImpl extends AbstractService<Asset, AssetId> implements
     private final static String TOTAL_HAIRCUT =
             "MATCH (si:StatementItem)-[:PART_OF]->()-[:STEMS_FROM]->(agr) " +
                     "WHERE si.id = {callId} " +
-                    "MATCH (asset:Asset {id:{assetId}})-[:IS_IN]->()-[eu:IS_ELIGIBLE_UNDER]->(agr) " +
+                    "WITH agr " +
+                    "MATCH (asset:Asset)-[:IS_IN]->()-[eu:IS_ELIGIBLE_UNDER]->(agr) " +
                     "WHERE asset.id = {assetId} " +
             "WITH eu.haircut + eu.FXHaircut as totalHaircut " +
             "RETURN totalHaircut";
@@ -82,8 +84,13 @@ public class AssetServiceImpl extends AbstractService<Asset, AssetId> implements
         final ImmutableMap<String, String> parameters = ImmutableMap.of("assetId", assetId.toString(),
                 "callId", callId);
         Result result = dao.getSession().query(TOTAL_HAIRCUT, parameters);
-        Map<String, Object> next = result.iterator().next();
-        return (Double) next.get("totalHaircut");
+        Iterator<Map<String, Object>> iterator = result.iterator();
+        if (iterator.hasNext()) {
+            Map<String, Object> next = iterator.next();
+            return (Double) next.get("totalHaircut");
+        } else {
+            return 0.0d;
+        }
     }
 
     @Override
