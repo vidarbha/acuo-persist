@@ -46,7 +46,8 @@ class EntityStoreFixture {
             custodian(custodianId: "JPM")
         }
 
-        def directedTo = builder.entity(legalEntityId: "client-entity", name: "clientEntity", firm: client)
+        def directedTo = builder.entity(legalEntityId: "client-entity", name: "clientEntity",
+                custodianAccounts: [bilateralAcct, clearedAcct], firm: client)
 
         def sentFrom = builder.entity(legalEntityId: "cpty-entity", name: "cptyEntity",
                 custodianAccounts: [bilateralAcct, clearedAcct], firm: cpty)
@@ -58,7 +59,7 @@ class EntityStoreFixture {
                         creationDateTime: LocalDateTime.now(),
                         settlementDate: LocalDateUtils.valuationDate())
             }
-            holds(custodianAccount: clearedAcct)
+            holds(custodianAccount: clearedAcct, availableQuantity: 1_000_000)
         }
         def cleared = cleared(now, directedTo, sentFrom, clearedRules)
 
@@ -69,7 +70,7 @@ class EntityStoreFixture {
                         creationDateTime: LocalDateTime.now(),
                         settlementDate: LocalDateUtils.valuationDate())
             }
-            holds(custodianAccount: bilateralAcct)
+            holds(custodianAccount: bilateralAcct, availableQuantity: 1_000_000)
         }
         def bilateral = bilateral(now, directedTo, sentFrom, bilateralRules)
 
