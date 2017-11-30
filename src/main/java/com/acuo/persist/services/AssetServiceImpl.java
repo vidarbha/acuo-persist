@@ -19,37 +19,38 @@ public class AssetServiceImpl extends AbstractService<Asset, AssetId> implements
 
     private final static String AVAILABLE_ASSET =
             "MATCH (client:Client)-[:MANAGES]->(entity)-[:CLIENT_SIGNS]->(agreement)-[:IS_COMPOSED_OF]->(rule)-[:APPLIES_TO]->(asset) " +
-                    "WHERE client.id = {clientId} " +
-                    "WITH asset, client " +
-                    "MATCH h=()-[:MANAGES]->(ca)-[holds:HOLDS]->(asset) " +
+            "WHERE client.id = {clientId} " +
+            "WITH asset, client " +
+            "MATCH h=()-[:MANAGES]->(ca)-[holds:HOLDS]->(asset) " +
             "MATCH s=(asset)-[:SETTLEMENT*0..1]->(settlement)-[:LATEST*0..1]->(settlementDate) " +
-                    "RETURN h, s";
+            "RETURN h, s";
 
     private final static String ELIGIBLE_ASSET_BY_CLIENT_AND_CALLID =
             "MATCH (client:Client)-[:MANAGES]->(entity)-[:CLIENT_SIGNS]->(agreement)-[:IS_COMPOSED_OF]->(rule)-[:APPLIES_TO]->(asset) " +
-                    "WHERE client.id = {clientId} " +
+            "WHERE client.id = {clientId} " +
             "WITH asset, agreement, entity, rule " +
-                    "MATCH (agreement)<-[:STEMS_FROM]-(ms)<-[*1..2]-(marginCall:MarginCall),(ms)-[:SENT_FROM|DIRECTED_TO]->(entity) " +
-                    "WHERE marginCall.id = {callId} AND marginCall.marginType IN rule.marginType " +
+            "MATCH (agreement)<-[:STEMS_FROM]-(ms)<-[*1..2]-(marginCall:MarginCall),(ms)-[:SENT_FROM|DIRECTED_TO]->(entity) " +
+            "WHERE marginCall.id = {callId} AND marginCall.marginType IN rule.marginType " +
             "AND NOT (asset)-[:EXCLUDED]->(marginCall) " +
             "WITH DISTINCT asset, rule " +
-                    "MATCH h=()-[:MANAGES]->(ca)-[:HOLDS]->(asset) " +
+            "MATCH h=()-[:MANAGES]->(ca)-[:HOLDS]->(asset) " +
             "MATCH s=(asset)-[:SETTLEMENT*0..1]->(settlement)-[:LATEST*0..1]->(settlementDate) " +
             "MATCH r=(rule)-[:APPLIES_TO]->(asset) " +
-                    "RETURN h, s, r";
+            "RETURN h, s, r";
 
     private final static String TOTAL_HAIRCUT =
             "MATCH (si:StatementItem)-[:PART_OF]->()-[:STEMS_FROM]->(agr) " +
-                    "WHERE si.id = {callId} " +
-                    "WITH agr " +
-                    "MATCH (asset:Asset)-[:IS_IN]->()-[eu:IS_ELIGIBLE_UNDER]->(agr) " +
-                    "WHERE asset.id = {assetId} " +
+            "WHERE si.id = {callId} " +
+            "WITH agr " +
+            "MATCH (asset:Asset)-[:IS_IN]->()-[eu:IS_ELIGIBLE_UNDER]->(agr) " +
+            "WHERE asset.id = {assetId} " +
             "WITH eu.haircut + eu.FXHaircut as totalHaircut " +
             "RETURN totalHaircut";
 
     private final static String ASSET_INVENTORY =
             "MATCH (client:Client)-[:HAS]->(ca)-[:HOLDS]->(asset) " +
-                    "WHERE client.id = {clientId}";
+            "WHERE client.id = {clientId} " +
+            "RETURN asset";
 
     @Inject
     public AssetServiceImpl(Provider<Session> session) {
