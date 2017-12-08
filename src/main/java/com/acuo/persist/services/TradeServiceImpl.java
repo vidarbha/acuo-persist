@@ -111,7 +111,7 @@ public class TradeServiceImpl<T extends Trade> extends AbstractService<T, TradeI
     @Transactional
     public <S extends T> Iterable<S> createOrUpdate(Iterable<S> trades) {
         long start = System.nanoTime();
-        final Iterable<S> saved = save(trades);
+        final Iterable<S> saved = save(trades, 1);
         long end = System.nanoTime();
         log.info("Save time: " + TimeUnit.NANOSECONDS.toSeconds(end - start));
         final Iterable<T> all = findAll();

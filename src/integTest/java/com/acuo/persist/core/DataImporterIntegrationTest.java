@@ -1,6 +1,6 @@
 package com.acuo.persist.core;
 
-import com.acuo.common.app.ServiceManagerModule;
+import com.acuo.common.app.service.ServiceManagerModule;
 import com.acuo.common.util.GuiceJUnitRunner;
 import com.acuo.persist.entity.Client;
 import com.acuo.persist.modules.ConfigurationIntegrationTestModule;
