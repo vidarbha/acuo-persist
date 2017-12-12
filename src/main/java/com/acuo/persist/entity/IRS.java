@@ -12,8 +12,6 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public class IRS extends Trade<IRS>{
 
-    private String tradeType;
-
     @Relationship(type = "PAYS")
     private Set<Leg> payLegs;
 

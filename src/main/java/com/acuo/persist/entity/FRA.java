@@ -12,8 +12,6 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public class FRA extends Trade<FRA> {
 
-    private String tradeType;
-
     private String legPay;
 
     private Double notional;

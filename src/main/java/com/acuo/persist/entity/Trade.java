@@ -36,6 +36,8 @@ public abstract class Trade<T extends Trade> extends Entity<T> implements Compar
     @Convert(TradeIdConverter.class)
     protected TradeId tradeId;
 
+    private String tradeType;
+
     private String underlyingAssetId;
 
     private Double notional;
