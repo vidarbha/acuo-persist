@@ -1,9 +1,11 @@
 package com.acuo.persist.utils
 
+import com.acuo.common.ids.ClientId
 import com.acuo.persist.modules.BuildersFactoryModule
 import com.acuo.persist.modules.ConfigurationTestModule
 import com.acuo.persist.modules.ImportServiceModule
 import com.acuo.persist.modules.InProcessNeo4jServerModule
+import com.acuo.persist.services.AssetService
 import com.acuo.persist.services.ClientService
 import com.acuo.persist.services.ClientSignsRelationService
 import com.acuo.persist.services.MarginCallService
@@ -33,6 +35,9 @@ class EntityStoreFixtureSpec extends Specification {
 
     @Inject
     MarginCallService marginCallService
+
+    @Inject
+    AssetService assetService
 
     void setup() {
         fixture.install()
@@ -69,6 +74,15 @@ class EntityStoreFixtureSpec extends Specification {
         with(nodes){
             size == 6
         }
+    }
 
+    def "retrieve all assets of a client"() {
+        expect:
+        def assets = assetService.findAssets(ClientId.fromString("999"))
+        assets != null
+        with(assets) {
+            size == 2
+            assets[0].model() != null
+        }
     }
 }

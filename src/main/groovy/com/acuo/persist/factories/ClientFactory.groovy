@@ -29,8 +29,8 @@ class ClientFactory extends AbstractFactory implements BuilderFactory {
 
     @Override
     void onNodeCompleted(FactoryBuilderSupport builder,
-                         Object parent, Object agreement) {
-        service.save(agreement)
+                         Object parent, Object client) {
+        service.save(client)
     }
 
     private Client getOrCreate(Map attributes) {

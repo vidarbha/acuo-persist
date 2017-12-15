@@ -21,8 +21,11 @@ public class Client extends Firm {
     @Labels
     private final List<String> labels = ImmutableList.of("Client");
 
-    @Relationship(type = "HAS")
+    @Relationship(type = "SETTINGS")
     private Set<Settings> settings;
+
+    @Relationship(type = "HAS")
+    private Set<CustodianAccount> custodianAccounts;
 
     @Convert(CurrencyConverter.class)
     private Currency prefCurrency;

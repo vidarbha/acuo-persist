@@ -34,10 +34,6 @@ class EntityStoreFixture {
 
         def now = LocalDate.now()
 
-        def client = builder.client(firmId: 999)
-
-        def cpty = builder.client(firmId: 888)
-
         def clearedAcct = builder.account(accountId: "cleared-acct") {
             custodian(custodianId: "GS")
         }
@@ -46,6 +42,11 @@ class EntityStoreFixture {
             custodian(custodianId: "JPM")
         }
 
+        def client = builder.client(firmId: 999, custodianAccounts: [clearedAcct, bilateralAcct])
+
+        def cpty = builder.client(firmId: 888)
+
+
         def directedTo = builder.entity(legalEntityId: "client-entity", name: "clientEntity",
                 custodianAccounts: [bilateralAcct, clearedAcct], firm: client)
 
@@ -53,24 +54,52 @@ class EntityStoreFixture {
                 custodianAccounts: [bilateralAcct, clearedAcct], firm: cpty)
 
         def clearedRules = [rule()]
-        def usd = builder.asset(assetId: AssetId.fromString("USD"), rules: clearedRules) {
+        def usd = builder.asset(
+                assetId: AssetId.fromString("USD"),
+                name: "USD",
+                currency: Currency.USD,
+                idType: "CASH",
+                ACUOCategory: "CASH",
+                ICADCode: "US-CASH",
+                type: "CASH",
+                rules: clearedRules,
+                parValue: 1.0d,
+                minUnit: 1.0d,
+                minUnitValue: 0.01,
+                yield: 0,
+                issueDate: now,
+                maturityDate: now) {
             settlement(settlementId: "s1") {
                 settlementDate(queryDateTime: LocalDateTime.now(),
                         creationDateTime: LocalDateTime.now(),
                         settlementDate: LocalDateUtils.valuationDate())
             }
-            holds(custodianAccount: clearedAcct, availableQuantity: 1_000_000)
+            holds(custodianAccount: clearedAcct, availableQuantity: 1_000_000, internalCost: 1.0, opptCost: 1.0)
         }
         def cleared = cleared(now, directedTo, sentFrom, clearedRules)
 
         def bilateralRules = [rule()]
-        def jpy = builder.asset(assetId: AssetId.fromString("JPY"), rules: bilateralRules) {
+        def jpy = builder.asset(
+                assetId: AssetId.fromString("JPY"),
+                name: "JPY",
+                currency: Currency.JPY,
+                idType: "CASH",
+                ACUOCategory: "CASH",
+                ICADCode: "JPY-CASH",
+                type: "CASH",
+                rules: bilateralRules,
+                parValue: 1.0d,
+                minUnit: 1.0d,
+                minUnitValue: 0.01,
+                yield: 0,
+                issueDate: now,
+                maturityDate: now) {
             settlement(settlementId: "s2") {
                 settlementDate(queryDateTime: LocalDateTime.now(),
                         creationDateTime: LocalDateTime.now(),
                         settlementDate: LocalDateUtils.valuationDate())
             }
-            holds(custodianAccount: bilateralAcct, availableQuantity: 1_000_000)
+            holds(custodianAccount: bilateralAcct, availableQuantity: 1_000_000, internalCost: 1.0, opptCost: 1.0)
         }
         def bilateral = bilateral(now, directedTo, sentFrom, bilateralRules)
 

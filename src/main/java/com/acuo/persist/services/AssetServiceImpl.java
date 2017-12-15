@@ -50,7 +50,9 @@ public class AssetServiceImpl extends AbstractService<Asset, AssetId> implements
     private final static String ASSET_INVENTORY =
             "MATCH (client:Client)-[:HAS]->(ca)-[:HOLDS]->(asset) " +
             "WHERE client.id = {clientId} " +
-            "RETURN asset";
+                    "WITH DISTINCT asset " +
+                    "MATCH p=()-[:MANAGES]->()-[:HOLDS]->(asset)-[*0..1]-()" +
+                    "RETURN p";
 
     @Inject
     public AssetServiceImpl(Provider<Session> session) {
