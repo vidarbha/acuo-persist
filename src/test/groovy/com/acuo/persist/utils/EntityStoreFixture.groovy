@@ -34,11 +34,11 @@ class EntityStoreFixture {
 
         def now = LocalDate.now()
 
-        def clearedAcct = builder.account(accountId: "cleared-acct", name: "cleared-acct", region: "SG") {
+        def clearedAcct = builder.account(accountId: "clearedAcct", name: "clearedAcct", region: "SG") {
             custodian(custodianId: "GS")
         }
 
-        def bilateralAcct = builder.account(accountId: "bilateral-acct", name: "bilateral-acct", region: "SG") {
+        def bilateralAcct = builder.account(accountId: "bilateralAcct", name: "bilateralAcct", region: "SG") {
             custodian(custodianId: "JPM")
         }
 
@@ -47,10 +47,10 @@ class EntityStoreFixture {
         def cpty = builder.client(firmId: 888)
 
 
-        def directedTo = builder.entity(legalEntityId: "client-entity", name: "clientEntity",
+        def directedTo = builder.entity(legalEntityId: "clientEntity", name: "clientEntity",
                 custodianAccounts: [bilateralAcct, clearedAcct], firm: client)
 
-        def sentFrom = builder.entity(legalEntityId: "cpty-entity", name: "cptyEntity",
+        def sentFrom = builder.entity(legalEntityId: "cptyEntity", name: "cptyEntity",
                 custodianAccounts: [bilateralAcct, clearedAcct], firm: cpty)
 
         def clearedRules = [rule()]
