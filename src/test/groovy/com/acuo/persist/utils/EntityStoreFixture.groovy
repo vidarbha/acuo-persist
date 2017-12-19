@@ -34,11 +34,11 @@ class EntityStoreFixture {
 
         def now = LocalDate.now()
 
-        def clearedAcct = builder.account(accountId: "cleared-acct") {
+        def clearedAcct = builder.account(accountId: "cleared-acct", name: "cleared-acct", region: "SG") {
             custodian(custodianId: "GS")
         }
 
-        def bilateralAcct = builder.account(accountId: "cleared-acct") {
+        def bilateralAcct = builder.account(accountId: "bilateral-acct", name: "bilateral-acct", region: "SG") {
             custodian(custodianId: "JPM")
         }
 
@@ -74,7 +74,7 @@ class EntityStoreFixture {
                         creationDateTime: LocalDateTime.now(),
                         settlementDate: LocalDateUtils.valuationDate())
             }
-            holds(custodianAccount: clearedAcct, availableQuantity: 1_000_000, internalCost: 1.0, opptCost: 1.0)
+            holds(custodianAccount: clearedAcct, availableQuantity: 10_000_000, internalCost: 1.0, opptCost: 1.0)
         }
         def cleared = cleared(now, directedTo, sentFrom, clearedRules)
 
@@ -99,7 +99,7 @@ class EntityStoreFixture {
                         creationDateTime: LocalDateTime.now(),
                         settlementDate: LocalDateUtils.valuationDate())
             }
-            holds(custodianAccount: bilateralAcct, availableQuantity: 1_000_000, internalCost: 1.0, opptCost: 1.0)
+            holds(custodianAccount: bilateralAcct, availableQuantity: 10_000_000, internalCost: 1.0, opptCost: 1.0)
         }
         def bilateral = bilateral(now, directedTo, sentFrom, bilateralRules)
 
