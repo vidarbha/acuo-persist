@@ -21,7 +21,7 @@ public class Client extends Firm {
     @Labels
     private final List<String> labels = ImmutableList.of("Client");
 
-    @Relationship(type = "SETTINGS")
+    @Relationship(type = "HAS_SETTINGS")
     private Set<Settings> settings;
 
     @Relationship(type = "HAS")
