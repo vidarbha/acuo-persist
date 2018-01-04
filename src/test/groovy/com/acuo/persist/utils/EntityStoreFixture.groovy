@@ -157,7 +157,8 @@ class EntityStoreFixture {
                     marginAmount: 1_000_000,
                     marginType: MarginType.Variation,
                     callDate: now.plusDays(1),
-                    direction: StatementDirection.IN) {
+                    direction: StatementDirection.IN,
+                    fxRate: 1) {
                 step(status: StatementStatus.Expected)
             }
             def matched = variation(itemId: prefix+"2",
@@ -167,7 +168,8 @@ class EntityStoreFixture {
                     marginAmount: 1_100_000,
                     marginType: MarginType.Variation,
                     callDate: now.plusDays(1),
-                    direction: StatementDirection.OUT) {
+                    direction: StatementDirection.OUT,
+                    fxRate: 1) {
                 step(status: StatementStatus.MatchedToReceived)
             }
             variation(itemId: prefix+"3",
@@ -178,7 +180,8 @@ class EntityStoreFixture {
                     marginType: MarginType.Variation,
                     callDate: now.plusDays(1),
                     matchedItem: matched,
-                    direction: StatementDirection.OUT) {
+                    direction: StatementDirection.OUT,
+                    fxRate: 1) {
                 step(status: StatementStatus.Unrecon)
             }
         }
