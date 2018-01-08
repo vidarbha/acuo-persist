@@ -55,10 +55,8 @@ public class FXRateServiceImpl extends AbstractService<FXRate, Long> implements 
     public Double getFXValue(Currency currency) {
         if (Currency.USD.equals(currency)) return 1d;
         final FXRate fxRate = get(currency, Currency.USD);
-        final Currency base = Currency.of(fxRate.getFrom().getCurrencyId());
         final FXValue fxValue = fxRate.getLast();
-        final Double rate = fxValue.getValue();
-        return Currency.USD.equals(base) ? 1 / rate : rate;
+        return fxValue.getValue();
     }
 
     @Transactional
