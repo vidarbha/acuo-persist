@@ -29,8 +29,9 @@ public class VariationMargin extends MarginCall<VariationMargin> {
                            Agreement agreement,
                            MarginStatement marginStatement,
                            Map<Currency, Double> rates,
-                           Long tradeCount) {
-        super(side, amount, valuationDate, callDate, currency, agreement, marginStatement, rates, tradeCount);
+                           Long tradeCount,
+                           Long tradeValued) {
+        super(side, amount, valuationDate, callDate, currency, agreement, marginStatement, rates, tradeCount, tradeValued);
         this.marginType = Variation;
         this.itemId = marginCallId(side, agreement, callDate, Variation, direction);
     }

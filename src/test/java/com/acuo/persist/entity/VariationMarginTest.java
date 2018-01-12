@@ -108,6 +108,7 @@ public class VariationMarginTest {
                 agreement,
                 statement,
                 rates,
+                tradeCount,
                 tradeCount);
 
         assertThat(variation).isNotNull();

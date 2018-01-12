@@ -19,7 +19,6 @@ import org.neo4j.ogm.session.Session;
 
 import javax.inject.Provider;
 import java.time.LocalDate;
-import java.util.stream.StreamSupport;
 
 import static com.acuo.common.util.ArgChecker.notNull;
 
@@ -106,13 +105,28 @@ public class ValuationServiceImpl extends AbstractService<Valuation, String> imp
     @Transactional
     public Long tradeValuedCount(PortfolioId portfolioId, LocalDate valuationDate) {
         String query =
-                "MATCH p=(portfolio:Portfolio {id:{id}})<-[:BELONGS_TO]-(trade:Trade)<-[:VALUATED]-(valuation:TradeValuation)-[:VALUE]->(value:TradeValue) " +
-                "RETURN valuation, nodes(p), relationships(p)";
-        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", portfolioId.toString());
-        Iterable<TradeValuation> valuations = dao.getSession().query(TradeValuation.class, query, parameters);
-        return StreamSupport.stream(valuations.spliterator(), true)
-                .filter(valuation -> valuation.isValuedFor(valuationDate))
-                .count();
+                "MATCH (portfolio:Portfolio {id:{id}})<-[:BELONGS_TO]-(trade:Trade)" +
+                "<-[:VALUATED]-(valuation:TradeValuation)-[:VALUE]->(value:TradeValue) " +
+                "WHERE value.valuationDate = {valDateStr} " +
+                "WITH DISTINCT trade " +
+                "RETURN count(trade)";
+        final String valDateStr = new LocalDateConverter().toGraphProperty(valuationDate);
+        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", portfolioId.toString(),
+                "valDateStr", valDateStr);
+        return dao.getSession().queryForObject(Long.class, query, parameters);
+    }
+
+    @Override
+    @Transactional
+    public Long tradeNotValuedCount(PortfolioId portfolioId, LocalDate valuationDate) {
+        String query =
+                "MATCH (portfolio:Portfolio {id:{id}})<-[:BELONGS_TO]-(trade:Trade)-[:ENCOUNTERS]-(error:ServiceError) " +
+                "WHERE error.valuationDate = {valDateStr}" +
+                "WITH DISTINCT trade " +
+                "RETURN count(trade)";
+        final String valDateStr = new LocalDateConverter().toGraphProperty(valuationDate);
+        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", portfolioId.toString(), "valDateStr", valDateStr);
+        return dao.getSession().queryForObject(Long.class, query, parameters);
     }
 
     @Override

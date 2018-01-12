@@ -54,10 +54,12 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
                       Agreement agreement,
                       MarginStatement marginStatement,
                       Map<Currency, Double> rates,
-                      Long tradeCount) {
+                      Long tradeCount,
+                      Long tradeValued) {
         this(side, convert(amount, currency, agreement.getCurrency(), rates), valuationDate, callDate, agreement, marginStatement);
         this.fxRate = getRate(currency, agreement.getCurrency(), rates);
-        this.tradeCount = this.tradeValued = tradeCount;
+        this.tradeCount = tradeCount;
+        this.tradeValued = tradeValued;
     }
 
     abstract Double collateralSettled(MarginStatement marginStatement);

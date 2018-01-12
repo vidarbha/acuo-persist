@@ -182,11 +182,11 @@ public class MarginStatementServiceImplTest {
         MarginStatement marginStatement = marginStatementService.getOrCreateMarginStatement(agreement, now);
 
         VariationMargin out = new VariationMargin(Side.Client,-100.0d, now, now, Currency.USD,
-                agreement, marginStatement, currencyService.getAllFX(), 0L);
+                agreement, marginStatement, currencyService.getAllFX(), 0L, 0L);
         out = save(marginStatement, out, StatementStatus.Reconciled);
 
         VariationMargin in = new VariationMargin(Side.Client,100.0d, now, now, Currency.USD,
-                agreement, marginStatement, currencyService.getAllFX(), 0L);
+                agreement, marginStatement, currencyService.getAllFX(), 0L, 0L);
         in = save(marginStatement, in, StatementStatus.Reconciled);
 
         Long count = marginStatementService.count(StatementStatus.Reconciled);
