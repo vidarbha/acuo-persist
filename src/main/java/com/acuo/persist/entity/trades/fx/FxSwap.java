@@ -29,6 +29,7 @@ public class FxSwap extends Trade<FxSwap> {
         setTradeTime(info.getTradeTime() != null ? info.getTradeTime().toLocalTime() : null);
         setMaturity(info.getMaturityDate());
         setClearingDate(info.getClearedTradeDate());
+        setTradeType(info.getDerivativeType());
 
         PricingSource pricingSource = new PricingSource();
         pricingSource.setName(PricingProvider.Markit);
