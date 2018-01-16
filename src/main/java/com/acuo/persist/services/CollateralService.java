@@ -5,6 +5,8 @@ import com.acuo.common.model.margin.Types;
 import com.acuo.persist.entity.AssetTransfer;
 import com.acuo.persist.entity.Collateral;
 
+import java.util.Optional;
+
 public interface CollateralService extends Service<Collateral, Long> {
 
     Collateral getCollateralFor(MarginStatementId statementId,
@@ -17,7 +19,7 @@ public interface CollateralService extends Service<Collateral, Long> {
                                         Types.AssetType assetType,
                                         Types.BalanceStatus status);
 
-    Collateral handle(AssetTransfer transfer);
+    Optional<Collateral> handle(AssetTransfer transfer);
 
     Double amount(Types.AssetType assetType, Types.MarginType marginType, Types.BalanceStatus status);
 }

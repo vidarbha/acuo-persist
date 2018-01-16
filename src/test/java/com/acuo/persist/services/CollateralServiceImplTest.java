@@ -24,6 +24,7 @@ import org.mockito.MockitoAnnotations;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.Set;
 
 import static com.acuo.common.model.margin.Types.AssetType.Cash;
@@ -68,7 +69,7 @@ public class CollateralServiceImplTest {
     private Asset asset;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         importService.reload();
 
@@ -77,7 +78,7 @@ public class CollateralServiceImplTest {
     }
 
     @Test
-    public void getCollateralFor() throws Exception {
+    public void getCollateralFor() {
         MarginStatementId statementId = MarginStatementId.fromString(marginStatement.getStatementId());
         Collateral b1 = collateralService.getCollateralFor(statementId, Variation, Cash, Settled);
         assertThat(b1).isNull();
@@ -90,7 +91,7 @@ public class CollateralServiceImplTest {
     }
 
     @Test
-    public void getOrCreateCollateralFor() throws Exception {
+    public void getOrCreateCollateralFor() {
         MarginStatementId statementId = MarginStatementId.fromString(marginStatement.getStatementId());
         Collateral b1 = collateralService.getOrCreateCollateralFor(statementId, Variation, Cash, Pending);
         assertThat(b1).isNotNull();
@@ -115,16 +116,18 @@ public class CollateralServiceImplTest {
         when(transfer.getQuantity()).thenReturn(10000d);
         when(transfer.getUnitValue()).thenReturn(2d);
 
-        Collateral collateral = collateralService.handle(transfer);
+        Optional<Collateral> collateral = collateralService.handle(transfer);
 
         assertThat(collateral).isNotNull();
-        assertThat(collateral.getStatus()).isEqualTo(Types.BalanceStatus.Pending);
-        assertThat(collateral.getAssetType()).isEqualTo(Types.AssetType.Cash);
-        assertThat(collateral.getMarginType()).isEqualTo(Types.MarginType.Variation);
-        assertThat(collateral.getStatement()).isNotNull();
-        assertThat(collateral.getLatestValue()).isNotNull();
-        assertThat(collateral.getLatestValue().getAmount()).isEqualTo(20000d);
-        assertThat(collateral.getValues()).isNotEmpty().hasSize(1);
+        assertThat(collateral).hasValueSatisfying(value -> {
+            assertThat(value.getStatus()).isEqualTo(Types.BalanceStatus.Pending);
+            assertThat(value.getAssetType()).isEqualTo(Types.AssetType.Cash);
+            assertThat(value.getMarginType()).isEqualTo(Types.MarginType.Variation);
+            assertThat(value.getStatement()).isNotNull();
+            assertThat(value.getLatestValue()).isNotNull();
+            assertThat(value.getLatestValue().getAmount()).isEqualTo(20000d);
+            assertThat(value.getValues()).isNotEmpty().hasSize(1);
+        });
     }
 
     @Test

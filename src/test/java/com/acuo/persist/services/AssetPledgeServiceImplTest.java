@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import javax.inject.Inject;
+import java.util.Optional;
 
 import static com.acuo.common.model.margin.Types.AssetType.Cash;
 import static com.acuo.common.model.margin.Types.BalanceStatus.Pending;
@@ -50,13 +51,13 @@ public class AssetPledgeServiceImplTest {
     private Asset asset;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         importService.reload();
     }
 
     @Test
-    public void getFor() throws Exception {
+    public void getFor() {
         AssetId assetId = AssetId.fromString("USD");
         AssetPledge b1 = assetPledgeService.getFor(assetId, Variation, Settled);
         assertThat(b1).isNull();
@@ -68,7 +69,7 @@ public class AssetPledgeServiceImplTest {
     }
 
     @Test
-    public void getOrCreateFor() throws Exception {
+    public void getOrCreateFor() {
         AssetId assetId = AssetId.fromString("USD");
         AssetPledge b1 = assetPledgeService.getOrCreateFor(assetId, Variation, Pending);
         assertThat(b1).isNotNull();
@@ -77,16 +78,18 @@ public class AssetPledgeServiceImplTest {
     }
 
     @Test
-    public void handle() throws Exception {
-        AssetPledge assetPledge = createPledge();
+    public void handle() {
+        Optional<AssetPledge> assetPledge = createPledge();
 
         assertThat(assetPledge).isNotNull();
-        assertThat(assetPledge.getStatus()).isEqualTo(Pending);
-        assertThat(assetPledge.getMarginType()).isEqualTo(Variation);
-        assertThat(assetPledge.getAsset()).isNotNull();
-        assertThat(assetPledge.getLatestValue()).isNotNull();
-        assertThat(assetPledge.getLatestValue().getAmount()).isEqualTo(20000d);
-        assertThat(assetPledge.getValues()).isNotEmpty().hasSize(1);
+        assertThat(assetPledge).hasValueSatisfying(value -> {
+            assertThat(value.getStatus()).isEqualTo(Pending);
+            assertThat(value.getMarginType()).isEqualTo(Variation);
+            assertThat(value.getAsset()).isNotNull();
+            assertThat(value.getLatestValue()).isNotNull();
+            assertThat(value.getLatestValue().getAmount()).isEqualTo(20000d);
+            assertThat(value.getValues()).isNotEmpty().hasSize(1);
+        });
     }
 
     @Test
@@ -101,7 +104,7 @@ public class AssetPledgeServiceImplTest {
         assertThat(amount).isEqualTo(20000.0d);
     }
 
-    private AssetPledge createPledge() {
+    private Optional<AssetPledge> createPledge() {
         when(transfer.getGeneratedBy()).thenReturn(marginCall);
         when(marginCall.getMarginType()).thenReturn(Variation);
 

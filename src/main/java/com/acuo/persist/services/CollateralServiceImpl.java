@@ -8,12 +8,14 @@ import com.acuo.persist.entity.Collateral;
 import com.acuo.persist.entity.CollateralValue;
 import com.acuo.persist.entity.MarginCall;
 import com.acuo.persist.entity.MarginStatement;
+import com.acuo.persist.entity.enums.AssetTransferStatus;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 import org.neo4j.ogm.session.Session;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import java.util.Optional;
 
 import static com.google.common.collect.ImmutableMap.of;
 
@@ -73,27 +75,9 @@ public class CollateralServiceImpl extends AbstractService<Collateral, Long> imp
 
     @Override
     @Transactional
-    public Collateral handle(AssetTransfer transfer) {
-
-        MarginCall marginCall = transfer.getGeneratedBy();
-        Types.MarginType marginType = marginCall.getMarginType();
-
-        MarginStatement marginStatement = marginCall.getMarginStatement();
-        String statementId = marginStatement.getStatementId();
-
-        Asset asset = transfer.getOf();
-        String type = asset.getType();
-        Types.AssetType assetType = "CASH".equals(type) ? Types.AssetType.Cash : Types.AssetType.NonCash;
-
-        Types.BalanceStatus status = AssetTransfer.status(transfer.getStatus());
-
-        double amount = transfer.getQuantity() * transfer.getUnitValue();
-        Collateral collateral = getOrCreateCollateralFor(MarginStatementId.fromString(statementId), marginType, assetType, status);
-        CollateralValue value = collateralValueService.createValue(amount);
-        value.setCollateral(collateral);
-        collateral.setLatestValue(value);
-        save(collateral, 2);
-        return find(collateral.getId());
+    public Optional<Collateral> handle(AssetTransfer transfer) {
+        Handler handler = new Handler(transfer);
+        return handler.handle();
     }
 
     @Override
@@ -109,6 +93,57 @@ public class CollateralServiceImpl extends AbstractService<Collateral, Long> imp
                    "marginType", marginType.name(),
                    "status", status.name());
         return dao.getSession().queryForObject(Double.class, query, parameters);
+    }
+
+    private class Handler {
+
+        private final Types.MarginType marginType;
+        private final String statementId;
+        private final Types.AssetType assetType;
+        private final AssetTransfer transfer;
+
+        Handler(AssetTransfer transfer) {
+            this.transfer = transfer;
+            MarginCall marginCall = transfer.getGeneratedBy();
+            this.marginType = marginCall.getMarginType();
+
+            MarginStatement marginStatement = marginCall.getMarginStatement();
+            this.statementId = marginStatement.getStatementId();
+
+            Asset asset = transfer.getOf();
+            String type = asset.getType();
+            this.assetType = "CASH".equals(type) ? Types.AssetType.Cash : Types.AssetType.NonCash;
+        }
+
+        Optional<Collateral> handle() {
+            if (transfer.getStatus().equals(AssetTransferStatus.Departed)) {
+                return Optional.ofNullable(departed());
+            }
+            if (transfer.getStatus().equals(AssetTransferStatus.Deployed)) {
+                return Optional.ofNullable(deployed());
+            }
+            return Optional.empty();
+        }
+
+        private Collateral departed() {
+            Types.BalanceStatus status = AssetTransfer.status(transfer.getStatus());
+            double amount = transfer.getQuantity() * transfer.getUnitValue();
+            Collateral collateral = getOrCreateCollateralFor(MarginStatementId.fromString(statementId), marginType, assetType, status);
+            CollateralValue value = collateralValueService.createValue(amount);
+            value.setCollateral(collateral);
+            collateral.setLatestValue(value);
+            save(collateral, 2);
+            return find(collateral.getId());
+        }
+
+        private Collateral deployed() {
+            Collateral collateral = getCollateralFor(MarginStatementId.fromString(statementId), marginType, assetType, Types.BalanceStatus.Pending);
+            if (collateral == null) return null;
+            collateral.setStatus(Types.BalanceStatus.Settled);
+            save(collateral, 2);
+            return find(collateral.getId());
+        }
+
     }
 
 }

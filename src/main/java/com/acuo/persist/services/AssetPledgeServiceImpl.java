@@ -1,17 +1,20 @@
 package com.acuo.persist.services;
 
 import com.acuo.common.ids.AssetId;
+import com.acuo.common.model.margin.Types;
 import com.acuo.persist.entity.Asset;
 import com.acuo.persist.entity.AssetPledge;
 import com.acuo.persist.entity.AssetPledgeValue;
 import com.acuo.persist.entity.AssetTransfer;
 import com.acuo.persist.entity.MarginCall;
+import com.acuo.persist.entity.enums.AssetTransferStatus;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 import org.neo4j.ogm.session.Session;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import java.util.Optional;
 
 import static com.acuo.common.model.margin.Types.*;
 import static com.google.common.collect.ImmutableMap.of;
@@ -68,21 +71,9 @@ public class AssetPledgeServiceImpl extends AbstractService<AssetPledge, Long> i
 
     @Override
     @Transactional
-    public AssetPledge handle(AssetTransfer transfer) {
-        MarginCall marginCall = transfer.getGeneratedBy();
-        MarginType marginType = marginCall.getMarginType();
-
-        Asset asset = transfer.getOf();
-
-        BalanceStatus status = AssetTransfer.status(transfer.getStatus());
-
-        double amount = transfer.getQuantity() * transfer.getUnitValue();
-        AssetPledge assetPledge = getOrCreateFor(asset.getAssetId(), marginType, status);
-        AssetPledgeValue value = assetPledgeValueService.createValue(amount);
-        value.setAssetPledge(assetPledge);
-        assetPledge.setLatestValue(value);
-        assetPledge = save(assetPledge, 2);
-        return find(assetPledge.getId());
+    public Optional<AssetPledge> handle(AssetTransfer transfer) {
+        Handler handler = new Handler(transfer);
+        return handler.handle();
     }
 
     @Override
@@ -109,5 +100,51 @@ public class AssetPledgeServiceImpl extends AbstractService<AssetPledge, Long> i
                 "marginType", marginType.name(),
                 "status", status.name());
         return dao.getSession().queryForObject(Double.class, query, parameters);
+    }
+
+    private class Handler {
+
+        private final AssetTransfer transfer;
+        private final MarginType marginType;
+        private final Asset asset;
+        private final BalanceStatus status;
+
+        Handler(AssetTransfer transfer) {
+            this.transfer = transfer;
+            MarginCall marginCall = transfer.getGeneratedBy();
+            this.marginType = marginCall.getMarginType();
+
+            this.asset = transfer.getOf();
+            this.status = AssetTransfer.status(transfer.getStatus());
+        }
+
+        Optional<AssetPledge> handle() {
+            if (transfer.getStatus().equals(AssetTransferStatus.Departed)) {
+                return Optional.ofNullable(departed());
+            }
+            if (transfer.getStatus().equals(AssetTransferStatus.Deployed)) {
+                return Optional.ofNullable(deployed());
+            }
+            return Optional.empty();
+        }
+
+        private AssetPledge departed() {
+            double amount = transfer.getQuantity() * transfer.getUnitValue();
+            AssetPledge assetPledge = getOrCreateFor(asset.getAssetId(), marginType, status);
+            AssetPledgeValue value = assetPledgeValueService.createValue(amount);
+            value.setAssetPledge(assetPledge);
+            assetPledge.setLatestValue(value);
+            assetPledge = save(assetPledge, 2);
+            return find(assetPledge.getId());
+        }
+
+        private AssetPledge deployed() {
+            AssetPledge assetPledge = getFor(asset.getAssetId(), marginType, Types.BalanceStatus.Pending);
+            if (assetPledge == null) return null;
+            assetPledge.setStatus(BalanceStatus.Settled);
+            assetPledge = save(assetPledge, 2);
+            return find(assetPledge.getId());
+        }
+
     }
 }
