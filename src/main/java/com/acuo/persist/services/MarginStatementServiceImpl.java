@@ -5,6 +5,7 @@ import com.acuo.common.ids.MarginStatementId;
 import com.acuo.persist.entity.Agreement;
 import com.acuo.persist.entity.MarginStatement;
 import com.acuo.persist.entity.StatementItem;
+import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import com.google.common.collect.ImmutableMap;
@@ -205,12 +206,16 @@ public class MarginStatementServiceImpl extends AbstractService<MarginStatement,
 
     @Override
     @Transactional
-    public Long count(StatementStatus status) {
+    public Long count(StatementStatus status, StatementDirection... directions) {
         String query =
-                "MATCH p=(agreement:Agreement)<-[:STEMS_FROM]-(ms:MarginStatement)<-[:PART_OF]-(s:StatementItem {direction:'OUT'})" +
-                "-[:LAST]->(step:Step {status:{status}}) " +
-                "RETURN ms, nodes(p), relationships(p)";
-        ImmutableMap<String, Object> parameters = ImmutableMap.of("status", status.name());
+                "MATCH p=(agreement:Agreement)<-[:STEMS_FROM]-(ms:MarginStatement)<-[:PART_OF]-(s:StatementItem)" +
+                        "-[:LAST]->(step:Step) " +
+                        "WHERE step.status = {status} " +
+                        "AND s.direction in {directions} " +
+                        "RETURN ms, nodes(p), relationships(p)";
+        if(directions == null || directions.length == 0) directions = StatementDirection.values();
+        ImmutableMap<String, Object> parameters = ImmutableMap.of("status", status.name(), "directions", asList(directions));
+
         Iterable<MarginStatement> marginStatements = dao.getSession().query(MarginStatement.class, query, parameters);
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime max = now.plusHours(36);
