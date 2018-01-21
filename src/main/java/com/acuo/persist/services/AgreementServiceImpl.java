@@ -23,11 +23,21 @@ public class AgreementServiceImpl extends AbstractService<Agreement, String> imp
     }
 
     @Override
+    public Agreement find(String id) {
+        String query =
+                "MATCH p=(:Firm)-[:MANAGES]->(legal:LegalEntity)-[]->(agreement:Agreement {id:{id}})" +
+                "RETURN p";
+        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", id);
+        return dao.getSession().queryForObject(getEntityType(), query, parameters);
+    }
+
+    @Override
     @Transactional
     public Agreement agreementFor(PortfolioId portfolioId) {
         String query =
-                "MATCH p=(legal:LegalEntity)-[]->(agreement:Agreement)<-[:FOLLOWS]-(portfolio:Portfolio {id:{id}}) " +
-                "RETURN p, nodes(p), relationships(p)";
+                "MATCH p=(:Firm)-[:MANAGES]->(legal:LegalEntity)-[]->(agreement:Agreement)" +
+                "<-[:FOLLOWS]-(portfolio:Portfolio {id:{id}}) " +
+                "RETURN p";
         final String pId = portfolioId.toString();
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", pId);
         return dao.getSession().queryForObject(getEntityType(), query, parameters);
@@ -37,9 +47,10 @@ public class AgreementServiceImpl extends AbstractService<Agreement, String> imp
     @Transactional
     public Agreement agreementFor(TradeId tradeId) {
         String query =
-                "MATCH p=(legal:LegalEntity)-[]->(agreement:Agreement)<-[:FOLLOWS]-(portfolio:Portfolio)" +
+                "MATCH p=(:Firm)-[:MANAGES]->(legal:LegalEntity)-[]->(agreement:Agreement)" +
+                "<-[:FOLLOWS]-(portfolio:Portfolio)" +
                 "<-[BELONGS_TO]-(trade:Trade {id:{id}}) " +
-                "RETURN p, nodes(p), relationships(p)";
+                "RETURN p";
         final String id = tradeId.toString();
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", id);
         return dao.getSession().queryForObject(getEntityType(), query, parameters);

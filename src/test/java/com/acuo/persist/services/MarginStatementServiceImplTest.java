@@ -55,7 +55,7 @@ public class MarginStatementServiceImplTest {
     private ClientId client999 = ClientId.fromString("999");
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         importService.reload();
     }
 
@@ -189,10 +189,10 @@ public class MarginStatementServiceImplTest {
                 agreement, marginStatement, currencyService.getAllFX(), 0L, 0L);
         in = save(marginStatement, in, StatementStatus.Reconciled);
 
-        Long count = marginStatementService.count(StatementStatus.Reconciled);
+        Long count = marginStatementService.count(client999, StatementStatus.Reconciled);
         assertThat(count).isNotNull().isEqualTo(1);
 
-        count = marginStatementService.count(StatementStatus.Unrecon);
+        count = marginStatementService.count(client999, StatementStatus.Unrecon);
         assertThat(count).isNotNull().isEqualTo(0);
     }
 

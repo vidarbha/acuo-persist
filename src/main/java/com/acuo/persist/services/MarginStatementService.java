@@ -41,5 +41,5 @@ public interface MarginStatementService extends Service<MarginStatement, String>
     @Deprecated
     <T extends StatementItem> T setStatus(String statementItemId, StatementStatus status);
 
-    Long count(StatementStatus status/*, StatementDirection... directions*/);
+    Long count(ClientId clientId, StatementStatus status);
 }

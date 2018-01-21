@@ -120,7 +120,8 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
 
     String marginCallId(Side side, Agreement agreement, LocalDate valuationDate, MarginType marginType, StatementDirection direction) {
         String todayFormatted = GraphData.getStatementDateFormatter().format(valuationDate);
-        String value = todayFormatted + "-" + agreement.getAgreementId() + "-" + marginType.name() + "-" + side + "-" + direction;
+        String value = agreement.clientId() + "" + todayFormatted + "-" +
+                agreement.getAgreementId() + "-" + marginType.name() + "-" + side + "-" + direction;
         return IDGen.encode(value) ;
     }
 
