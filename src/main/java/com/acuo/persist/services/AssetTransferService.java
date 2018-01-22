@@ -14,5 +14,5 @@ public interface AssetTransferService extends Service<AssetTransfer, String> {
 
     void receiveAsset(String marginCallId, AssetId assetId, Double quantity, String fromAccount);
 
-    Result getPledgedAssets();
+    Result getPledgedAssets(ClientId clientId);
 }

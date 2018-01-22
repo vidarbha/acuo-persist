@@ -20,7 +20,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.Optional;
 
 import static com.acuo.persist.entity.enums.AssetTransferStatus.*;
@@ -163,15 +162,15 @@ public class AssetTransferServiceImpl extends AbstractService<AssetTransfer, Str
         assetService.save(asset, 1);
     }
 
-    public Result getPledgedAssets() {
+    public Result getPledgedAssets(ClientId clientId) {
         String query =
         "MATCH (asset:Asset)<-[:OF]-(at:AssetTransfer {status:'Departed'})-[:GENERATED_BY]->(call:MarginCall) " +
         "MATCH (call)-[:PART_OF]->(:MarginStatement)-[:STEMS_FROM]->(a:Agreement) " +
-        "MATCH (l1:LegalEntity)-[:CLIENT_SIGNS]->(a)<-[:COUNTERPARTY_SIGNS]-(l2:LegalEntity) " +
+        "MATCH (:Client {id:{id}})-[:MANAGES]->(l1:LegalEntity)-[:CLIENT_SIGNS]->(a)<-[:COUNTERPARTY_SIGNS]-(l2:LegalEntity) " +
         "MATCH (c1:Custodian)-[:MANAGES]->(ca1:CustodianAccount)<-[:FROM]-(at)-[:TO]->(ca2:CustodianAccount)<-[:MANAGES]-(c2:Custodian) " +
         "RETURN a.name, a.currency, l1.name, l2.name, c1.name, c2.name, ca1.name, ca2.name, " +
         "at.id, at.pledgeTime, at.unitValue, at.quantity, at.subStatus, at.settlementDate, at.assetFxRate, at.callFxRate, " +
         "asset.currency, asset.name, asset.id, asset.settlementTime";
-        return dao.getSession().query(query, Collections.emptyMap());
+        return dao.getSession().query(query, ImmutableMap.of("id",clientId.toString()));
     }
 }

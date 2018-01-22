@@ -19,7 +19,6 @@ import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiPredicate;
@@ -31,7 +30,6 @@ import static com.acuo.common.model.margin.Types.BalanceStatus.Settled;
 import static com.acuo.common.model.margin.Types.MarginType.Initial;
 import static com.acuo.common.model.margin.Types.MarginType.Variation;
 import static com.acuo.common.util.ArithmeticUtils.addition;
-import static java.util.stream.Collectors.toSet;
 
 @NodeEntity
 @Data
@@ -88,17 +86,6 @@ public class MarginStatement extends Entity<MarginStatement> {
     @Relationship(type = "BALANCE", direction = Relationship.INCOMING)
     private Set<Collateral> collaterals = new HashSet<>();
 
-    public Set<MarginCall> getMarginCalls() {
-        if (statementItems != null)
-            return statementItems.stream()
-                    .filter(statementItem -> statementItem.getMarginType().equals(Initial)
-                            || statementItem.getMarginType().equals(Variation))
-                    .map(statementItem -> (MarginCall) statementItem)
-                    .collect(toSet());
-        else
-            return Collections.emptySet();
-    }
-
     public MarginStatement() {
     }
 
@@ -107,18 +94,14 @@ public class MarginStatement extends Entity<MarginStatement> {
         this.statementId = marginStatementId(agreement, callDate);
         this.currency = agreement.getCurrency();
         this.date = callDate;
-        ClientSignsRelation clientSignsRelation = agreement.getClientSignsRelation();
-        CounterpartSignsRelation counterpartSignsRelation = agreement.getCounterpartSignsRelation();
-        LegalEntity client = clientSignsRelation.getLegalEntity();
-        LegalEntity counterpart = counterpartSignsRelation.getLegalEntity();
         // always the same direction from the principal to the counterpart
-        this.setSentFrom(client);
-        this.setDirectedTo(counterpart);
+        this.setSentFrom(agreement.clientEntity());
+        this.setDirectedTo(agreement.counterpartEntity());
     }
 
     private String marginStatementId(Agreement agreement, LocalDate date) {
         String todayFormatted = GraphData.getStatementDateFormatter().format(date);
-        String value = todayFormatted + "-" + agreement.getAgreementId();
+        String value = agreement.clientId() + "-" + todayFormatted + "-" + agreement.getAgreementId();
         return IDGen.encode(value);
     }
 

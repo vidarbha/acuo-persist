@@ -98,10 +98,13 @@ class AssetTransferServiceImplSpec extends Specification {
     }
 
     def "get pledged assets"() {
+        given:
+        def clientId = ClientId.fromString("999")
+
         when: "we query for all pledged assets"
-        assetTransferService.getPledgedAssets()
+        assetTransferService.getPledgedAssets(clientId)
 
         then: "we query the db with no parameters"
-        1 * session.query(_ as String, [:])
+        1 * session.query(_ as String, ["id":clientId.toString()])
     }
 }

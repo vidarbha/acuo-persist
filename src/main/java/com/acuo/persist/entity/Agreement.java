@@ -1,5 +1,6 @@
 package com.acuo.persist.entity;
 
+import com.acuo.common.ids.ClientId;
 import com.acuo.common.model.margin.Types;
 import com.acuo.persist.neo4j.converters.CurrencyConverter;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
@@ -18,6 +19,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
+
+import static com.acuo.common.util.ArgChecker.notNull;
 
 @NodeEntity
 @Data
@@ -107,4 +110,21 @@ public class Agreement extends Entity<Agreement> {
     @Relationship(type = "IS_COMPOSED_OF")
     private Set<Rule> rules = new HashSet<>();
 
+    public LegalEntity clientEntity() {
+        final ClientSignsRelation relation = notNull(getClientSignsRelation(), "ClientSignsRelation");
+        final LegalEntity entity = relation.getLegalEntity();
+        return notNull(entity, "LegalEntity");
+    }
+
+    public LegalEntity counterpartEntity() {
+        final CounterpartSignsRelation relation = notNull(getCounterpartSignsRelation(), "CounterpartSignsRelation");
+        final LegalEntity entity = relation.getLegalEntity();
+        return notNull(entity, "LegalEntity");
+    }
+
+    public ClientId clientId() {
+        LegalEntity legalEntity = clientEntity();
+        final Firm firm = notNull(legalEntity.getFirm(), "Firm");
+        return ClientId.fromString(firm.getFirmId());
+    }
 }

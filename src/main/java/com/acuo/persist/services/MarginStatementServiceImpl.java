@@ -206,16 +206,16 @@ public class MarginStatementServiceImpl extends AbstractService<MarginStatement,
 
     @Override
     @Transactional
-    public Long count(StatementStatus status, StatementDirection... directions) {
+    public Long count(ClientId clientId, StatementStatus status, StatementDirection... directions) {
         String query =
-                "MATCH p=(agreement:Agreement)<-[:STEMS_FROM]-(ms:MarginStatement)<-[:PART_OF]-(s:StatementItem)" +
-                        "-[:LAST]->(step:Step) " +
-                        "WHERE step.status = {status} " +
-                        "AND s.direction in {directions} " +
-                        "RETURN ms, nodes(p), relationships(p)";
-        if(directions == null || directions.length == 0) directions = StatementDirection.values();
-        ImmutableMap<String, Object> parameters = ImmutableMap.of("status", status.name(), "directions", asList(directions));
-
+            "MATCH p=(:Client {id:{clientId}})-[:MANAGES]->(l:LegalEntity)-[]->(agreement:Agreement)<-[:STEMS_FROM]-" +
+            "(ms:MarginStatement)<-[:PART_OF]-(s:StatementItem)-[:LAST]->(step:Step {status:{status}}) " +
+            "WHERE s.direction in {directions} " +
+            "RETURN ms, nodes(p), relationships(p)";
+        ImmutableMap<String, Object> parameters = ImmutableMap.of(
+                "clientId", clientId.toString(),
+                "status", status.name(),
+                "directions", asList(directions));
         Iterable<MarginStatement> marginStatements = dao.getSession().query(MarginStatement.class, query, parameters);
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime max = now.plusHours(36);
