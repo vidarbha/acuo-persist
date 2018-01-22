@@ -1,5 +1,6 @@
 package com.acuo.persist.services;
 
+import com.acuo.common.ids.ClientId;
 import com.acuo.common.ids.PortfolioId;
 import com.acuo.common.ids.TradeId;
 import com.acuo.common.model.margin.Types;
@@ -19,7 +20,7 @@ public interface ValuationService extends Service<Valuation, String> {
 
     MarginValuation getOrCreateMarginValuationFor(PortfolioId portfolioId, Types.CallType callType);
 
-    Long tradeCount(PortfolioId portfolioId);
+    Long tradeCount(ClientId clientId, PortfolioId portfolioId);
 
     Long tradeValuedCount(PortfolioId portfolioId, LocalDate valuationDate);
 

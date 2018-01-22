@@ -12,7 +12,7 @@ public interface TradeService<T extends Trade> extends Service<T, TradeId> {
 
     Iterable<T> findBilateralTradesByClientId(ClientId clientId);
 
-    <T extends Trade> Iterable<T> findByPortfolioId(PortfolioId... ids);
+    <T extends Trade> Iterable<T> findByPortfolioId(ClientId clientId, PortfolioId... ids);
 
     Iterable<IRS> findAllIRS();
 

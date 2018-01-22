@@ -1,5 +1,6 @@
 package com.acuo.persist.services;
 
+import com.acuo.common.ids.ClientId;
 import com.acuo.common.ids.PortfolioId;
 import com.acuo.common.ids.TradeId;
 import com.acuo.persist.entity.Portfolio;
@@ -37,28 +38,29 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio, PortfolioId
 
     @Override
     @Transactional
-    public Iterable<Portfolio> portfolios(PortfolioId... ids) {
+    public Iterable<Portfolio> portfolios(ClientId clientId, PortfolioId... ids) {
         String query =
-                "MATCH p=(firm:Firm)-[:MANAGES]-(legal:LegalEntity)-[:CLIENT_SIGNS|COUNTERPARTY_SIGNS]-" +
-                "(a:Agreement)<-[:FOLLOWS]-(portfolio:Portfolio) " +
-                "WHERE portfolio.id IN {ids} " +
-                "RETURN portfolio, nodes(p), relationships(p)";
-        return dao.getSession().query(Portfolio.class, query, ImmutableMap.of("ids", ids));
+        "MATCH p=(firm:Firm {id:{clientId}})-[:MANAGES]-(legal:LegalEntity)-[]-(a:Agreement)<-[:FOLLOWS]-(portfolio:Portfolio) " +
+        "WHERE portfolio.id IN {ids} " +
+        "RETURN p";
+        return dao.getSession().query(Portfolio.class, query, ImmutableMap.of("clientId", clientId.toString(), "ids", ids));
     }
 
     @Override
     @Transactional
-    public Portfolio portfolio(PortfolioId id) {
-        return Iterables.single(portfolios(id));
+    public Portfolio portfolio(ClientId clientId, PortfolioId id) {
+        return Iterables.single(portfolios(clientId, id));
     }
 
     @Override
     @Transactional
-    public Long tradeCount(PortfolioId portfolioId) {
+    public Long tradeCount(ClientId clientId, PortfolioId portfolioId) {
         String query =
-                "MATCH (portfolio:Portfolio {id:{id}})<-[:BELONGS_TO]-(trade:Trade) " +
-                "RETURN count(trade) as count";
-        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", portfolioId.toString());
+            "MATCH (firm:Firm {id:{clientId}})-[:MANAGES]-(legal:LegalEntity)-[]-(a:Agreement)<-[:FOLLOWS]-" +
+            "(portfolio:Portfolio {id:{id}})<-[:BELONGS_TO]-(trade:Trade) " +
+            "RETURN count(trade) as count";
+        final ImmutableMap<String, String> parameters = ImmutableMap.of("clientId", clientId.toString(),
+                "id", portfolioId.toString());
         Result result =  dao.getSession().query(query, parameters);
         Map<String, Object> next = result.iterator().next();
         return (Long) next.get("count");

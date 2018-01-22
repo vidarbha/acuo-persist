@@ -63,15 +63,17 @@ public class TradeServiceImpl<T extends Trade> extends AbstractService<T, TradeI
 
     @Override
     @Transactional
-    public Iterable<T> findByPortfolioId(PortfolioId... ids) {
+    public Iterable<T> findByPortfolioId(ClientId clientId, PortfolioId... ids) {
         if (log.isDebugEnabled()) {
             log.debug("findByPortfolioId for {}", Arrays.asList(ids));
         }
         String query =
                 "MATCH p=()-[*0..1]-(t:Trade)-[r:BELONGS_TO]->(portfolio:Portfolio)-[:FOLLOWS]->(a:Agreement) " +
+                "<-[]-(:LegalEntity)-[:MANAGES]-(:Client {id:{clientId}}) " +
                 "WHERE portfolio.id IN {ids} " +
                 "RETURN p, nodes(p), relationships(p)";
-        return dao.getSession().query(getEntityType(), query, ImmutableMap.of("ids", ids));
+        return dao.getSession().query(getEntityType(), query, ImmutableMap.of("clientId",clientId.toString(),
+                "ids", ids));
     }
 
     @Override

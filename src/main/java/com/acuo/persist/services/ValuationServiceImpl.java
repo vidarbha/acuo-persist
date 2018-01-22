@@ -1,5 +1,6 @@
 package com.acuo.persist.services;
 
+import com.acuo.common.ids.ClientId;
 import com.acuo.common.ids.PortfolioId;
 import com.acuo.common.ids.TradeId;
 import com.acuo.common.model.margin.Types;
@@ -97,8 +98,8 @@ public class ValuationServiceImpl extends AbstractService<Valuation, String> imp
 
     @Override
     @Transactional
-    public Long tradeCount(PortfolioId portfolioId) {
-        return portfolioService.tradeCount(portfolioId);
+    public Long tradeCount(ClientId clientId, PortfolioId portfolioId) {
+        return portfolioService.tradeCount(clientId, portfolioId);
     }
 
     @Override

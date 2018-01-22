@@ -1,5 +1,6 @@
 package com.acuo.persist.services
 
+import com.acuo.common.ids.ClientId
 import com.acuo.common.ids.PortfolioId
 import com.acuo.common.ids.TradeId
 import com.acuo.persist.entity.Portfolio
@@ -14,6 +15,7 @@ class PortfolioServiceImplSpec extends Specification {
 
     @Subject PortfolioService portfolioService = new PortfolioServiceImpl({->session})
 
+    ClientId clientId = ClientId.fromString("999")
 
     def "find portfolio by trade id"() {
         given:
@@ -31,7 +33,7 @@ class PortfolioServiceImplSpec extends Specification {
         def ids = ['p1', 'p2'].collect {p -> PortfolioId.fromString(p) }
 
         when:
-        portfolioService.portfolios(*ids)
+        portfolioService.portfolios(clientId, *ids)
 
         then:
         1 * session.query(Portfolio, _ as String, {it.any {key, value -> key == 'ids' && value == [*ids]} })
@@ -43,7 +45,7 @@ class PortfolioServiceImplSpec extends Specification {
         def portfolio = Stub(Portfolio)
 
         when:
-        portfolioService.portfolio(id)
+        portfolioService.portfolio(clientId, id)
 
         then:
         1 * session.query(Portfolio, _ as String, {it.any {key, value -> key == 'ids' && value == [id]} }) >> [portfolio]
@@ -56,7 +58,7 @@ class PortfolioServiceImplSpec extends Specification {
         result.iterator() >> [["count":1L]].iterator()
 
         when:
-        def count = portfolioService.tradeCount(id)
+        def count = portfolioService.tradeCount(clientId, id)
 
         then:
         1 * session.query(_ as String, {it.any {key, value -> key == 'id' && value == 'p1'} }) >> result
