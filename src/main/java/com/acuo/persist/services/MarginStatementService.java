@@ -5,6 +5,7 @@ import com.acuo.common.ids.MarginStatementId;
 import com.acuo.persist.entity.Agreement;
 import com.acuo.persist.entity.MarginStatement;
 import com.acuo.persist.entity.StatementItem;
+import com.acuo.persist.entity.enums.StatementDirection;
 import com.acuo.persist.entity.enums.StatementStatus;
 
 import java.time.LocalDate;
@@ -41,5 +42,5 @@ public interface MarginStatementService extends Service<MarginStatement, String>
     @Deprecated
     <T extends StatementItem> T setStatus(String statementItemId, StatementStatus status);
 
-    Long count(ClientId clientId, StatementStatus status);
+    Long count(ClientId clientId, StatementStatus status, StatementDirection... directions);
 }
