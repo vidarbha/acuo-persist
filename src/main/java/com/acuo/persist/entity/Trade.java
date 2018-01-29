@@ -49,6 +49,9 @@ public abstract class Trade<T extends Trade> extends Entity<T> implements Compar
     @Convert(LocalDateConverter.class)
     private LocalDate tradeDate;
 
+    @Convert(LocalDateConverter.class)
+    private LocalDate effectiveDate;
+
     @Convert(LocalTimeConverter.class)
     private LocalTime tradeTime;
 
