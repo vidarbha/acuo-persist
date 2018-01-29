@@ -1,17 +1,21 @@
 package com.acuo.persist.services;
 
 import com.acuo.common.ids.AssetId;
+import com.acuo.common.ids.MarginStatementId;
 import com.acuo.common.ids.PortfolioId;
 import com.acuo.common.ids.TradeId;
+import com.acuo.persist.entity.AlgoError;
 import com.acuo.persist.entity.ServiceError;
 
 import java.util.List;
 
 public interface ErrorService extends Service<ServiceError, String> {
 
-    public void persist(AssetId assetId, List<ServiceError> serviceError);
+    void persist(AssetId assetId, List<ServiceError> errors);
 
-    public void persist(TradeId tradeId, ServiceError serviceError);
+    void persist(TradeId tradeId, ServiceError error);
 
-    public void persist(PortfolioId portfolioId, ServiceError serviceError);
+    void persist(PortfolioId portfolioId, ServiceError error);
+
+    void persist(MarginStatementId statementId, AlgoError error);
 }

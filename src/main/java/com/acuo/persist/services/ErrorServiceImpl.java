@@ -1,9 +1,12 @@
 package com.acuo.persist.services;
 
 import com.acuo.common.ids.AssetId;
+import com.acuo.common.ids.MarginStatementId;
 import com.acuo.common.ids.PortfolioId;
 import com.acuo.common.ids.TradeId;
+import com.acuo.persist.entity.AlgoError;
 import com.acuo.persist.entity.Asset;
+import com.acuo.persist.entity.MarginStatement;
 import com.acuo.persist.entity.Portfolio;
 import com.acuo.persist.entity.ServiceError;
 import com.acuo.persist.entity.trades.Trade;
@@ -18,16 +21,19 @@ public class ErrorServiceImpl extends AbstractService<ServiceError, String> impl
     private final TradeService<Trade> tradeService;
     private final AssetService assetService;
     private final PortfolioService portfolioService;
+    private final MarginStatementService statementService;
 
     @Inject
     public ErrorServiceImpl(Provider<Session> session,
                             TradeService<Trade> tradeService,
                             AssetService assetService,
-                            PortfolioService portfolioService) {
+                            PortfolioService portfolioService,
+                            MarginStatementService statementService) {
         super(session);
         this.tradeService = tradeService;
         this.assetService = assetService;
         this.portfolioService = portfolioService;
+        this.statementService = statementService;
     }
 
     @Override
@@ -36,33 +42,44 @@ public class ErrorServiceImpl extends AbstractService<ServiceError, String> impl
     }
 
     @Override
-    public void persist(AssetId assetId, List<ServiceError> serviceError) {
-        if (assetId == null || serviceError == null) return;
+    public void persist(AssetId assetId, List<ServiceError> errors) {
+        if (assetId == null || errors == null) return;
 
         Asset asset = assetService.find(assetId);
         if (asset == null) return;
-        asset.addAllErrors(serviceError);
+        asset.addAllErrors(errors);
         assetService.save(asset);
     }
 
     @Override
-    public void persist(TradeId tradeId, ServiceError serviceError) {
-        if (tradeId == null || serviceError == null) return;
+    public void persist(TradeId tradeId, ServiceError error) {
+        if (tradeId == null || error == null) return;
 
         Trade trade = tradeService.find(tradeId);
         if (trade == null) return;
-        trade.addErrors(serviceError);
+        trade.addErrors(error);
         tradeService.save(trade);
     }
 
     @Override
-    public void persist(PortfolioId portfolioId, ServiceError serviceError) {
-        if (portfolioId == null || serviceError == null) return;
+    public void persist(PortfolioId portfolioId, ServiceError error) {
+        if (portfolioId == null || error == null) return;
 
         Portfolio portfolio = portfolioService.find(portfolioId);
         if (portfolio == null) return;
-        portfolio.addErrors(serviceError);
+        portfolio.addErrors(error);
         portfolioService.save(portfolio);
     }
+
+    @Override
+    public void persist(MarginStatementId statementId, AlgoError error) {
+        if (statementId == null || error == null) return;
+
+        MarginStatement marginStatement = statementService.find(statementId.toString());
+        if (marginStatement == null) return;
+        error.setStatement(marginStatement);
+        save(error);
+    }
+
 
 }
