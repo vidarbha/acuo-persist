@@ -1,8 +1,8 @@
 package com.acuo.persist.modules;
 
-import com.acuo.persist.entity.FRA;
-import com.acuo.persist.entity.IRS;
-import com.acuo.persist.entity.Trade;
+import com.acuo.persist.entity.trades.FRA;
+import com.acuo.persist.entity.trades.IRS;
+import com.acuo.persist.entity.trades.Trade;
 import com.acuo.persist.services.*;
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;

@@ -1,6 +1,7 @@
 package com.acuo.persist.entity;
 
 import com.acuo.common.util.ArgChecker;
+import com.acuo.persist.entity.trades.Trade;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -9,8 +10,6 @@ import org.neo4j.ogm.annotation.Relationship;
 
 import java.time.LocalDate;
 import java.util.Set;
-
-import static org.neo4j.ogm.annotation.Relationship.INCOMING;
 
 @NodeEntity
 @Data

@@ -7,7 +7,7 @@ import com.acuo.common.model.margin.Types;
 import com.acuo.persist.entity.MarginValuation;
 import com.acuo.persist.entity.MarginValue;
 import com.acuo.persist.entity.Portfolio;
-import com.acuo.persist.entity.Trade;
+import com.acuo.persist.entity.trades.Trade;
 import com.acuo.persist.entity.TradeValuation;
 import com.acuo.persist.entity.TradeValue;
 import com.acuo.persist.entity.Valuation;

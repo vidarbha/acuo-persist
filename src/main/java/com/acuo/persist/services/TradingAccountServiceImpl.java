@@ -1,6 +1,6 @@
 package com.acuo.persist.services;
 
-import com.acuo.persist.entity.Trade;
+import com.acuo.persist.entity.trades.Trade;
 import com.acuo.persist.entity.TradingAccount;
 import com.google.inject.persist.Transactional;
 import org.neo4j.ogm.session.Session;

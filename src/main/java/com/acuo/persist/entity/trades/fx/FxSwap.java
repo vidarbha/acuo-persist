@@ -1,10 +1,8 @@
 package com.acuo.persist.entity.trades.fx;
 
-import com.acuo.common.ids.TradeId;
 import com.acuo.common.model.trade.FxSwapTrade;
-import com.acuo.common.model.trade.TradeInfo;
 import com.acuo.persist.entity.PricingSource;
-import com.acuo.persist.entity.Trade;
+import com.acuo.persist.entity.trades.Trade;
 import com.acuo.persist.entity.enums.PricingProvider;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,13 +21,7 @@ public class FxSwap extends Trade<FxSwap> {
     public FxSwap() {}
 
     public FxSwap(FxSwapTrade model) {
-        final TradeInfo info = model.getInfo();
-        setTradeId(TradeId.fromString(info.getTradeId()));
-        setTradeDate(info.getTradeDate());
-        setTradeTime(info.getTradeTime() != null ? info.getTradeTime().toLocalTime() : null);
-        setMaturity(info.getMaturityDate());
-        setClearingDate(info.getClearedTradeDate());
-        setTradeType(info.getDerivativeType());
+        super(model);
 
         PricingSource pricingSource = new PricingSource();
         pricingSource.setName(PricingProvider.Markit);
@@ -41,20 +33,14 @@ public class FxSwap extends Trade<FxSwap> {
     }
 
     public FxSwapTrade model() {
-        TradeInfo info = new TradeInfo();
-        info.setTradeId(getTradeId().toString());
-        info.setClearedTradeId(getTradeId().toString());
-        info.setClearedTradeDate(getClearingDate());
-        info.setTradeDate(getTradeDate());
-        info.setBook(getAccount() != null ? getAccount().getAccountId() : null);
-        info.setPortfolio(getPortfolio() != null ? getPortfolio().getPortfolioId().toString() : null);
+        final FxSwapTrade fxSwapTrade = new FxSwapTrade();
+        fxSwapTrade.setInfo(info());
 
         com.acuo.common.model.product.fx.FxSwap product = new com.acuo.common.model.product.fx.FxSwap();
         product.setNearLeg(nearLeg.model());
         product.setFarLeg(farLeg.model());
-        final FxSwapTrade fxSwapTrade = new FxSwapTrade();
-        fxSwapTrade.setInfo(info);
         fxSwapTrade.setProduct(product);
+
         return fxSwapTrade;
     }
 

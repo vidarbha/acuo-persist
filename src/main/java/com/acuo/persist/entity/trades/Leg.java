@@ -1,5 +1,6 @@
-package com.acuo.persist.entity;
+package com.acuo.persist.entity.trades;
 
+import com.acuo.persist.entity.Entity;
 import com.acuo.persist.neo4j.converters.BusinessDayConventionConverter;
 import com.acuo.persist.neo4j.converters.CurrencyConverter;
 import com.acuo.persist.neo4j.converters.DayCountConverter;

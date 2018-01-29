@@ -6,7 +6,7 @@ import com.acuo.common.ids.TradeId;
 import com.acuo.persist.entity.Asset;
 import com.acuo.persist.entity.Portfolio;
 import com.acuo.persist.entity.ServiceError;
-import com.acuo.persist.entity.Trade;
+import com.acuo.persist.entity.trades.Trade;
 import org.neo4j.ogm.session.Session;
 
 import javax.inject.Inject;

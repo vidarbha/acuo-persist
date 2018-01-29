@@ -8,7 +8,7 @@ import com.acuo.common.util.GuiceJUnitRunner;
 import com.acuo.persist.core.ImportService;
 import com.acuo.persist.entity.AssetValuation;
 import com.acuo.persist.entity.AssetValue;
-import com.acuo.persist.entity.IRS;
+import com.acuo.persist.entity.trades.IRS;
 import com.acuo.persist.entity.MarginValuation;
 import com.acuo.persist.entity.MarginValue;
 import com.acuo.persist.entity.TradeValuation;

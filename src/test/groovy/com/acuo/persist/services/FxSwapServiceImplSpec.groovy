@@ -5,7 +5,7 @@ import com.acuo.common.model.BusinessDayAdjustment
 import com.acuo.common.model.product.fx.FxSingle
 import com.acuo.common.model.trade.FxSwapTrade
 import com.acuo.common.model.trade.TradeInfo
-import com.acuo.persist.entity.Trade
+import com.acuo.persist.entity.trades.Trade
 import com.acuo.persist.entity.trades.fx.FxSwap
 import com.acuo.persist.modules.ConfigurationTestModule
 import com.acuo.persist.modules.InProcessNeo4jServerModule
