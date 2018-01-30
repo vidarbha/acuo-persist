@@ -14,11 +14,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.neo4j.ogm.testutil.TestServer;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 
 import static com.acuo.persist.configuration.PropertiesHelper.*;
 import static org.junit.Assert.assertEquals;
@@ -34,13 +32,12 @@ import static org.junit.Assert.assertNotNull;
 public class DataImporterIntegrationTest {
 
     private DataImporter importer;
-    private CypherExecutor executor;
 
     @Inject
-    ServiceManager serviceManager;
+    private ServiceManager serviceManager;
 
-    @Inject
-    Provider<TestServer> serverProvider;
+    //@Inject
+    //private Provider<TestServer> serverProvider;
 
     @Inject
     @Named(ACUO_DATA_BRANCH)
@@ -59,10 +56,10 @@ public class DataImporterIntegrationTest {
     private String dataImportFiles;
 
     @Inject
-    DataLoader dataLoader;
+    private DataLoader dataLoader;
 
     @Inject
-    ClientService clientService;
+    private ClientService clientService;
 
     @Before
     public void setup() {
@@ -70,12 +67,12 @@ public class DataImporterIntegrationTest {
             serviceManager.startAsync().awaitHealthy();
         }
         importer = new Neo4jDataImporter(dataLoader, workingDirectory, dataBranch, dataImportFiles, workingDirectory, directoryTemplate);
-        executor = new EmbeddedCypherExecutor(serverProvider.get().getGraphDatabaseService());
+        //CypherExecutor executor = new EmbeddedCypherExecutor(serverProvider.get().getGraphDatabaseService());
     }
 
     @Test
     public void testImportClients() {
-        importer.importFiles("clients");
+        importer.importFiles("develop", "ACUO", "clients");
 
         Iterable<Client> clients = clientService.findAll();
 

@@ -29,10 +29,8 @@ import static org.junit.Assert.assertNotNull;
 		Neo4jIntegrationTestModule.class})
 public class SessionIntegrationTest {
 
-	private DataImporter importer;
-
 	@Inject
-	ServiceManager serviceManager;
+    private ServiceManager serviceManager;
 
 	@Inject
 	@Named(ACUO_DATA_BRANCH)
@@ -51,10 +49,10 @@ public class SessionIntegrationTest {
 	private String dataImportFiles;
 
 	@Inject
-    DataLoader dataLoader;
+    private DataLoader dataLoader;
 
 	@Inject
-	ClientService clientService;
+    private ClientService clientService;
 
 	@Before
 	public void setup() {
@@ -62,8 +60,8 @@ public class SessionIntegrationTest {
 			serviceManager.startAsync().awaitHealthy();
 		}
 
-		importer = new Neo4jDataImporter(dataLoader, workingDirectory, dataBranch, dataImportFiles, workingDirectory, directoryTemplate);
-		importer.importFiles("develop", importer.filesToImport());
+        DataImporter importer = new Neo4jDataImporter(dataLoader, workingDirectory, dataBranch, dataImportFiles, workingDirectory, directoryTemplate);
+        importer.importFiles("develop", "ACUO", importer.filesToImport());
 	}
 
 	@Test

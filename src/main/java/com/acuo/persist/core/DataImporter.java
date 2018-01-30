@@ -5,7 +5,7 @@ import org.neo4j.ogm.annotation.Transient;
 @Transient
 public interface DataImporter {
 
-    void importFiles(final String branch, String... fileNames);
+    void importFiles(final String branch, String client, String... fileNames);
 
     String[] filesToImport();
 

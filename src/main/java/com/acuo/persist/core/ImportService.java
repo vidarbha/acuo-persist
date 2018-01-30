@@ -1,16 +1,17 @@
 package com.acuo.persist.core;
 
 import com.google.inject.Singleton;
+import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
 
+@Slf4j
 @Singleton
 public class ImportService {
 
     private final DataLoader loader;
     private final DataImporter importer;
-
-    private String branch = null;
 
     @Inject
     public ImportService(DataLoader loader, DataImporter importer) {
@@ -18,21 +19,30 @@ public class ImportService {
         this.importer = importer;
     }
 
-    public ImportService branch(String value) {
-        this.branch = value;
-        return this;
-    }
-
-    public void load(String fileName) {
-        importer.importFiles(branch, fileName);
-    }
-
     public void reload() {
         deleteAll();
-        importer.importFiles(branch, importer.filesToImport());
+        DataFiles dataFiles = DataFiles.builder().client("ACUO").build();
+        reload(dataFiles);
+    }
+
+    public void load(DataFiles dataFiles) {
+        importer.importFiles(dataFiles.branch, dataFiles.client, dataFiles.fileName);
+    }
+
+    public void reload(DataFiles dataFiles) {
+        importer.importFiles(dataFiles.branch, dataFiles.client, importer.filesToImport());
     }
 
     public void deleteAll() {
+        log.info("purging the database");
         loader.purgeDatabase();
+    }
+
+    @Builder
+    public static class DataFiles {
+        private String branch;
+        @Builder.Default
+        private String client = "ACUO";
+        private String fileName;
     }
 }

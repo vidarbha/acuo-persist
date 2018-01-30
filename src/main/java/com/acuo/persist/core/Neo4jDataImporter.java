@@ -3,7 +3,6 @@ package com.acuo.persist.core;
 import com.acuo.common.cache.manager.CacheManager;
 import com.acuo.common.cache.manager.Cacheable;
 import com.acuo.common.cache.manager.CachedObject;
-import com.acuo.common.util.ArgChecker;
 import com.acuo.persist.configuration.PropertiesHelper;
 import com.acuo.persist.utils.GraphData;
 import com.google.inject.Singleton;
@@ -15,12 +14,14 @@ import javax.inject.Named;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+
+import static com.acuo.common.util.ArgChecker.notNull;
 
 @Singleton
 public class Neo4jDataImporter implements DataImporter {
@@ -33,7 +34,7 @@ public class Neo4jDataImporter implements DataImporter {
     private final String dataBranch;
     private final String directoryTemplate;
     private final String dataImportFiles;
-    private Map<String, String> substitutions = new HashMap<>();
+    private Map<String, String> substitutions = new LinkedHashMap<>();
 
     @Inject
     public Neo4jDataImporter(DataLoader loader,
@@ -57,11 +58,11 @@ public class Neo4jDataImporter implements DataImporter {
     }
 
     @Override
-    public void importFiles(String branch, String... fileNames) {
+    public void importFiles(String branch, String client, String... fileNames) {
         if (branch == null)
             branch = dataBranch;
         final String value = branch;
-        Arrays.stream(fileNames).forEach(f -> importFile(value, f));
+        Arrays.stream(fileNames).forEach(f -> importFile(value, client, f));
     }
 
     @Override
@@ -73,33 +74,33 @@ public class Neo4jDataImporter implements DataImporter {
                 .toArray(String[]::new);
     }
 
-    private void importFile(String branch, String fileName) {
+    private void importFile(String branch, String client, String fileName) {
         try {
             substitutions.put("%branch%", branch);
+            substitutions.put("%client%", client);
             String filePath = String.format(directoryTemplate, workingDirPath, fileName);
             filePath = buildQuery(filePath, substitutions);
-            LOG.info("Importing files [{}] from {}", fileName, filePath);
-            String query = file(filePath);
+            LOG.info("Importing client [{}] files [{}] from {}", client, fileName, filePath);
+            String query = file(client, filePath);
             loader.loadData(query);
         } catch (Exception e) {
-            LOG.error("an error occured while importing file {}", fileName, e);
+            LOG.error("an error occured while importing client [{}] file {}", client, fileName, e);
         }
     }
 
-    private String file(String filePath) throws IOException, URISyntaxException {
-        Cacheable value = cacheManager.getCache(filePath);
+    private String file(String client, String filePath) throws IOException, URISyntaxException {
+        Cacheable value = cacheManager.getCache(client + filePath);
         if (value == null) {
             String file = GraphData.readFile(filePath);
             file = buildQuery(file, substitutions);
-            value = new CachedObject(file, filePath, 3);
+            value = new CachedObject(file, client + filePath, 3);
             cacheManager.putCache(value);
         }
         return (String)value.getObject();
     }
 
-    private String buildQuery(String file, Map<String, String> substitutions) throws IOException {
-        ArgChecker.notNull(file, "file");
-        String query = replacePlaceHolders(file, substitutions.entrySet());
+    private String buildQuery(String file, Map<String, String> substitutions) {
+        String query = replacePlaceHolders(notNull(file, "file"), substitutions.entrySet());
         LOG.debug("{}", query);
         return query;
     }
