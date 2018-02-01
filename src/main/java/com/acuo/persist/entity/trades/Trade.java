@@ -24,7 +24,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
@@ -98,7 +97,6 @@ public abstract class Trade<T extends Trade> extends Entity<T> implements Compar
     }
 
     @Property(name = "id")
-    @Index(primary = true)
     @Convert(TradeIdConverter.class)
     protected TradeId tradeId;
 

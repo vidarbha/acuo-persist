@@ -7,7 +7,7 @@ public abstract class Entity<T extends Entity> {
     @GraphId
     private Long id;
 
-    public final Long getId() {
+    public Long getId() {
         return id;
     }
 

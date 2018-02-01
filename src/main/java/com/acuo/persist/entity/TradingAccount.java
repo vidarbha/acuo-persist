@@ -3,7 +3,6 @@ package com.acuo.persist.entity;
 import com.acuo.persist.entity.trades.Trade;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
@@ -17,7 +16,6 @@ import java.util.TreeSet;
 public class TradingAccount extends Entity<TradingAccount> {
 
     @Property(name="id")
-    @Index(primary = true)
     private String accountId;
 
     private String name;

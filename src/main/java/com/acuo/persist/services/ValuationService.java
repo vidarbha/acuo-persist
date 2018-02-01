@@ -12,21 +12,21 @@ import java.time.LocalDate;
 
 public interface ValuationService extends Service<Valuation, String> {
 
-    TradeValuation getTradeValuationFor(TradeId tradeId);
+    TradeValuation getTradeValuationFor(ClientId clientId, TradeId tradeId);
 
-    TradeValuation getOrCreateTradeValuationFor(TradeId tradeId);
+    TradeValuation getOrCreateTradeValuationFor(ClientId clientId, TradeId tradeId);
 
-    MarginValuation getMarginValuationFor(PortfolioId portfolioId, Types.CallType callType);
+    MarginValuation getMarginValuationFor(ClientId clientId, PortfolioId portfolioId, Types.CallType callType);
 
-    MarginValuation getOrCreateMarginValuationFor(PortfolioId portfolioId, Types.CallType callType);
+    MarginValuation getOrCreateMarginValuationFor(ClientId clientId, PortfolioId portfolioId, Types.CallType callType);
 
     Long tradeCount(ClientId clientId, PortfolioId portfolioId);
 
-    Long tradeValuedCount(PortfolioId portfolioId, LocalDate valuationDate);
+    Long tradeValuedCount(ClientId clientId, PortfolioId portfolioId, LocalDate valuationDate);
 
-    Long tradeNotValuedCount(PortfolioId portfolioId, LocalDate valuationDate);
+    Long tradeNotValuedCount(ClientId clientId, PortfolioId portfolioId, LocalDate valuationDate);
 
-    boolean isTradeValuated(TradeId tradeId, LocalDate valuationDate);
+    boolean isTradeValuated(ClientId clientId, TradeId tradeId, LocalDate valuationDate);
 
-    boolean isPortfolioValuated(PortfolioId portfolioId, Types.CallType callType, LocalDate valuationDate);
+    boolean isPortfolioValuated(ClientId clientId, PortfolioId portfolioId, Types.CallType callType, LocalDate valuationDate);
 }

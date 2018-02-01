@@ -4,13 +4,10 @@ import com.acuo.common.ids.ClientId;
 import com.acuo.common.ids.PortfolioId;
 import com.acuo.common.ids.TradeId;
 import com.acuo.common.typeref.TypeReference;
-import com.acuo.persist.entity.trades.IRS;
 import com.acuo.persist.entity.trades.Trade;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.inject.persist.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.neo4j.ogm.cypher.query.SortOrder;
 import org.neo4j.ogm.session.Session;
 
 import javax.inject.Inject;
@@ -22,29 +19,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
+import static com.google.common.collect.ImmutableMap.of;
 import static java.util.stream.Collectors.toList;
 
 @Slf4j
-public class TradeServiceImpl<T extends Trade> extends AbstractService<T, TradeId> implements TradeService<T> {
+public class TradeServiceImpl<T extends Trade> extends AbstractService<T, Long> implements TradeService<T> {
 
     @Inject
     public TradeServiceImpl(Provider<Session> session) {
         super(session);
-    }
-
-    @Override
-    @Transactional
-    public Iterable<T> findBilateralTradesByClientId(ClientId clientId) {
-        if (log.isDebugEnabled()) {
-            log.debug("findBilateralTradesByClientId {}",clientId);
-        }
-        String query =  "MATCH (:Client {id:{id}}) " +
-                        "-[:MANAGES]-> (:LegalEntity) " +
-                        "-[:HAS]-> (:TradingAccount) " +
-                        "-[:POSITIONS_ON]-> (trade:Trade) " +
-                        "WITH trade " +
-                        "MATCH p=(trade)-[r*0..1]-() RETURN trade, nodes(p), relationships(p)";
-        return dao.getSession().query(getEntityType(), query, ImmutableMap.of("id",clientId.toString()));
     }
 
     @Override
@@ -55,47 +38,74 @@ public class TradeServiceImpl<T extends Trade> extends AbstractService<T, TradeI
 
     @Override
     @Transactional
-    public T find(TradeId id) {
-        String query =
-                "MATCH p=()-[*0..1]-(t:Trade {id:{id}}) RETURN p";
-        return dao.getSession().queryForObject(getEntityType(), query, ImmutableMap.of("id", id));
+    public T findTradeBy(ClientId clientId, TradeId tradeId) {
+        if (log.isDebugEnabled()) {
+            log.debug("findTradeBy clientId {} and tradeId {}",clientId, tradeId);
+        }
+        String query =  "MATCH (client:Client) " +
+                        "-[:MANAGES]-> (:LegalEntity) " +
+                        "-[:HAS]-> (:TradingAccount) " +
+                        "-[:POSITIONS_ON]-> (trade:Trade) " +
+                        "WHERE client.id = {clientId} " +
+                        "AND trade.id = {tradeId}" +
+                        "WITH trade " +
+                        "MATCH p=(trade)-[*0..1]-() RETURN p";
+        return dao.getSession().queryForObject(getEntityType(), query, of(
+                "clientId", clientId.toString(),
+                "tradeId", tradeId
+                ));
+    }
+
+    @Override
+    @Transactional
+    public Iterable<T> findAllClientTrades(ClientId clientId) {
+        if (log.isDebugEnabled()) {
+            log.debug("findAllClientTrades clientId {}",clientId);
+        }
+        String query =  "MATCH (client:Client) " +
+                        "-[:MANAGES]-> (:LegalEntity) " +
+                        "-[:HAS]-> (:TradingAccount) " +
+                        "-[:POSITIONS_ON]-> (trade:Trade) " +
+                        "WHERE client.id = {clientId} " +
+                        "WITH trade " +
+                        "MATCH p=(trade)-[*0..1]-() RETURN p";
+        return dao.getSession().query(getEntityType(), query, of("clientId", clientId.toString()));
     }
 
     @Override
     @Transactional
     public Iterable<T> findByPortfolioId(ClientId clientId, PortfolioId... ids) {
         if (log.isDebugEnabled()) {
-            log.debug("findByPortfolioId for {}", Arrays.asList(ids));
+            log.debug("findByPortfolioId clientId {} for {}", clientId, Arrays.asList(ids));
         }
         String query =
                 "MATCH p=()-[*0..1]-(t:Trade)-[r:BELONGS_TO]->(portfolio:Portfolio)-[:FOLLOWS]->(a:Agreement) " +
-                "<-[]-(:LegalEntity)-[:MANAGES]-(:Client {id:{clientId}}) " +
-                "WHERE portfolio.id IN {ids} " +
-                "RETURN p, nodes(p), relationships(p)";
-        return dao.getSession().query(getEntityType(), query, ImmutableMap.of("clientId",clientId.toString(),
-                "ids", ids));
+                "<-[]-(:LegalEntity)-[:MANAGES]-(client:Client) " +
+                "WHERE client.id = {clientId} AND portfolio.id IN {ids} " +
+                "RETURN p";
+        return dao.getSession().query(getEntityType(), query, of(
+                "clientId",clientId.toString(),
+                "ids", ids)
+                );
     }
 
     @Override
     @Transactional
-    public Iterable<IRS> findAllIRS() {
+    public Iterable<T> findAllTradeByIds(ClientId clientId, List<TradeId> tradeIds) {
         if (log.isDebugEnabled()) {
-            log.debug("findAllIRS");
+            log.debug("findAllTradeByIds clientId {} and tradeIds {} ", clientId, tradeIds);
         }
-        return dao.getSession().loadAll(IRS.class, new SortOrder().add("tradeType"),1);
-    }
-
-    @Override
-    @Transactional
-    public Iterable<T> findAllTradeByIds(List<TradeId> ids) {
-        if (log.isDebugEnabled()) {
-            log.debug("findAllTradeByIds {} ", ids);
-        }
-        String query =
-                "MATCH p=(t:Trade)-[*0..1]-() " +
-                "WHERE t.id IN {ids}" +
-                "RETURN p, nodes(p), relationships(p)";
-        return dao.getSession().query(getEntityType(), query, ImmutableMap.of("ids", ids));
+        String query =  "MATCH (client:Client) " +
+                        "-[:MANAGES]-> (:LegalEntity) " +
+                        "-[:HAS]-> (:TradingAccount) " +
+                        "-[:POSITIONS_ON]-> (trade:Trade) " +
+                        "WHERE client.id = {clientId} " +
+                        "AND trade.id IN {tradeIds} " +
+                        "WITH trade " +
+                        "MATCH p=(trade)-[*0..1]-() RETURN p";
+        return dao.getSession().query(getEntityType(), query, of(
+                "clientId", clientId.toString(),
+                "tradeIds", tradeIds));
     }
 
     @Transactional
@@ -103,7 +113,7 @@ public class TradeServiceImpl<T extends Trade> extends AbstractService<T, TradeI
         if (log.isDebugEnabled()) {
             log.debug("createOrUpdate {}",trade);
         }
-        T byId = find(trade.getTradeId());
+        T byId = find(trade.getId());
         if(byId != null) {
             delete(byId);
         }
@@ -111,14 +121,14 @@ public class TradeServiceImpl<T extends Trade> extends AbstractService<T, TradeI
     }
 
     @Transactional
-    public <S extends T> Iterable<S> createOrUpdate(Iterable<S> trades) {
+    public <S extends T> Iterable<S> createOrUpdate(ClientId clientId, Iterable<S> trades) {
         long start = System.nanoTime();
         final Iterable<S> saved = save(trades, 1);
         long end = System.nanoTime();
         log.info("Save time: " + TimeUnit.NANOSECONDS.toSeconds(end - start));
-        final Iterable<T> all = findAll();
+        final Iterable<T> all = findAllClientTrades(clientId);
         final List<TradeId> idsToDelete = intersection(tradeIds(all), tradeIds(saved));
-        Iterable<T> toDelete = findAllTradeByIds(idsToDelete);
+        Iterable<T> toDelete = findAllTradeByIds(clientId, idsToDelete);
         if (!Iterables.isEmpty(toDelete)) {
             delete(toDelete);
         }

@@ -2,8 +2,8 @@ package com.acuo.persist.entity.trades.fx;
 
 import com.acuo.common.model.trade.FxSwapTrade;
 import com.acuo.persist.entity.PricingSource;
-import com.acuo.persist.entity.trades.Trade;
 import com.acuo.persist.entity.enums.PricingProvider;
+import com.acuo.persist.entity.trades.Trade;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.NodeEntity;

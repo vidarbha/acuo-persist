@@ -1,6 +1,7 @@
 package com.acuo.persist.services;
 
 import com.acuo.common.ids.AssetId;
+import com.acuo.common.ids.ClientId;
 import com.acuo.common.ids.MarginStatementId;
 import com.acuo.common.ids.PortfolioId;
 import com.acuo.common.ids.TradeId;
@@ -52,20 +53,20 @@ public class ErrorServiceImpl extends AbstractService<ServiceError, String> impl
     }
 
     @Override
-    public void persist(TradeId tradeId, ServiceError error) {
+    public void persist(ClientId clientId, TradeId tradeId, ServiceError error) {
         if (tradeId == null || error == null) return;
 
-        Trade trade = tradeService.find(tradeId);
+        Trade trade = tradeService.findTradeBy(clientId, tradeId);
         if (trade == null) return;
         trade.addErrors(error);
         tradeService.save(trade);
     }
 
     @Override
-    public void persist(PortfolioId portfolioId, ServiceError error) {
+    public void persist(ClientId clientId, PortfolioId portfolioId, ServiceError error) {
         if (portfolioId == null || error == null) return;
 
-        Portfolio portfolio = portfolioService.find(portfolioId);
+        Portfolio portfolio = portfolioService.portfolio(clientId, portfolioId);
         if (portfolio == null) return;
         portfolio.addErrors(error);
         portfolioService.save(portfolio);
@@ -80,6 +81,4 @@ public class ErrorServiceImpl extends AbstractService<ServiceError, String> impl
         error.setStatement(marginStatement);
         save(error);
     }
-
-
 }

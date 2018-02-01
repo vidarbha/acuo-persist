@@ -145,7 +145,7 @@ public class MarginStatementServiceImplTest {
 
     @Test
     public void testGetMarginStatement(){
-        Agreement agreement = agreementService.agreementFor(PortfolioId.fromString("p2"));
+        Agreement agreement = agreementService.agreementFor(client999, PortfolioId.fromString("p2"));
         LocalDate callDate = LocalDate.of(2017, 1, 13);
         MarginStatement marginStatement = marginStatementService.getMarginStatement(agreement, callDate);
         assertSatisfies(callDate, marginStatement);
@@ -163,7 +163,7 @@ public class MarginStatementServiceImplTest {
 
     @Test
     public void testGetOrCreateMarginStatement(){
-        Agreement agreement = agreementService.agreementFor(PortfolioId.fromString("p2"));
+        Agreement agreement = agreementService.agreementFor(client999, PortfolioId.fromString("p2"));
         LocalDate callDate = LocalDate.of(2017, 1, 13);
         MarginStatement marginStatement = marginStatementService.getOrCreateMarginStatement(agreement, callDate);
         assertSatisfies(callDate, marginStatement);

@@ -1,13 +1,16 @@
 package com.acuo.persist.services
 
+import com.acuo.common.ids.ClientId
 import com.acuo.common.model.AdjustableDate
 import com.acuo.common.model.BusinessDayAdjustment
 import com.acuo.common.model.product.fx.FxSingle
 import com.acuo.common.model.trade.FxSwapTrade
 import com.acuo.common.model.trade.TradeInfo
+import com.acuo.persist.core.ImportService
 import com.acuo.persist.entity.trades.Trade
 import com.acuo.persist.entity.trades.fx.FxSwap
 import com.acuo.persist.modules.ConfigurationTestModule
+import com.acuo.persist.modules.ImportServiceModule
 import com.acuo.persist.modules.InProcessNeo4jServerModule
 import com.acuo.persist.modules.RepositoryModule
 import com.opengamma.strata.basics.currency.Currency
@@ -26,24 +29,38 @@ import static com.opengamma.strata.basics.date.HolidayCalendarIds.GBLO
 @UseModules([
         ConfigurationTestModule,
         InProcessNeo4jServerModule,
+        ImportServiceModule,
         RepositoryModule
 ])
 class FxSwapServiceImplSpec extends Specification {
+
+    @Inject
+    ImportService importService
+
+    @Inject
+    TradingAccountService accountService
 
     @Subject
     @Inject
     TradeService<Trade> tradeService
 
+    ClientId client999 = ClientId.fromString("999")
+
+    void setup() {
+        importService.reload()
+    }
+
     void "Compare an fx swap trade with its persisted version"(){
         given:
         FxSwapTrade original = fxSwapTrade()
         FxSwap entity = new FxSwap(original)
+        entity.setAccount(accountService.account(client999, "ACUOSG8745"))
 
         when:
-        tradeService.createOrUpdate([entity])
+        tradeService.createOrUpdate(client999, [entity])
 
         and:
-        FxSwap persisted = tradeService.find(entity.tradeId) as FxSwap
+        FxSwap persisted = tradeService.findTradeBy(client999, entity.tradeId) as FxSwap
 
         then:
         persisted != null
@@ -59,6 +76,7 @@ class FxSwapServiceImplSpec extends Specification {
         TradeInfo info = new TradeInfo()
         info.setTradeId("dummyFxSwap")
         info.setClearedTradeId("dummyFxSwap")
+        info.setBook("ACUOSG8745")
 
         com.acuo.common.model.product.fx.FxSwap product = new com.acuo.common.model.product.fx.FxSwap()
         FxSingle nearLeg = fxSingle(1_000_000, 1_200_000, Period.ofMonths(6) )

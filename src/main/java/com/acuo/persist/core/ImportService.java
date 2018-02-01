@@ -25,6 +25,11 @@ public class ImportService {
         reload(dataFiles);
     }
 
+    public void load(String fileName) {
+        DataFiles dataFiles = DataFiles.builder().client("ACUO").fileName(fileName).build();
+        load(dataFiles);
+    }
+
     public void load(DataFiles dataFiles) {
         importer.importFiles(dataFiles.branch, dataFiles.client, dataFiles.fileName);
     }

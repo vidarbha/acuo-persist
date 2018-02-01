@@ -1,5 +1,6 @@
 package com.acuo.persist.services;
 
+import com.acuo.common.ids.ClientId;
 import com.acuo.common.ids.MarginStatementId;
 import com.acuo.common.ids.PortfolioId;
 import com.acuo.common.model.margin.Types;
@@ -68,12 +69,14 @@ public class CollateralServiceImplTest {
     @Mock
     private Asset asset;
 
+    private ClientId client999 = ClientId.fromString("999");
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         importService.reload();
 
-        Agreement a1 = agreementService.agreementFor(PortfolioId.fromString("p1a"));
+        Agreement a1 = agreementService.agreementFor(client999, PortfolioId.fromString("p1a"));
         marginStatement = marginStatementService.getOrCreateMarginStatement(a1, LocalDate.now());
     }
 

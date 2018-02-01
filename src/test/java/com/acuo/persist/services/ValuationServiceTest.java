@@ -1,6 +1,7 @@
 package com.acuo.persist.services;
 
 import com.acuo.common.ids.AssetId;
+import com.acuo.common.ids.ClientId;
 import com.acuo.common.ids.PortfolioId;
 import com.acuo.common.ids.TradeId;
 import com.acuo.common.model.margin.Types;
@@ -51,6 +52,11 @@ public class ValuationServiceTest {
     @Inject
     private AssetValuationService assetValuationService = null;
 
+    @Inject
+    private TradingAccountService accountService = null;
+
+    private ClientId client999 = ClientId.fromString("999");
+
     @Before
     public void setUp() {
         importService.reload();
@@ -59,7 +65,7 @@ public class ValuationServiceTest {
     @Test
     public void testMarginValuationService() {
 
-        MarginValuation valuation = valuationService.getOrCreateMarginValuationFor(PortfolioId.fromString("p2"), Types.CallType.Variation);
+        MarginValuation valuation = valuationService.getOrCreateMarginValuationFor(client999, PortfolioId.fromString("p2"), Types.CallType.Variation);
 
         MarginValue newValue = createMarginValue(Currency.USD, 1.0d, "Markit");
         newValue.setValuation(valuation);
@@ -68,7 +74,7 @@ public class ValuationServiceTest {
 
         assertThat(value).isNotNull();
 
-        valuation = valuationService.getMarginValuationFor(PortfolioId.fromString("p2"), Types.CallType.Variation);
+        valuation = valuationService.getMarginValuationFor(client999, PortfolioId.fromString("p2"), Types.CallType.Variation);
 
         Set<MarginValue> values = valuation.getValues();
         assertThat(values).isNotEmpty();
@@ -100,8 +106,9 @@ public class ValuationServiceTest {
         TradeId t1 = TradeId.fromString("t1");
         IRS entity = new IRS();
         entity.setTradeId(t1);
+        entity.setAccount(accountService.account(client999, "ACUOSG8745"));
         tradeService.save(entity);
-        TradeValuation valuation = valuationService.getOrCreateTradeValuationFor(t1);
+        TradeValuation valuation = valuationService.getOrCreateTradeValuationFor(client999, t1);
 
         TradeValue newValue = createTradeValue(Currency.USD, 1.0d, "DataScope");
         newValue.setValuation(valuation);
@@ -110,7 +117,7 @@ public class ValuationServiceTest {
 
         assertThat(value).isNotNull();
 
-        valuation = valuationService.getTradeValuationFor(t1);
+        valuation = valuationService.getTradeValuationFor(client999, t1);
 
         Set<TradeValue> values = valuation.getValues();
         assertThat(values).isNotEmpty();

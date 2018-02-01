@@ -36,7 +36,7 @@ class PortfolioServiceImplSpec extends Specification {
         portfolioService.portfolios(clientId, *ids)
 
         then:
-        1 * session.query(Portfolio, _ as String, {it.any {key, value -> key == 'ids' && value == [*ids]} })
+        1 * session.query(Portfolio, _ as String, { it['clientId'] == "999" && it['portfolioIds'] == [*ids]})
     }
 
     def "get a portfolio from a portfolio id"() {
@@ -48,7 +48,7 @@ class PortfolioServiceImplSpec extends Specification {
         portfolioService.portfolio(clientId, id)
 
         then:
-        1 * session.query(Portfolio, _ as String, {it.any {key, value -> key == 'ids' && value == [id]} }) >> [portfolio]
+        1 * session.query(Portfolio, _ as String, { it['clientId'] == "999" && it['portfolioIds'] == [id] }) >> [portfolio]
     }
 
     def "get the trade count"() {
@@ -61,7 +61,7 @@ class PortfolioServiceImplSpec extends Specification {
         def count = portfolioService.tradeCount(clientId, id)
 
         then:
-        1 * session.query(_ as String, {it.any {key, value -> key == 'id' && value == 'p1'} }) >> result
+        1 * session.query(_ as String, { it['clientId'] == "999" && it['portfolioId'] == id.toString() }) >> result
         count == 1L
     }
 }

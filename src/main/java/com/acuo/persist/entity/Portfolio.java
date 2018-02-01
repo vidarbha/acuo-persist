@@ -4,7 +4,6 @@ import com.acuo.common.ids.PortfolioId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
@@ -23,7 +22,6 @@ import static com.acuo.persist.neo4j.converters.TypedStringConverter.PortfolioId
 public class Portfolio extends Entity<Portfolio> {
 
     @Property(name = "id")
-    @Index(primary = true)
     @Convert(PortfolioIdConverter.class)
     private PortfolioId portfolioId;
 

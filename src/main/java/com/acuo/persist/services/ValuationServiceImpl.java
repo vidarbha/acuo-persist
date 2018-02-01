@@ -26,17 +26,14 @@ import static com.acuo.common.util.ArgChecker.notNull;
 public class ValuationServiceImpl extends AbstractService<Valuation, String> implements ValuationService {
 
     private final PortfolioService portfolioService;
-    private final AssetService assetService;
     private final TradeService<Trade> tradeService;
 
     @Inject
     public ValuationServiceImpl(Provider<Session> session,
                                 PortfolioService portfolioService,
-                                AssetService assetService,
                                 TradeService<Trade> tradeService) {
         super(session);
         this.portfolioService = portfolioService;
-        this.assetService = assetService;
         this.tradeService = tradeService;
     }
 
@@ -48,22 +45,29 @@ public class ValuationServiceImpl extends AbstractService<Valuation, String> imp
 
     @Override
     @Transactional
-    public TradeValuation getTradeValuationFor(TradeId tradeId) {
-        String query =
-                "MATCH p=(value:TradeValue)<-[:VALUE*0..1]-(valuation:TradeValuation)-[:VALUATED]->(trade:Trade {id:{id}})-[*0..1]-(n) " +
-                        "RETURN p, nodes(p), relationships(p)";
-        final String id = tradeId.toString();
-        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", id);
+    public TradeValuation getTradeValuationFor(ClientId clientId, TradeId tradeId) {
+        String query =  "MATCH (client:Client) " +
+                        "-[:MANAGES]-> (:LegalEntity) " +
+                        "-[:HAS]-> (:TradingAccount) " +
+                        "-[:POSITIONS_ON]-> (trade:Trade) " +
+                        "WHERE client.id = {clientId} " +
+                        "AND trade.id = {tradeId}" +
+                        "WITH trade " +
+                        "MATCH p=(value:TradeValue)<-[:VALUE*0..1]-(valuation:TradeValuation)-[:VALUATED]->(trade)-[*0..1]-(n) " +
+                        "RETURN p";
+        final ImmutableMap<String, String> parameters = ImmutableMap.of(
+                "clientId", clientId.toString(),
+                "tradeId", tradeId.toString());
         return dao.getSession().queryForObject(TradeValuation.class, query, parameters);
     }
 
     @Override
     @Transactional
-    public TradeValuation getOrCreateTradeValuationFor(TradeId tradeId) {
-        TradeValuation valuation = getTradeValuationFor(tradeId);
+    public TradeValuation getOrCreateTradeValuationFor(ClientId clientId, TradeId tradeId) {
+        TradeValuation valuation = getTradeValuationFor(clientId, tradeId);
         if (valuation == null) {
             valuation = new TradeValuation();
-            Trade trade = tradeService.find(tradeId);
+            Trade trade = tradeService.findTradeBy(clientId, tradeId);
             valuation.setTrade(notNull(trade, "trade"));
             valuation = createOrUpdate(valuation);
         }
@@ -72,23 +76,29 @@ public class ValuationServiceImpl extends AbstractService<Valuation, String> imp
 
     @Override
     @Transactional
-    public MarginValuation getMarginValuationFor(PortfolioId portfolioId, Types.CallType callType) {
+    public MarginValuation getMarginValuationFor(ClientId clientId, PortfolioId portfolioId, Types.CallType callType) {
         String query =
-                "MATCH p=(value)<-[:VALUE*0..1]-(valuation:MarginValuation {callType: {callType}})" +
-                        "-[:VALUATED]->(portfolio:Portfolio {id:{id}})-[:BELONGS_TO|FOLLOWS|PART_OF]-(n) " +
-                        "RETURN p, nodes(p), relationships(p)";
-        final String pId = portfolioId.toString();
-        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", pId, "callType", callType.name());
+            "MATCH (client:Client)-[:MANAGES]-(legal:LegalEntity)-[]-(a:Agreement)<-[:FOLLOWS]-(portfolio:Portfolio) " +
+            "WHERE client.id = {clientId} " +
+            "AND portfolio.id = {portfolioId}" +
+            "WITH portfolio " +
+            "MATCH p=(value)<-[:VALUE*0..1]-(valuation:MarginValuation {callType: {callType}})" +
+            "-[:VALUATED]->(portfolio)-[:BELONGS_TO|FOLLOWS|PART_OF]-(n) " +
+            "RETURN p";
+        final ImmutableMap<String, String> parameters = ImmutableMap.of(
+                "clientId", clientId.toString(),
+                "portfolioId", portfolioId.toString(),
+                "callType", callType.name());
         return dao.getSession().queryForObject(MarginValuation.class, query, parameters);
     }
 
     @Override
     @Transactional
-    public MarginValuation getOrCreateMarginValuationFor(PortfolioId portfolioId, Types.CallType callType) {
-        MarginValuation valuation = getMarginValuationFor(portfolioId, callType);
+    public MarginValuation getOrCreateMarginValuationFor(ClientId clientId, PortfolioId portfolioId, Types.CallType callType) {
+        MarginValuation valuation = getMarginValuationFor(clientId, portfolioId, callType);
         if (valuation == null) {
             valuation = new MarginValuation();
-            Portfolio portfolio = portfolioService.find(portfolioId);
+            Portfolio portfolio = portfolioService.portfolio(clientId, portfolioId);
             valuation.setPortfolio(notNull(portfolio, "portfolio"));
             valuation.setCallType(callType);
             valuation = createOrUpdate(valuation);
@@ -104,39 +114,58 @@ public class ValuationServiceImpl extends AbstractService<Valuation, String> imp
 
     @Override
     @Transactional
-    public Long tradeValuedCount(PortfolioId portfolioId, LocalDate valuationDate) {
+    public Long tradeValuedCount(ClientId clientId, PortfolioId portfolioId, LocalDate valuationDate) {
         String query =
-                "MATCH (portfolio:Portfolio {id:{id}})<-[:BELONGS_TO]-(trade:Trade)" +
+                "MATCH (client:Client)-[:MANAGES]-(legal:LegalEntity)-[]-(a:Agreement)<-[:FOLLOWS]-" +
+                "(portfolio:Portfolio)<-[:BELONGS_TO]-(trade:Trade)" +
                 "<-[:VALUATED]-(valuation:TradeValuation)-[:VALUE]->(value:TradeValue) " +
-                "WHERE value.valuationDate = {valDateStr} " +
+                "WHERE client.id = {clientId} " +
+                "AND portfolio.id = {portfolioId}" +
+                "AND value.valuationDate = {valDateStr} " +
                 "WITH DISTINCT trade " +
                 "RETURN count(trade)";
         final String valDateStr = new LocalDateConverter().toGraphProperty(valuationDate);
-        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", portfolioId.toString(),
+        final ImmutableMap<String, String> parameters = ImmutableMap.of(
+                "clientId", clientId.toString(),
+                "portfolioId", portfolioId.toString(),
                 "valDateStr", valDateStr);
         return dao.getSession().queryForObject(Long.class, query, parameters);
     }
 
     @Override
     @Transactional
-    public Long tradeNotValuedCount(PortfolioId portfolioId, LocalDate valuationDate) {
+    public Long tradeNotValuedCount(ClientId clientId, PortfolioId portfolioId, LocalDate valuationDate) {
         String query =
-                "MATCH (portfolio:Portfolio {id:{id}})<-[:BELONGS_TO]-(trade:Trade)-[:ENCOUNTERS]-(error:ServiceError) " +
-                "WHERE error.valuationDate = {valDateStr}" +
+                "MATCH (client:Client)-[:MANAGES]-(legal:LegalEntity)-[]-(a:Agreement)<-[:FOLLOWS]-" +
+                "(portfolio:Portfolio)<-[:BELONGS_TO]-(trade:Trade)-[:ENCOUNTERS]-(error:ServiceError) " +
+                "WHERE client.id = {clientId} " +
+                "AND portfolio.id = {portfolioId}" +
+                "AND error.valuationDate = {valDateStr}" +
                 "WITH DISTINCT trade " +
                 "RETURN count(trade)";
         final String valDateStr = new LocalDateConverter().toGraphProperty(valuationDate);
-        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", portfolioId.toString(), "valDateStr", valDateStr);
+        final ImmutableMap<String, String> parameters = ImmutableMap.of(
+                "clientId", clientId.toString(),
+                "portfolioId", portfolioId.toString(),
+                "valDateStr", valDateStr);
         return dao.getSession().queryForObject(Long.class, query, parameters);
     }
 
     @Override
     @Transactional
-    public boolean isTradeValuated(TradeId tradeId, LocalDate valuationDate) {
-        String query =
-                "MATCH (value:TradeValue {valuationDate:{date}})<-[:VALUE]-(valuation:TradeValuation)-[:VALUATED]->(trade:Trade {id:{id}})" +
-                "RETURN value";
-        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", tradeId.toString(),
+    public boolean isTradeValuated(ClientId clientId, TradeId tradeId, LocalDate valuationDate) {
+        String query =  "MATCH (client:Client) " +
+                        "-[:MANAGES]-> (:LegalEntity) " +
+                        "-[:HAS]-> (:TradingAccount) " +
+                        "-[:POSITIONS_ON]-> (trade:Trade) " +
+                        "WHERE client.id = {clientId} " +
+                        "AND trade.id = {tradeId}" +
+                        "WITH trade " +
+                        "MATCH (value:TradeValue {valuationDate:{date}})<-[:VALUE]-(:TradeValuation)-[:VALUATED]->(trade)" +
+                        "RETURN value";
+        final ImmutableMap<String, String> parameters = ImmutableMap.of(
+                "clientId", clientId.toString(),
+                "tradeId", tradeId.toString(),
                 "date", new LocalDateConverter().toGraphProperty(valuationDate));
         Iterable<TradeValue> values = dao.getSession().query(TradeValue.class, query, parameters);
         return values != null && !Iterables.isEmpty(values);
@@ -144,11 +173,19 @@ public class ValuationServiceImpl extends AbstractService<Valuation, String> imp
 
     @Override
     @Transactional
-    public boolean isPortfolioValuated(PortfolioId portfolioId, Types.CallType callType, LocalDate valuationDate) {
+    public boolean isPortfolioValuated(ClientId clientId, PortfolioId portfolioId, Types.CallType callType, LocalDate valuationDate) {
         String query =
-                "MATCH (value:MarginValue {valuationDate:{date}})<-[:VALUE]-(valuation:MarginValuation {callType:{callType}})-[:VALUATED]->(portfolio:Portfolio {id:{id}})" +
+                "MATCH (client:Client)-[:MANAGES]-(legal:LegalEntity)-[]-(a:Agreement)<-[:FOLLOWS]-(portfolio:Portfolio) " +
+                "WHERE client.id = {clientId} " +
+                "AND portfolio.id = {portfolioId}" +
+                "WITH portfolio " +
+                "MATCH (portfolio)<-[:VALUATED]-(valuation:MarginValuation)-[:VALUE]->(value:MarginValue) " +
+                "WHERE valuation.callType = {callType} " +
+                "AND value.valuationDate = {date} " +
                 "RETURN value";
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", portfolioId.toString(),
+                "clientId", clientId.toString(),
+                "portfolioId", portfolioId.toString(),
                 "callType", callType.name(),
                 "date", new LocalDateConverter().toGraphProperty(valuationDate));
         Iterable<MarginValue> values = dao.getSession().query(MarginValue.class, query, parameters);

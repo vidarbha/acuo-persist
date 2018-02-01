@@ -5,7 +5,7 @@ import com.acuo.persist.entity.Portfolio;
 import com.acuo.common.ids.PortfolioId;
 import com.acuo.common.ids.TradeId;
 
-public interface PortfolioService extends Service<Portfolio, PortfolioId> {
+public interface PortfolioService extends Service<Portfolio, Long> {
 
     Portfolio findBy(TradeId tradeId);
 

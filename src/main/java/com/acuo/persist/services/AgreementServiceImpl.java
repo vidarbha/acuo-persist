@@ -1,5 +1,6 @@
 package com.acuo.persist.services;
 
+import com.acuo.common.ids.ClientId;
 import com.acuo.common.ids.PortfolioId;
 import com.acuo.common.ids.TradeId;
 import com.acuo.persist.entity.Agreement;
@@ -33,26 +34,32 @@ public class AgreementServiceImpl extends AbstractService<Agreement, String> imp
 
     @Override
     @Transactional
-    public Agreement agreementFor(PortfolioId portfolioId) {
+    public Agreement agreementFor(ClientId clientId, PortfolioId portfolioId) {
         String query =
-                "MATCH p=(:Firm)-[:MANAGES]->(legal:LegalEntity)-[]->(agreement:Agreement)" +
-                "<-[:FOLLOWS]-(portfolio:Portfolio {id:{id}}) " +
-                "RETURN p";
-        final String pId = portfolioId.toString();
-        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", pId);
+            "MATCH (client:Client)-[:MANAGES]->(legal:LegalEntity)-[]->(agreement:Agreement)<-[:FOLLOWS]-(portfolio:Portfolio) " +
+            "WHERE client.id = {clientId} AND portfolio.id = {portfolioId} " +
+            "WITH portfolio " +
+            "MATCH p=(:Firm)-[:MANAGES]->(:LegalEntity)-[]->(:Agreement)<-[:FOLLOWS]-(portfolio) " +
+            "RETURN p";
+        final ImmutableMap<String, String> parameters = ImmutableMap.of(
+                "clientId", clientId.toString(),
+                "portfolioId", portfolioId.toString());
         return dao.getSession().queryForObject(getEntityType(), query, parameters);
     }
 
     @Override
     @Transactional
-    public Agreement agreementFor(TradeId tradeId) {
+    public Agreement agreementFor(ClientId clientId, TradeId tradeId) {
         String query =
-                "MATCH p=(:Firm)-[:MANAGES]->(legal:LegalEntity)-[]->(agreement:Agreement)" +
-                "<-[:FOLLOWS]-(portfolio:Portfolio)" +
-                "<-[BELONGS_TO]-(trade:Trade {id:{id}}) " +
-                "RETURN p";
-        final String id = tradeId.toString();
-        final ImmutableMap<String, String> parameters = ImmutableMap.of("id", id);
+           "MATCH (client:Client)-[:MANAGES]->(legal:LegalEntity)-[]->(agreement:Agreement)<-[:FOLLOWS]-(portfolio:Portfolio)" +
+           "<-[BELONGS_TO]-(trade:Trade) " +
+           "WHERE client.id = {clientId} AND trade.id = {tradeId} " +
+           "WITH portfolio " +
+           "MATCH p=(:Firm)-[:MANAGES]->(:LegalEntity)-[]->(:Agreement)<-[:FOLLOWS]-(portfolio) " +
+           "RETURN p";
+        final ImmutableMap<String, String> parameters = ImmutableMap.of(
+                "clientId", clientId.toString(),
+                "tradeId", tradeId.toString());
         return dao.getSession().queryForObject(getEntityType(), query, parameters);
     }
 }

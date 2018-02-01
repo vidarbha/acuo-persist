@@ -1,5 +1,6 @@
 package com.acuo.persist.services;
 
+import com.acuo.common.ids.ClientId;
 import com.acuo.common.ids.TradeId;
 import com.acuo.common.util.GuiceJUnitRunner;
 import com.acuo.persist.core.ImportService;
@@ -29,20 +30,25 @@ public class TradeServiceImplTest {
     private ImportService importService = null;
 
     @Inject
+    private TradingAccountService accountService = null;
+
+    @Inject
     private TradeService<FRA> fraTradeService = null;
 
+    private ClientId client999 = ClientId.fromString("999");
+
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         importService.reload();
     }
 
     @Test
-    public void testCreateAndUpdateTradeAndAvoidCreatingMultipleLegsOW754() throws Exception {
+    public void testCreateAndUpdateTradeAndAvoidCreatingMultipleLegsOW754() {
 
-        fraTradeService.createOrUpdate(ImmutableSet.of(createFRA()));
-        fraTradeService.createOrUpdate(ImmutableSet.of(createFRA()));
+        fraTradeService.createOrUpdate(client999, ImmutableSet.of(createFRA()));
+        fraTradeService.createOrUpdate(client999, ImmutableSet.of(createFRA()));
 
-        FRA fra = fraTradeService.find(TradeId.fromString("fra"));
+        FRA fra = fraTradeService.findTradeBy(client999, TradeId.fromString("fra"));
         assertThat(fra.getPayLegs()).hasSize(1);
         assertThat(fra.getReceiveLegs()).hasSize(1);
     }
@@ -56,6 +62,7 @@ public class TradeServiceImplTest {
         receiveLeg.setLegId("2");
         fra.setPayLegs(ImmutableSet.of(payLeg));
         fra.setReceiveLegs(ImmutableSet.of(receiveLeg));
+        fra.setAccount(accountService.account(client999, "ACUOSG8745"));
         return fra;
     }
 
