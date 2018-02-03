@@ -5,7 +5,7 @@ import com.acuo.common.model.results.AssetSettlementDate
 import com.acuo.persist.entity.Settlement
 import com.acuo.persist.modules.BuildersFactoryModule
 import com.acuo.persist.modules.ConfigurationTestModule
-import com.acuo.persist.modules.ImportServiceModule
+import com.acuo.persist.modules.ImportTestServiceModule
 import com.acuo.persist.modules.InProcessNeo4jServerModule
 import com.acuo.persist.utils.EntityStoreFixture
 import spock.guice.UseModules
@@ -17,7 +17,7 @@ import java.time.LocalDate
 @UseModules([
         ConfigurationTestModule,
         InProcessNeo4jServerModule,
-        ImportServiceModule,
+        ImportTestServiceModule,
         BuildersFactoryModule
 ])
 class SettlementServiceImplSpec extends Specification {

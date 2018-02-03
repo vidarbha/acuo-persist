@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
+import java.util.Arrays;
 
 @Slf4j
 @Singleton
@@ -19,15 +20,36 @@ public class ImportService {
         this.importer = importer;
     }
 
+    public void createConstraints() {
+        log.info("create constraints");
+        importer.createConstraints("develop");
+    }
+
     public void reload() {
         deleteAll();
-        DataFiles dataFiles = DataFiles.builder().client("ACUO").build();
-        reload(dataFiles);
+        createConstraints();
+        reload("ACUO", "Reuters", "Palo");
     }
 
     public void load(String fileName) {
-        DataFiles dataFiles = DataFiles.builder().client("ACUO").fileName(fileName).build();
-        load(dataFiles);
+        load("ACUO", fileName);
+    }
+
+    public void reload(String... clients) {
+        Arrays.stream(clients).forEach(client -> {
+                DataFiles dataFiles = DataFiles.builder().client(client).build();
+                reload(dataFiles);
+            }
+        );
+    }
+
+    public void load(String client, String... fileNames) {
+        final DataFiles.DataFilesBuilder builder = DataFiles.builder().client(client);
+        Arrays.stream(fileNames).forEach(file -> {
+                DataFiles dataFiles = builder.fileName(file).build();
+                load(dataFiles);
+            }
+        );
     }
 
     public void load(DataFiles dataFiles) {

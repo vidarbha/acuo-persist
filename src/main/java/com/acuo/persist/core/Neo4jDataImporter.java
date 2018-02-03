@@ -6,27 +6,27 @@ import com.acuo.common.cache.manager.CachedObject;
 import com.acuo.persist.configuration.PropertiesHelper;
 import com.acuo.persist.utils.GraphData;
 import com.google.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import static com.acuo.common.util.ArgChecker.notNull;
 
+@Slf4j
 @Singleton
 public class Neo4jDataImporter implements DataImporter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Neo4jDataImporter.class);
+    public static final String CONSTRAINTS_CQL = "constraints.cql";
+
     private static CacheManager cacheManager = new CacheManager();
 
     private final DataLoader loader;
@@ -51,18 +51,30 @@ public class Neo4jDataImporter implements DataImporter {
         this.dataImportFiles = dataImportFiles;
         substitutions.put("%workingDirPath%", workingDirPath);
         substitutions.put("%dataImportLink%", dataDirPath);
-        LOG.info("data importer created with working [{}] branch [{}] data [{}] template [{}]", workingDirPath,
+        log.info("data importer created with working [{}] branch [{}] data [{}] template [{}]", workingDirPath,
                 dataBranch,
                 dataDirPath,
                 directoryTemplate);
     }
 
     @Override
+    public void createConstraints(String branch) {
+        loadDataFile(branch, CONSTRAINTS_CQL);
+    }
+
+    private void loadDataFile(String branch, String fileName) {
+        String filePath = String.format("%s/cypher/%s", workingDirPath, fileName);
+        substitutions.put("%branch%", branch);
+        filePath = buildQuery(filePath, substitutions);
+        CypherFileSpliter spliter = CypherFileSpliter.of(filePath);
+        spliter.splitByDefaultDelimiter(filePath).forEach(loader::loadData);
+    }
+
+    @Override
     public void importFiles(String branch, String client, String... fileNames) {
         if (branch == null)
             branch = dataBranch;
-        final String value = branch;
-        Arrays.stream(fileNames).forEach(f -> importFile(value, client, f));
+        importFile(branch, client, fileNames);
     }
 
     @Override
@@ -74,34 +86,44 @@ public class Neo4jDataImporter implements DataImporter {
                 .toArray(String[]::new);
     }
 
-    private void importFile(String branch, String client, String fileName) {
-        try {
-            substitutions.put("%branch%", branch);
-            substitutions.put("%client%", client);
-            String filePath = String.format(directoryTemplate, workingDirPath, fileName);
-            filePath = buildQuery(filePath, substitutions);
-            LOG.info("Importing client [{}] files [{}] from {}", client, fileName, filePath);
-            String query = file(client, filePath);
-            loader.loadData(query);
-        } catch (Exception e) {
-            LOG.error("an error occured while importing client [{}] file {}", client, fileName, e);
-        }
+    private void importFile(String branch, String client, String... fileNames) {
+        long start = System.nanoTime();
+        substitutions.put("%branch%", branch);
+        substitutions.put("%client%", client);
+        final String[] queries = Arrays.stream(fileNames)
+                .parallel()
+                .map(fileName -> {
+                    String filePath = String.format(directoryTemplate, workingDirPath, fileName);
+                    filePath = buildQuery(filePath, substitutions);
+                    log.info("Importing client [{}] files [{}] from {}", client, fileName, filePath);
+                    return file(client, filePath);
+                })
+                .filter(query -> !query.isEmpty())
+                .toArray(String[]::new);
+        loader.loadData(queries);
+        long end = System.nanoTime();
+        log.info("total execution time {} in seconds", TimeUnit.NANOSECONDS.toSeconds(end - start));
     }
 
-    private String file(String client, String filePath) throws IOException, URISyntaxException {
-        Cacheable value = cacheManager.getCache(client + filePath);
-        if (value == null) {
-            String file = GraphData.readFile(filePath);
-            file = buildQuery(file, substitutions);
-            value = new CachedObject(file, client + filePath, 3);
-            cacheManager.putCache(value);
+    private String file(String client, String filePath) {
+        try {
+            Cacheable value = cacheManager.getCache(client + filePath);
+            if (value == null) {
+                String file = GraphData.readFile(filePath);
+                file = buildQuery(file, substitutions);
+                value = new CachedObject(file, client + filePath, 3);
+                cacheManager.putCache(value);
+            }
+            return (String) value.getObject();
+        } catch (Exception e) {
+            log.error("an error occured while importing client [{}] file {}", client, filePath, e);
+            return "";
         }
-        return (String)value.getObject();
     }
 
     private String buildQuery(String file, Map<String, String> substitutions) {
         String query = replacePlaceHolders(notNull(file, "file"), substitutions.entrySet());
-        LOG.debug("{}", query);
+        log.debug("{}", query);
         return query;
     }
 

@@ -15,7 +15,7 @@ import java.util.Set;
 public class Firm extends Entity<Firm> {
 
     @Property(name="id")
-    @Index(primary = true)
+    @Index(unique = true)
     private String firmId;
 
     private String name;

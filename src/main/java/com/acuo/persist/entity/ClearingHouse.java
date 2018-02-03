@@ -12,7 +12,7 @@ import org.neo4j.ogm.annotation.Property;
 public class ClearingHouse extends Entity<ClearingHouse> {
 
     @Property(name = "id")
-    @Index(primary = true)
+    @Index(unique = true)
     private String clearingHouseId;
     private String name;
     private String shortName;

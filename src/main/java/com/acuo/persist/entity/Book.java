@@ -17,7 +17,7 @@ import static com.acuo.persist.neo4j.converters.TypedStringConverter.BookIdConve
 public class Book extends Entity<Book> {
 
     @Property(name = "id")
-    @Index(primary = true)
+    @Index(unique = true)
     @Convert(BookIdConverter.class)
     private BookId bookId;
 

@@ -62,7 +62,7 @@ public class Agreement extends Entity<Agreement> {
     }
 
     @Property(name="id")
-    @Index(primary = true)
+    @Index(unique = true)
     private String agreementId;
 
     private String ampId;

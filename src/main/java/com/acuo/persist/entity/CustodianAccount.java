@@ -19,7 +19,7 @@ import static org.neo4j.ogm.annotation.Relationship.INCOMING;
 public class CustodianAccount extends Entity<CustodianAccount> {
 
     @Property(name = "id")
-    @Index(primary = true)
+    @Index(unique = true)
     private String accountId;
     private String name;
     private String region;

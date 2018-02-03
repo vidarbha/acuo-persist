@@ -38,7 +38,7 @@ import static com.acuo.common.util.ArithmeticUtils.addition;
 public class MarginStatement extends Entity<MarginStatement> {
 
     @Property(name = "id")
-    @Index(primary = true)
+    @Index(unique = true)
     private String statementId;
 
     @Convert(LocalDateConverter.class)

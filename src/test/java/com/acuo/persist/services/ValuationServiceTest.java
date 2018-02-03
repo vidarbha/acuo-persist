@@ -15,7 +15,7 @@ import com.acuo.persist.entity.MarginValue;
 import com.acuo.persist.entity.TradeValuation;
 import com.acuo.persist.entity.TradeValue;
 import com.acuo.persist.modules.ConfigurationTestModule;
-import com.acuo.persist.modules.ImportServiceModule;
+import com.acuo.persist.modules.ImportTestServiceModule;
 import com.acuo.persist.modules.InProcessNeo4jServerModule;
 import com.opengamma.strata.basics.currency.Currency;
 import org.junit.Before;
@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @GuiceJUnitRunner.GuiceModules({
         ConfigurationTestModule.class,
         InProcessNeo4jServerModule.class,
-        ImportServiceModule.class
+        ImportTestServiceModule.class
 })
 public class ValuationServiceTest {
 

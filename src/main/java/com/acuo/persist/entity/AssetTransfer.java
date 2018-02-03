@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 public class AssetTransfer extends Entity<AssetTransfer> {
 
     @Property(name = "id")
-    @Index(primary = true)
+    @Index(unique = true)
     private String assertTransferId;
 
     private Double quantity;

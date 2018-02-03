@@ -4,7 +4,7 @@ import com.acuo.common.ids.AssetId
 import com.acuo.common.ids.ClientId
 import com.acuo.persist.modules.BuildersFactoryModule
 import com.acuo.persist.modules.ConfigurationTestModule
-import com.acuo.persist.modules.ImportServiceModule
+import com.acuo.persist.modules.ImportTestServiceModule
 import com.acuo.persist.modules.InProcessNeo4jServerModule
 import com.acuo.persist.utils.EntityStoreFixture
 import org.neo4j.ogm.model.Result
@@ -17,7 +17,7 @@ import javax.inject.Inject
 @UseModules([
         ConfigurationTestModule,
         InProcessNeo4jServerModule,
-        ImportServiceModule,
+        ImportTestServiceModule,
         BuildersFactoryModule
 ])
 class AssetServiceImplSpec extends Specification {

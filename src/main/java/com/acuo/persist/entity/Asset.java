@@ -66,7 +66,7 @@ public class Asset extends Entity<Asset> {
     }
 
     @Property(name = "id")
-    @Index(primary = true)
+    @Index(unique = true)
     @Convert(AssetIdConverter.class)
     private AssetId assetId;
 

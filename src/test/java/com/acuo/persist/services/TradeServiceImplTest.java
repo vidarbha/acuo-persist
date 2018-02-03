@@ -7,12 +7,13 @@ import com.acuo.persist.core.ImportService;
 import com.acuo.persist.entity.trades.FRA;
 import com.acuo.persist.entity.trades.Leg;
 import com.acuo.persist.modules.ConfigurationTestModule;
-import com.acuo.persist.modules.ImportServiceModule;
+import com.acuo.persist.modules.ImportTestServiceModule;
 import com.acuo.persist.modules.InProcessNeo4jServerModule;
 import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.neo4j.harness.ServerControls;
 
 import javax.inject.Inject;
 
@@ -22,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @GuiceJUnitRunner.GuiceModules({
         ConfigurationTestModule.class,
         InProcessNeo4jServerModule.class,
-        ImportServiceModule.class
+        ImportTestServiceModule.class
 })
 public class TradeServiceImplTest {
 
@@ -34,6 +35,9 @@ public class TradeServiceImplTest {
 
     @Inject
     private TradeService<FRA> fraTradeService = null;
+
+    @Inject
+    private ServerControls controls = null;
 
     private ClientId client999 = ClientId.fromString("999");
 

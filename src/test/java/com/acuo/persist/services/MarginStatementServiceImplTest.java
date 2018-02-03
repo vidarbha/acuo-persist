@@ -13,7 +13,7 @@ import com.acuo.persist.entity.VariationMargin;
 import com.acuo.persist.entity.enums.Side;
 import com.acuo.persist.entity.enums.StatementStatus;
 import com.acuo.persist.modules.ConfigurationTestModule;
-import com.acuo.persist.modules.ImportServiceModule;
+import com.acuo.persist.modules.ImportTestServiceModule;
 import com.acuo.persist.modules.InProcessNeo4jServerModule;
 import com.opengamma.strata.basics.currency.Currency;
 import org.assertj.core.api.AbstractObjectAssert;
@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @GuiceJUnitRunner.GuiceModules({
         ConfigurationTestModule.class,
         InProcessNeo4jServerModule.class,
-        ImportServiceModule.class
+        ImportTestServiceModule.class
 })
 @Ignore
 public class MarginStatementServiceImplTest {

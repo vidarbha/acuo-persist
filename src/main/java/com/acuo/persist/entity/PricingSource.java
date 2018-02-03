@@ -11,7 +11,7 @@ import org.neo4j.ogm.annotation.NodeEntity;
 @EqualsAndHashCode(callSuper = false)
 public class PricingSource extends Entity<PricingSource> {
 
-    @Index(primary = true)
+    @Index(unique = true)
     private PricingProvider name;
 
 }

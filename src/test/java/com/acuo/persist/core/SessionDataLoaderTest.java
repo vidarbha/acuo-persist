@@ -33,7 +33,7 @@ public class SessionDataLoaderTest {
 
 		when(sessionProvider.get()).thenReturn(session);
 
-		loader = new SessionDataLoader(sessionProvider, "graph-data");
+		loader = new SessionDataLoader(sessionProvider);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -47,7 +47,7 @@ public class SessionDataLoaderTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testLoadDataWithNullQuery() {
-		loader.loadData(null);
+		loader.loadData((String) null);
 
 		verify(session, times(0)).query(anyString(), anyMap());
 	}
@@ -67,12 +67,12 @@ public class SessionDataLoaderTest {
 		verify(session, times(1)).purgeDatabase();
 	}
 
-	@SuppressWarnings("unchecked")
+	/*@SuppressWarnings("unchecked")
 	@Test
 	public void testCreateConstraints() {
 		loader.createConstraints();
 
 		verify(session, times(0)).query(anyString(), anyMap());
-	}
+	}*/
 
 }

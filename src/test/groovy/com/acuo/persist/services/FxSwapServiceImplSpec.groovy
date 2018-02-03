@@ -10,7 +10,7 @@ import com.acuo.persist.core.ImportService
 import com.acuo.persist.entity.trades.Trade
 import com.acuo.persist.entity.trades.fx.FxSwap
 import com.acuo.persist.modules.ConfigurationTestModule
-import com.acuo.persist.modules.ImportServiceModule
+import com.acuo.persist.modules.ImportTestServiceModule
 import com.acuo.persist.modules.InProcessNeo4jServerModule
 import com.acuo.persist.modules.RepositoryModule
 import com.opengamma.strata.basics.currency.Currency
@@ -29,7 +29,7 @@ import static com.opengamma.strata.basics.date.HolidayCalendarIds.GBLO
 @UseModules([
         ConfigurationTestModule,
         InProcessNeo4jServerModule,
-        ImportServiceModule,
+        ImportTestServiceModule,
         RepositoryModule
 ])
 class FxSwapServiceImplSpec extends Specification {

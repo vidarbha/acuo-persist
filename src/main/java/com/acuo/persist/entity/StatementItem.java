@@ -27,7 +27,7 @@ import static com.acuo.common.model.margin.Types.MarginType;
 public class StatementItem<T extends StatementItem> extends Entity<T> {
 
     @Property(name = "id")
-    @Index(primary = true)
+    @Index(unique = true)
     protected String itemId;
 
     @Convert(LocalDateConverter.class)

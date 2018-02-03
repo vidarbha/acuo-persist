@@ -17,7 +17,7 @@ import java.util.Set;
 public class Settlement extends Entity<Settlement> {
 
     @Property(name = "id")
-    @Index(primary = true)
+    @Index(unique = true)
     private String settlementId;
 
     @Relationship(type = "SETTLEMENT", direction = Relationship.INCOMING)

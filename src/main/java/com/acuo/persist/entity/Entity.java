@@ -1,10 +1,12 @@
 package com.acuo.persist.entity;
 
-import org.neo4j.ogm.annotation.GraphId;
+import org.neo4j.ogm.annotation.Id;
+import org.neo4j.ogm.annotation.NodeEntity;
 
+@NodeEntity
 public abstract class Entity<T extends Entity> {
 
-    @GraphId
+    @Id
     private Long id;
 
     public Long getId() {

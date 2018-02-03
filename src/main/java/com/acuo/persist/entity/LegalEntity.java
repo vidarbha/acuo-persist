@@ -16,7 +16,7 @@ import java.util.Set;
 public class LegalEntity extends Entity<LegalEntity> {
 
     @Property(name="id")
-    @Index(primary = true)
+    @Index(unique = true)
     private String legalEntityId;
 
     private String name;

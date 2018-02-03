@@ -7,11 +7,7 @@ public interface DataLoader {
 
     void purgeDatabase();
 
-    void createConstraints();
-
     void loadData(String query);
 
-    void loadDataFile(String fileName);
-
-    void loadAll();
+    void loadData(String... queries);
 }

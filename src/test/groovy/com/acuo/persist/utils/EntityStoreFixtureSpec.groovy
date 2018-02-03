@@ -3,7 +3,7 @@ package com.acuo.persist.utils
 import com.acuo.common.ids.ClientId
 import com.acuo.persist.modules.BuildersFactoryModule
 import com.acuo.persist.modules.ConfigurationTestModule
-import com.acuo.persist.modules.ImportServiceModule
+import com.acuo.persist.modules.ImportTestServiceModule
 import com.acuo.persist.modules.InProcessNeo4jServerModule
 import com.acuo.persist.services.AssetService
 import com.acuo.persist.services.ClientService
@@ -18,7 +18,7 @@ import javax.inject.Inject
 @UseModules([
         ConfigurationTestModule,
         InProcessNeo4jServerModule,
-        ImportServiceModule,
+        ImportTestServiceModule,
         BuildersFactoryModule
 ])
 class EntityStoreFixtureSpec extends Specification {

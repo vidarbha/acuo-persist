@@ -16,7 +16,7 @@ import java.util.Set;
 public class Custodian extends Entity<Custodian> {
 
     @Property(name = "id")
-    @Index(primary = true)
+    @Index(unique = true)
     private String custodianId;
     private String country;
     private String countryShortName;

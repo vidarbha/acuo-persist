@@ -7,7 +7,7 @@ import com.acuo.persist.core.ImportService;
 import com.acuo.persist.entity.Agreement;
 import com.acuo.persist.entity.Portfolio;
 import com.acuo.persist.modules.ConfigurationTestModule;
-import com.acuo.persist.modules.ImportServiceModule;
+import com.acuo.persist.modules.ImportTestServiceModule;
 import com.acuo.persist.modules.InProcessNeo4jServerModule;
 import com.acuo.persist.modules.RepositoryModule;
 import org.junit.Before;
@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @GuiceJUnitRunner.GuiceModules({
         ConfigurationTestModule.class,
         InProcessNeo4jServerModule.class,
-        ImportServiceModule.class,
+        ImportTestServiceModule.class,
         RepositoryModule.class
 })
 public class PortfolioServiceImplTest {
