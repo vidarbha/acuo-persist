@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.neo4j.ogm.model.QueryStatistics;
 import org.neo4j.ogm.model.Result;
 import org.neo4j.ogm.session.Session;
+import org.neo4j.ogm.transaction.Transaction;
 
 import javax.inject.Inject;
 import java.util.Arrays;
@@ -34,11 +35,13 @@ public class SessionDataLoader implements DataLoader {
         if (StringUtils.isEmpty(query))
             return;
         final Result result = sessionProvider.get().query(query, Collections.emptyMap());
-        final QueryStatistics queryStatistics = result.queryStatistics();
-        log.info("results: \n\tnodes created [{}],\n\t properties set [{}], \n\trelationships created [{}]",
-                queryStatistics.getNodesCreated(),
-                queryStatistics.getPropertiesSet(),
-                queryStatistics.getRelationshipsCreated());
+        if (result != null) {
+            final QueryStatistics queryStatistics = result.queryStatistics();
+            log.info("results: \n\tnodes created [{}],\n\t properties set [{}], \n\trelationships created [{}]",
+                    queryStatistics.getNodesCreated(),
+                    queryStatistics.getPropertiesSet(),
+                    queryStatistics.getRelationshipsCreated());
+        }
     }
 
     @Transactional
@@ -50,7 +53,10 @@ public class SessionDataLoader implements DataLoader {
             if (log.isDebugEnabled()) {
                 log.debug("loading query {} ", query);
             }
-            session.query(query, Collections.emptyMap());
+            try (Transaction transaction = session.beginTransaction()) {
+                session.query(query, Collections.emptyMap());
+                transaction.commit();
+            }
         });
         log.info("queries loaded successfully", queries.length);
     }

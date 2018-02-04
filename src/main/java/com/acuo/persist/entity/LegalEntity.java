@@ -1,7 +1,10 @@
 package com.acuo.persist.entity;
 
-import lombok.*;
-import org.neo4j.ogm.annotation.Index;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
@@ -16,7 +19,7 @@ import java.util.Set;
 public class LegalEntity extends Entity<LegalEntity> {
 
     @Property(name="id")
-    @Index(unique = true)
+    @Id
     private String legalEntityId;
 
     private String name;

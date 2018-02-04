@@ -1,5 +1,6 @@
 package com.acuo.persist.entity;
 
+import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 
@@ -7,6 +8,7 @@ import org.neo4j.ogm.annotation.NodeEntity;
 public abstract class Entity<T extends Entity> {
 
     @Id
+    @GeneratedValue
     private Long id;
 
     public Long getId() {

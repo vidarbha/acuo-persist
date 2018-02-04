@@ -4,6 +4,8 @@ import com.acuo.persist.core.DataLoader;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.QueryStatistics;
+import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.harness.ServerControls;
 
@@ -35,7 +37,13 @@ public class DirectDataLoader implements DataLoader {
         if (StringUtils.isEmpty(query))
             return;
         try(Transaction tx = databaseService.beginTx()) {
-            databaseService.execute(query, Collections.emptyMap());
+            Result result = databaseService.execute(query, Collections.emptyMap());
+            QueryStatistics queryStatistics = result.getQueryStatistics();
+            log.info("query {}", query);
+            log.info("results: \n\tnodes created [{}],\n\t properties set [{}], \n\trelationships created [{}]",
+                    queryStatistics.getNodesCreated(),
+                    queryStatistics.getPropertiesSet(),
+                    queryStatistics.getRelationshipsCreated());
             tx.success();
         }
     }

@@ -48,8 +48,8 @@ public class CypherFileSpliterTest {
 	@Test
 	public void testSplitByDefaultDelimiter() {
 		CypherFileSpliter spliter = CypherFileSpliter.newBuilder(".").build();
-		
-		List<String> lines = spliter.splitByDefaultDelimiter("spliter-test-with-default-delim.txt");
+
+		List<String> lines = spliter.splitByDefaultDelimiter("file://spliter-test-with-default-delim.txt");
 		
 		assertNotNull(lines);
 		assertEquals(3, lines.size());

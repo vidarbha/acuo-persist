@@ -6,8 +6,6 @@ import lombok.ToString;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
-import static org.neo4j.ogm.annotation.Relationship.INCOMING;
-
 @NodeEntity
 @Data
 @EqualsAndHashCode(callSuper = true, exclude = {"collateral"})

@@ -27,8 +27,8 @@ public class ImportService {
 
     public void reload() {
         deleteAll();
-        createConstraints();
-        reload("ACUO", "Reuters", "Palo");
+        //createConstraints();
+        reload("ACUO"/*, "Reuters", "Palo"*/);
     }
 
     public void load(String fileName) {
