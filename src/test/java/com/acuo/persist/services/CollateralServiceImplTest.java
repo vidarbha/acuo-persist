@@ -5,7 +5,7 @@ import com.acuo.common.ids.MarginStatementId;
 import com.acuo.common.ids.PortfolioId;
 import com.acuo.common.model.margin.Types;
 import com.acuo.common.util.GuiceJUnitRunner;
-import com.acuo.persist.core.ImportService;
+import com.acuo.persist.core.DataImporter;
 import com.acuo.persist.entity.Agreement;
 import com.acuo.persist.entity.Asset;
 import com.acuo.persist.entity.AssetTransfer;
@@ -44,7 +44,7 @@ import static org.mockito.Mockito.when;
 public class CollateralServiceImplTest {
 
     @Inject
-    private ImportService importService = null;
+    private DataImporter importService = null;
 
     @Inject
     private AgreementService agreementService = null;

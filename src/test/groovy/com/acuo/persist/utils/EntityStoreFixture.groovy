@@ -4,7 +4,7 @@ import com.acuo.common.ids.AssetId
 import com.acuo.common.model.margin.Types
 import com.acuo.common.util.LocalDateUtils
 import com.acuo.persist.builders.FactoryBuilder
-import com.acuo.persist.core.ImportService
+import com.acuo.persist.core.DataImporter
 import com.acuo.persist.entity.enums.Side
 import com.acuo.persist.entity.enums.StatementDirection
 import com.acuo.persist.entity.enums.StatementStatus
@@ -21,10 +21,10 @@ import static com.acuo.common.model.margin.Types.MarginType
 class EntityStoreFixture {
 
     final FactoryBuilder builder
-    final ImportService importService
+    final DataImporter importService
 
     @Inject
-    EntityStoreFixture(FactoryBuilder builder, ImportService importService){
+    EntityStoreFixture(FactoryBuilder builder, DataImporter importService){
         this.builder = builder
         this.importService = importService
     }

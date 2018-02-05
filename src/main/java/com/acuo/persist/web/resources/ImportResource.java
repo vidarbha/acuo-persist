@@ -1,6 +1,6 @@
 package com.acuo.persist.web.resources;
 
-import com.acuo.persist.core.ImportService;
+import com.acuo.persist.core.DataImporter;
 import com.codahale.metrics.annotation.Timed;
 
 import javax.inject.Inject;
@@ -15,10 +15,10 @@ import java.util.List;
 @Path("/import")
 public class ImportResource {
 
-    private final ImportService service;
+    private final DataImporter service;
 
     @Inject
-    public ImportResource(ImportService service) {
+    public ImportResource(DataImporter service) {
         this.service = service;
     }
 
@@ -35,11 +35,7 @@ public class ImportResource {
     @Timed
     public Response reload(@PathParam("client") String client,
                            @QueryParam("branch") String branch) {
-        ImportService.DataFiles dataFiles = ImportService.DataFiles.builder()
-                .branch(branch)
-                .client(client)
-                .build();
-        service.reload(dataFiles);
+        service.withBranch(branch).reload();
         return Response.status(Status.OK).build();
     }
 
@@ -48,13 +44,7 @@ public class ImportResource {
     @Timed
     public Response reload(@PathParam("clients") List<String> clients,
                            @QueryParam("branch") String branch) {
-        clients.stream().forEach(client -> {
-                ImportService.DataFiles dataFiles = ImportService.DataFiles.builder()
-                .branch(branch)
-                .client(client)
-                .build();
-                service.reload(dataFiles);
-        });
+        service.withBranch(branch).reload(clients.toArray(new String[0]));
         return Response.status(Status.OK).build();
     }
 
@@ -64,11 +54,7 @@ public class ImportResource {
     public Response load(@PathParam("client") String client,
                          @QueryParam("branch") String branch,
                          @QueryParam("file") String fileName) {
-        ImportService.DataFiles dataFiles = ImportService.DataFiles.builder()
-                .branch(branch)
-                .fileName(fileName)
-                .build();
-        service.load(dataFiles);
+        service.withBranch(branch).load(client, fileName);
         return Response.status(Status.OK).build();
     }
 }

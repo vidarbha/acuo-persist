@@ -3,7 +3,7 @@ package com.acuo.persist.services;
 import com.acuo.common.ids.AssetId;
 import com.acuo.common.ids.ClientId;
 import com.acuo.common.util.GuiceJUnitRunner;
-import com.acuo.persist.core.ImportService;
+import com.acuo.persist.core.DataImporter;
 import com.acuo.persist.entity.Asset;
 import com.acuo.persist.modules.ConfigurationTestModule;
 import com.acuo.persist.modules.ImportTestServiceModule;
@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AssetServiceImplTest {
 
     @Inject
-    private ImportService importService = null;
+    private DataImporter importService = null;
 
     @Inject
     private AssetService assetService = null;

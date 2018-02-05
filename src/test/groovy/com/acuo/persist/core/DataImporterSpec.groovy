@@ -12,7 +12,7 @@ class DataImporterSpec extends Specification {
 	void setup() {
 		MockitoAnnotations.initMocks(this)
 
-		importer = new Neo4jDataImporter(loader, "graph-data", "develop", "","file1, file2", "%s/cypher/%s.load")
+		importer = new Neo4jDataImporter(loader, "graph-data", "develop", "","file1, file2", "%s/cypher/%s.load", "ACUO")
 	}
 
 	void "load client data file"() {
@@ -20,7 +20,7 @@ class DataImporterSpec extends Specification {
 		def regex = /LOAD CSV WITH HEADERS FROM.*AS line.*/
 
 		when:
-		importer.importFiles(null, "ACUO", "clients")
+		importer.load("ACUO", "clients")
 
 		then:
 		1 * loader.loadData(_ as String[]) >> { arguments ->
@@ -30,14 +30,5 @@ class DataImporterSpec extends Specification {
 				}
 			}
 		}
-	}
-
-	void "getting files to import"() {
-		given:
-		final String[] values = importer.filesToImport()
-
-		expect:
-		values != null
-		values.size() == 2
 	}
 }

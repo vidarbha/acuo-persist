@@ -6,7 +6,7 @@ import com.acuo.common.model.BusinessDayAdjustment
 import com.acuo.common.model.product.fx.FxSingle
 import com.acuo.common.model.trade.FxSwapTrade
 import com.acuo.common.model.trade.TradeInfo
-import com.acuo.persist.core.ImportService
+import com.acuo.persist.core.DataImporter
 import com.acuo.persist.entity.trades.Trade
 import com.acuo.persist.entity.trades.fx.FxSwap
 import com.acuo.persist.modules.ConfigurationTestModule
@@ -35,7 +35,7 @@ import static com.opengamma.strata.basics.date.HolidayCalendarIds.GBLO
 class FxSwapServiceImplSpec extends Specification {
 
     @Inject
-    ImportService importService
+    DataImporter importService
 
     @Inject
     TradingAccountService accountService

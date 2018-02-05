@@ -2,7 +2,7 @@ package com.acuo.persist.services;
 
 import com.acuo.common.ids.AssetId;
 import com.acuo.common.util.GuiceJUnitRunner;
-import com.acuo.persist.core.ImportService;
+import com.acuo.persist.core.DataImporter;
 import com.acuo.persist.entity.Asset;
 import com.acuo.persist.entity.AssetPledge;
 import com.acuo.persist.entity.AssetTransfer;
@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 public class AssetPledgeServiceImplTest {
 
     @Inject
-    private ImportService importService = null;
+    private DataImporter importService = null;
 
     @Inject
     private AssetPledgeService assetPledgeService = null;

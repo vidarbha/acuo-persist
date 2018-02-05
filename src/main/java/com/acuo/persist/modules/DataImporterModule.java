@@ -12,6 +12,7 @@ class DataImporterModule extends AbstractModule {
 
         install(new DataLoaderModule());
 
+        //bind(ImportService.class).to(Neo4jDataImporter.class).in(Singleton.class);
         bind(DataImporter.class).to(Neo4jDataImporter.class).in(Singleton.class);
     }
 }

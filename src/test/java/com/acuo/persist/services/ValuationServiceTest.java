@@ -6,14 +6,14 @@ import com.acuo.common.ids.PortfolioId;
 import com.acuo.common.ids.TradeId;
 import com.acuo.common.model.margin.Types;
 import com.acuo.common.util.GuiceJUnitRunner;
-import com.acuo.persist.core.ImportService;
+import com.acuo.persist.core.DataImporter;
 import com.acuo.persist.entity.AssetValuation;
 import com.acuo.persist.entity.AssetValue;
-import com.acuo.persist.entity.trades.IRS;
 import com.acuo.persist.entity.MarginValuation;
 import com.acuo.persist.entity.MarginValue;
 import com.acuo.persist.entity.TradeValuation;
 import com.acuo.persist.entity.TradeValue;
+import com.acuo.persist.entity.trades.IRS;
 import com.acuo.persist.modules.ConfigurationTestModule;
 import com.acuo.persist.modules.ImportTestServiceModule;
 import com.acuo.persist.modules.InProcessNeo4jServerModule;
@@ -38,7 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ValuationServiceTest {
 
     @Inject
-    private ImportService importService = null;
+    private DataImporter importService = null;
 
     @Inject
     private ValuationService valuationService = null;

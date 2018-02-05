@@ -4,7 +4,7 @@ import com.acuo.common.ids.ClientId;
 import com.acuo.common.ids.MarginStatementId;
 import com.acuo.common.ids.PortfolioId;
 import com.acuo.common.util.GuiceJUnitRunner;
-import com.acuo.persist.core.ImportService;
+import com.acuo.persist.core.DataImporter;
 import com.acuo.persist.entity.Agreement;
 import com.acuo.persist.entity.MarginStatement;
 import com.acuo.persist.entity.StatementItem;
@@ -38,7 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MarginStatementServiceImplTest {
 
     @Inject
-    private ImportService importService = null;
+    private DataImporter importService = null;
 
     @Inject
     private MarginStatementService marginStatementService = null;

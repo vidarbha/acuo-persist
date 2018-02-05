@@ -7,6 +7,7 @@ import com.acuo.persist.configuration.PropertiesHelper;
 import com.acuo.persist.utils.GraphData;
 import com.google.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -23,7 +24,7 @@ import static com.acuo.common.util.ArgChecker.notNull;
 
 @Slf4j
 @Singleton
-public class Neo4jDataImporter implements DataImporter {
+public class Neo4jDataImporter implements DataImporter, ImportService {
 
     public static final String CONSTRAINTS_CQL = "constraints.cql";
 
@@ -34,32 +35,111 @@ public class Neo4jDataImporter implements DataImporter {
     private final String dataBranch;
     private final String directoryTemplate;
     private final String dataImportFiles;
-    private Map<String, String> substitutions = new LinkedHashMap<>();
+    private final String[] clientsToLoad;
+    private final Map<String, String> substitutions;
 
-    @Inject
-    public Neo4jDataImporter(DataLoader loader,
-                             @Named(PropertiesHelper.ACUO_DATA_DIR) String dataDir,
-                             @Named(PropertiesHelper.ACUO_DATA_BRANCH) String dataBranch,
-                             @Named(PropertiesHelper.ACUO_DATA_IMPORT_LINK) String dataImportLink,
-                             @Named(PropertiesHelper.ACUO_DATA_IMPORT_FILES) String dataImportFiles,
-                             @Named(PropertiesHelper.ACUO_CYPHER_DIR_TEMPLATE) String directoryTemplate) {
+    private Neo4jDataImporter(DataLoader loader,
+                      String dataDir,
+                      String dataBranch,
+                      String directoryTemplate,
+                      String dataImportFiles,
+                      String[] clientsToLoad,
+                      Map<String, String> substitutions) {
         this.loader = loader;
         this.workingDirPath = dataDir;
         this.dataBranch = dataBranch;
-        String dataDirPath = GraphData.getDataLink(dataImportLink);
         this.directoryTemplate = directoryTemplate;
         this.dataImportFiles = dataImportFiles;
+        this.clientsToLoad = clientsToLoad;
+        this.substitutions = substitutions;
+        log.info("data importer created with working [{}], branch [{}], template [{}], substitutions [{}] for clients [{}]",
+                workingDirPath,
+                dataBranch,
+                directoryTemplate,
+                substitutions,
+                clientsToLoad
+        );
+    }
+
+    @Inject
+    public Neo4jDataImporter(DataLoader loader,
+                             @Named(PropertiesHelper.ACUO_DATA_DIR) String workingDirPath,
+                             @Named(PropertiesHelper.ACUO_DATA_BRANCH) String dataBranch,
+                             @Named(PropertiesHelper.ACUO_DATA_IMPORT_LINK) String dataImportLink,
+                             @Named(PropertiesHelper.ACUO_DATA_IMPORT_FILES) String dataImportFiles,
+                             @Named(PropertiesHelper.ACUO_CYPHER_DIR_TEMPLATE) String directoryTemplate,
+                             @Named(PropertiesHelper.ACUO_DATA_CLIENTS_TO_LOAD) String clientsToLoad) {
+        this(loader, workingDirPath, dataBranch, directoryTemplate, dataImportFiles, clientsToLoad.split(","),
+                substitutions(workingDirPath, dataImportLink));
+    }
+
+    private static Map<String, String> substitutions(String workingDirPath, String dataImportLink) {
+        String dataDirPath = GraphData.getDataLink(dataImportLink);
+        Map<String, String> substitutions = new LinkedHashMap<>();
         substitutions.put("%workingDirPath%", workingDirPath);
         substitutions.put("%dataImportLink%", dataDirPath);
-        log.info("data importer created with working [{}] branch [{}] data [{}] template [{}]", workingDirPath,
-                dataBranch,
-                dataDirPath,
-                directoryTemplate);
+        return substitutions;
+    }
+
+    public DataImporter withBranch(String branch) {
+        if (StringUtils.isEmpty(branch)) {
+            return this;
+        } else {
+            return new Neo4jDataImporter(loader, workingDirPath, branch, directoryTemplate, dataImportFiles, clientsToLoad,
+                    substitutions);
+        }
     }
 
     @Override
-    public void createConstraints(String branch) {
-        loadDataFile(branch, CONSTRAINTS_CQL);
+    public void reload() {
+        deleteAll();
+        DataItem dataItem = DataItem.builder()
+                .clients(clientsToLoad)
+                .branch(dataBranch)
+                .fileNames(filesToImport())
+                .build();
+        importFiles(dataItem);
+    }
+
+    @Override
+    public void reload(String... clients) {
+        DataItem dataItem = DataItem.builder()
+                .clients(clients)
+                .branch(dataBranch)
+                .fileNames(filesToImport())
+                .build();
+        importFiles(dataItem);
+    }
+
+    @Override
+    public void load(String fileName) {
+        DataItem dataItem = DataItem.builder()
+                .clients(clientsToLoad)
+                .branch(dataBranch)
+                .fileNames(new String[]{fileName})
+                .build();
+        importFiles(dataItem);
+    }
+
+    @Override
+    public void load(String client, String... fileNames) {
+        DataItem dataItem = DataItem.builder()
+                .clients(new String[]{client})
+                .branch(dataBranch)
+                .fileNames(fileNames)
+                .build();
+        importFiles(dataItem);
+    }
+
+    @Override
+    public void createConstraints() {
+        loadDataFile(dataBranch, CONSTRAINTS_CQL);
+    }
+
+    @Override
+    public void deleteAll() {
+        log.info("purging the database");
+        loader.purgeDatabase();
     }
 
     private void loadDataFile(String branch, String fileName) {
@@ -70,15 +150,12 @@ public class Neo4jDataImporter implements DataImporter {
         spliter.splitByDefaultDelimiter(filePath).forEach(loader::loadData);
     }
 
-    @Override
-    public void importFiles(String branch, String client, String... fileNames) {
-        if (branch == null)
-            branch = dataBranch;
-        importFile(branch, client, fileNames);
+    private void importFiles(DataItem dataItem) {
+        Arrays.stream(dataItem.clients).forEach(client ->
+                importFile(dataItem.branch, client, dataItem.fileNames));
     }
 
-    @Override
-    public String[] filesToImport() {
+    private String[] filesToImport() {
         return Pattern.compile(",")
                 .splitAsStream(dataImportFiles)
                 .filter(Objects::nonNull)
