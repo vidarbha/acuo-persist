@@ -19,6 +19,7 @@ public class PropertiesHelper {
     public static final String ACUO_CONFIG_APPID = "acuo.config.appid";
     public static final String ACUO_CONFIG_ENV = "acuo.config.env";
 
+    public static final String ACUO_DATA_CLIENTS_TO_LOAD = "acuo.data.clients.to.load";
     public static final String ACUO_DATA_DIR = "acuo.data.dir";
     public static final String ACUO_DATA_BRANCH = "acuo.data.branch";
     public static final String ACUO_DATA_IMPORT_LINK = "acuo.data.import.link";

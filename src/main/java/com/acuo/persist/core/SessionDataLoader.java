@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.neo4j.ogm.model.QueryStatistics;
 import org.neo4j.ogm.model.Result;
 import org.neo4j.ogm.session.Session;
-import org.neo4j.ogm.transaction.Transaction;
 
 import javax.inject.Inject;
 import java.util.Arrays;
@@ -32,15 +31,26 @@ public class SessionDataLoader implements DataLoader {
     @Transactional
     @Override
     public void loadData(String query) {
+        if (log.isDebugEnabled()) {
+            log.info("executing query {}", query);
+        }
         if (StringUtils.isEmpty(query))
             return;
         final Result result = sessionProvider.get().query(query, Collections.emptyMap());
-        if (result != null) {
-            final QueryStatistics queryStatistics = result.queryStatistics();
-            log.info("results: \n\tnodes created [{}],\n\t properties set [{}], \n\trelationships created [{}]",
-                    queryStatistics.getNodesCreated(),
-                    queryStatistics.getPropertiesSet(),
-                    queryStatistics.getRelationshipsCreated());
+        if (log.isDebugEnabled() && result != null) {
+            QueryStatistics statistics = result.queryStatistics();
+            log.debug("results: " +
+                            "\n\tnodes created [{}],nodes deleted [{}]," +
+                            "\n\trelations created [{}], relations deleted [{}]," +
+                            "\n\tindexes created [{}], indexes deleted [{}]," +
+                            "\n\tconstraints created [{}], constraints deleted [{}]," +
+                            "\n\t properties set [{}]",
+                    statistics.getNodesCreated(), statistics.getNodesDeleted(),
+                    statistics.getRelationshipsCreated(), statistics.getRelationshipsDeleted(),
+                    statistics.getIndexesAdded(), statistics.getIndexesRemoved(),
+                    statistics.getConstraintsAdded(), statistics.getConstraintsRemoved(),
+                    statistics.getPropertiesSet()
+            );
         }
     }
 
@@ -48,16 +58,7 @@ public class SessionDataLoader implements DataLoader {
     @Override
     public void loadData(String... queries) {
         log.info("loading {} queries ...", queries.length);
-        final Session session = sessionProvider.get();
-        Arrays.stream(queries).forEach(query -> {
-            if (log.isDebugEnabled()) {
-                log.debug("loading query {} ", query);
-            }
-            try (Transaction transaction = session.beginTransaction()) {
-                session.query(query, Collections.emptyMap());
-                transaction.commit();
-            }
-        });
-        log.info("queries loaded successfully", queries.length);
+        Arrays.stream(queries).forEach(this::loadData);
+        log.info("queries loaded successfully");
     }
 }

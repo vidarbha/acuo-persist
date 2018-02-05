@@ -1,10 +1,12 @@
 package com.acuo.persist.core;
 
+import com.acuo.persist.configuration.PropertiesHelper;
 import com.google.inject.Singleton;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.Arrays;
 
 @Slf4j
@@ -13,11 +15,15 @@ public class ImportService {
 
     private final DataLoader loader;
     private final DataImporter importer;
+    private final String[] clientsToLoad;
 
     @Inject
-    public ImportService(DataLoader loader, DataImporter importer) {
+    public ImportService(DataLoader loader,
+                         DataImporter importer,
+                         @Named(PropertiesHelper.ACUO_DATA_CLIENTS_TO_LOAD) String clientsToLoad) {
         this.loader = loader;
         this.importer = importer;
+        this.clientsToLoad = clientsToLoad.split(",");
     }
 
     public void createConstraints() {
@@ -27,8 +33,7 @@ public class ImportService {
 
     public void reload() {
         deleteAll();
-        //createConstraints();
-        reload("ACUO"/*, "Reuters", "Palo"*/);
+        reload(clientsToLoad);
     }
 
     public void load(String fileName) {

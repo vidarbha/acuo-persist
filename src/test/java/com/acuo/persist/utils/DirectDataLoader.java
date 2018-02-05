@@ -34,24 +34,37 @@ public class DirectDataLoader implements DataLoader {
 
     @Override
     public void loadData(String query) {
-        if (StringUtils.isEmpty(query))
+        if (log.isDebugEnabled()) {
+            log.info("executing query {}", query);
+        }
+        if (StringUtils.isEmpty(query)) {
             return;
+        }
         try(Transaction tx = databaseService.beginTx()) {
             Result result = databaseService.execute(query, Collections.emptyMap());
-            QueryStatistics queryStatistics = result.getQueryStatistics();
-            log.info("query {}", query);
-            log.info("results: \n\tnodes created [{}],\n\t properties set [{}], \n\trelationships created [{}]",
-                    queryStatistics.getNodesCreated(),
-                    queryStatistics.getPropertiesSet(),
-                    queryStatistics.getRelationshipsCreated());
+            if (log.isDebugEnabled() && result != null) {
+                QueryStatistics statistics = result.getQueryStatistics();
+                log.debug("results: " +
+                        "\n\tnodes created [{}], deleted [{}]," +
+                        "\n\trelations created [{}], deleted [{}]," +
+                        "\n\tindexes created [{}], deleted [{}]," +
+                        "\n\tconstraints created [{}], deleted [{}]," +
+                        "\n\tproperties set [{}]",
+                        statistics.getNodesCreated(), statistics.getNodesDeleted(),
+                        statistics.getRelationshipsCreated(), statistics.getRelationshipsDeleted(),
+                        statistics.getIndexesAdded(), statistics.getIndexesRemoved(),
+                        statistics.getConstraintsAdded(), statistics.getConstraintsRemoved(),
+                        statistics.getPropertiesSet()
+                );
+            }
             tx.success();
         }
     }
 
     @Override
     public void loadData(String... queries) {
-        Arrays.stream(queries).forEach(query -> {
-            loadData(query);
-        });
+        log.info("loading {} queries ...", queries.length);
+        Arrays.stream(queries).forEach(this::loadData);
+        log.info("queries loaded successfully");
     }
 }
