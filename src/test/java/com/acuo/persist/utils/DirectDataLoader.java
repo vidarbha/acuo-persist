@@ -27,9 +27,10 @@ public class DirectDataLoader implements DataLoader {
 
     @Override
     public void purgeDatabase() {
-        final Transaction transaction = databaseService.beginTx();
-        databaseService.execute("MATCH (n) OPTIONAL MATCH (n)-[r0]-() DELETE r0, n");
-        transaction.close();
+        try(Transaction tx = databaseService.beginTx()) {
+            databaseService.execute("MATCH (n) OPTIONAL MATCH (n)-[r0]-() DELETE r0, n");
+            tx.success();
+        }
     }
 
     @Override
