@@ -8,7 +8,7 @@ import com.acuo.persist.entity.trades.FRA;
 import com.acuo.persist.entity.trades.Leg;
 import com.acuo.persist.modules.ConfigurationTestModule;
 import com.acuo.persist.modules.ImportTestServiceModule;
-import com.acuo.persist.modules.Neo4jSessionModule;
+import com.acuo.persist.modules.InProcessNeo4jServerModule;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import org.junit.Before;
@@ -22,7 +22,7 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 @RunWith(GuiceJUnitRunner.class)
 @GuiceJUnitRunner.GuiceModules({
         ConfigurationTestModule.class,
-        Neo4jSessionModule.class,
+        InProcessNeo4jServerModule.class,
         ImportTestServiceModule.class,
 })
 public class TradeServiceImplTest {

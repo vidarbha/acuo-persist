@@ -52,7 +52,6 @@ public class CypherFileSpliter {
 
     public List<String> splitByDelimiter(String fileName, String delim) {
         try {
-            //String filePath = String.format(directoryTemplate, workingDirectory, fileName);
             String content = GraphData.readFile(fileName);
             return Stream.of(content).map(w -> w.split(delim)).flatMap(Arrays::stream).filter(x -> !x.trim().isEmpty())
                     .map(x -> chomp(x)).collect(Collectors.toList());
