@@ -53,7 +53,18 @@ public class AssetPledgeServiceImplTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        importService.reload();
+        importService.deleteAll();
+        importService.load("ACUO",
+                "firms","counterparts",
+                "workingZones","legalentities",
+                "clearingHouses","fcms",
+                "tradingAccounts","bilateralMasterAgreements",
+                "bilateralAgreements","clearedAgreements",
+                "ratingScores","assetCategories",
+                "custodianAccounts","counterpartCustodianAccounts",
+                "custodianAssets","buildEligibility",
+                "settings","currencies",
+                "fxRates","portfolios","books");
     }
 
     @Test

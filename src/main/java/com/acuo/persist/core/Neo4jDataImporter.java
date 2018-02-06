@@ -151,8 +151,7 @@ public class Neo4jDataImporter implements DataImporter, ImportService {
     }
 
     private void importFiles(DataItem dataItem) {
-        Arrays.stream(dataItem.clients).forEach(client ->
-                importFile(dataItem.branch, client, dataItem.fileNames));
+        importFile(dataItem.branch, dataItem.clients, dataItem.fileNames);
     }
 
     private String[] filesToImport() {
@@ -163,19 +162,23 @@ public class Neo4jDataImporter implements DataImporter, ImportService {
                 .toArray(String[]::new);
     }
 
-    private void importFile(String branch, String client, String... fileNames) {
+    private void importFile(String branch, String[] clients, String[] fileNames) {
         long start = System.nanoTime();
-        substitutions.put("%branch%", branch);
-        substitutions.put("%client%", client);
-        final String[] queries = Arrays.stream(fileNames)
-                .parallel()
-                .map(fileName -> {
-                    String filePath = String.format(directoryTemplate, workingDirPath, fileName);
-                    filePath = buildQuery(filePath, substitutions);
-                    log.info("Importing client [{}] files [{}] from {}", client, fileName, filePath);
-                    return file(client, filePath);
+        final String[] queries = Arrays.stream(clients)
+                .flatMap(client -> {
+                    substitutions.put("%branch%", branch);
+                    substitutions.put("%client%", client);
+                    return Arrays.stream(fileNames)
+                            .parallel()
+                            .map(fileName -> {
+                                String filePath = String.format(directoryTemplate, workingDirPath, fileName);
+                                filePath = buildQuery(filePath, substitutions);
+                                log.info("Importing client [{}] files [{}] from {}", client, fileName, filePath);
+                                return file(client, filePath);
+                            })
+                            .filter(query -> !query.isEmpty());
+
                 })
-                .filter(query -> !query.isEmpty())
                 .toArray(String[]::new);
         loader.loadData(queries);
         long end = System.nanoTime();

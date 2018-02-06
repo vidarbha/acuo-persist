@@ -13,12 +13,16 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Singleton
 public class DirectDataLoader implements DataLoader {
 
     private final GraphDatabaseService databaseService;
+
+    private static final boolean allInOne = false;
 
     @Inject
     public DirectDataLoader(ServerControls serverControls) {
@@ -35,6 +39,7 @@ public class DirectDataLoader implements DataLoader {
 
     @Override
     public void loadData(String query) {
+        long stat = System.nanoTime();
         if (log.isDebugEnabled()) {
             log.info("executing query {}", query);
         }
@@ -60,12 +65,22 @@ public class DirectDataLoader implements DataLoader {
             }
             tx.success();
         }
+        long end = System.nanoTime();
+        if (log.isDebugEnabled()) {
+            log.debug("query {} took {}", query, TimeUnit.NANOSECONDS.toMillis(end-stat));
+        }
     }
 
     @Override
     public void loadData(String... queries) {
         log.info("loading {} queries ...", queries.length);
-        Arrays.stream(queries).forEach(this::loadData);
+        if (allInOne) {
+            final String bigQuery = Arrays.stream(queries)
+                    .collect(Collectors.joining(" WITH count(*) as dummy " + System.getProperty("line.separator")));
+            loadData(bigQuery.replaceAll(";", ""));
+        } else {
+            Arrays.stream(queries).forEach(this::loadData);
+        }
         log.info("queries loaded successfully");
     }
 }
