@@ -1,21 +1,18 @@
 package com.acuo.persist.services;
 
-import com.acuo.common.ids.AssetId;
 import com.acuo.common.ids.ClientId;
 import com.acuo.common.ids.PortfolioId;
 import com.acuo.common.ids.TradeId;
 import com.acuo.common.model.margin.Types;
 import com.acuo.common.util.GuiceJUnitRunner;
-import com.acuo.persist.core.ImportService;
-import com.acuo.persist.entity.AssetValuation;
-import com.acuo.persist.entity.AssetValue;
-import com.acuo.persist.entity.trades.IRS;
+import com.acuo.persist.core.DataImporter;
 import com.acuo.persist.entity.MarginValuation;
 import com.acuo.persist.entity.MarginValue;
 import com.acuo.persist.entity.TradeValuation;
 import com.acuo.persist.entity.TradeValue;
+import com.acuo.persist.entity.trades.IRS;
 import com.acuo.persist.modules.ConfigurationTestModule;
-import com.acuo.persist.modules.ImportServiceModule;
+import com.acuo.persist.modules.ImportTestServiceModule;
 import com.acuo.persist.modules.InProcessNeo4jServerModule;
 import com.opengamma.strata.basics.currency.Currency;
 import org.junit.Before;
@@ -24,7 +21,6 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,12 +29,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @GuiceJUnitRunner.GuiceModules({
         ConfigurationTestModule.class,
         InProcessNeo4jServerModule.class,
-        ImportServiceModule.class
+        ImportTestServiceModule.class
 })
 public class ValuationServiceTest {
 
     @Inject
-    private ImportService importService = null;
+    private DataImporter importService = null;
 
     @Inject
     private ValuationService valuationService = null;
@@ -48,9 +44,6 @@ public class ValuationServiceTest {
 
     @Inject
     private TradeService<IRS> tradeService = null;
-
-    @Inject
-    private AssetValuationService assetValuationService = null;
 
     @Inject
     private TradingAccountService accountService = null;
@@ -78,26 +71,6 @@ public class ValuationServiceTest {
 
         Set<MarginValue> values = valuation.getValues();
         assertThat(values).isNotEmpty();
-    }
-
-    @Test
-    public void testAssetValuationService() {
-
-        final AssetId usd = AssetId.fromString("USD");
-        AssetValue newValue = createAssetValue(Currency.USD, 1.0d, "Reuters");
-
-        assetValuationService.persist(usd, newValue);
-
-        newValue = createAssetValue(Currency.USD, 1.1d, "Reuters");
-        assetValuationService.persist(usd, newValue);
-
-        AssetValuation valuation = assetValuationService.getAssetValuationFor(usd);
-
-//        Set<AssetValue> values = valuation.getValues();
-//        assertThat(values).isNotEmpty();
-
-        final AssetValue latestValue = valuation.getLatestValue();
-        assertThat(latestValue).isNotNull();
     }
 
     @Test
@@ -129,17 +102,6 @@ public class ValuationServiceTest {
         newValue.setCurrency(currency);
         newValue.setAmount(amount);
         newValue.setTimestamp(Instant.now());
-        return newValue;
-    }
-
-    private AssetValue createAssetValue(Currency currency, Double amount, String source) {
-        AssetValue newValue = new AssetValue();
-        newValue.setSource(source);
-        newValue.setCoupon(amount);
-        newValue.setNominalCurrency(currency);
-        newValue.setReportCurrency(currency);
-        newValue.setTimestamp(Instant.now());
-        newValue.setValuationDate(LocalDate.now());
         return newValue;
     }
 

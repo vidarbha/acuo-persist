@@ -35,6 +35,11 @@ public class InProcessNeo4jServerModule extends AbstractModule {
         return configuration;
     }
 
+    @Provides
+    ServerControls serverControls(CloseableTestServer server) {
+        return server.serverControls;
+    }
+
     @Singleton
     static class CloseableTestServer {
 

@@ -2,14 +2,14 @@ package com.acuo.persist.services;
 
 import com.acuo.common.ids.AssetId;
 import com.acuo.common.util.GuiceJUnitRunner;
-import com.acuo.persist.core.ImportService;
+import com.acuo.persist.core.DataImporter;
 import com.acuo.persist.entity.Asset;
 import com.acuo.persist.entity.AssetPledge;
 import com.acuo.persist.entity.AssetTransfer;
 import com.acuo.persist.entity.MarginCall;
 import com.acuo.persist.entity.enums.AssetTransferStatus;
 import com.acuo.persist.modules.ConfigurationTestModule;
-import com.acuo.persist.modules.ImportServiceModule;
+import com.acuo.persist.modules.ImportTestServiceModule;
 import com.acuo.persist.modules.InProcessNeo4jServerModule;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,12 +31,12 @@ import static org.mockito.Mockito.when;
 @GuiceJUnitRunner.GuiceModules({
         ConfigurationTestModule.class,
         InProcessNeo4jServerModule.class,
-        ImportServiceModule.class
+        ImportTestServiceModule.class
 })
 public class AssetPledgeServiceImplTest {
 
     @Inject
-    private ImportService importService = null;
+    private DataImporter importService = null;
 
     @Inject
     private AssetPledgeService assetPledgeService = null;
@@ -53,7 +53,18 @@ public class AssetPledgeServiceImplTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        importService.reload();
+        importService.deleteAll();
+        importService.load("ACUO",
+                "firms","counterparts",
+                "workingZones","legalentities",
+                "clearingHouses","fcms",
+                "tradingAccounts","bilateralMasterAgreements",
+                "bilateralAgreements","clearedAgreements",
+                "ratingScores","assetCategories",
+                "custodianAccounts","counterpartCustodianAccounts",
+                "custodianAssets","buildEligibility",
+                "settings","currencies",
+                "fxRates","portfolios","books");
     }
 
     @Test

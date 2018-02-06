@@ -3,11 +3,11 @@ package com.acuo.persist.services;
 import com.acuo.common.ids.ClientId;
 import com.acuo.common.ids.PortfolioId;
 import com.acuo.common.util.GuiceJUnitRunner;
-import com.acuo.persist.core.ImportService;
+import com.acuo.persist.core.DataImporter;
 import com.acuo.persist.entity.Agreement;
 import com.acuo.persist.entity.Portfolio;
 import com.acuo.persist.modules.ConfigurationTestModule;
-import com.acuo.persist.modules.ImportServiceModule;
+import com.acuo.persist.modules.ImportTestServiceModule;
 import com.acuo.persist.modules.InProcessNeo4jServerModule;
 import com.acuo.persist.modules.RepositoryModule;
 import org.junit.Before;
@@ -23,13 +23,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 @GuiceJUnitRunner.GuiceModules({
         ConfigurationTestModule.class,
         InProcessNeo4jServerModule.class,
-        ImportServiceModule.class,
+        ImportTestServiceModule.class,
         RepositoryModule.class
 })
 public class PortfolioServiceImplTest {
 
     @Inject
-    private ImportService importService;
+    private DataImporter importService;
 
     @Inject
     private PortfolioService portfolioService;

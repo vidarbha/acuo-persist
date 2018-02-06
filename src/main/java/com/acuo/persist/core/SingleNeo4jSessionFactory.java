@@ -17,7 +17,7 @@ public class SingleNeo4jSessionFactory implements Provider<SessionFactory> {
 
     @Inject
     public SingleNeo4jSessionFactory(Configuration configuration, Packages packages) {
-        log.info("Creating a Neo4j Session Factory using config [{}] and packages [{}]", configuration, packages);
+        log.info("Creating a Neo4j Session Factory using config [{}] and packages [{}]", configuration.getURI(), packages.value());
         this.factory = new SessionFactory(configuration, packages.value());
     }
 

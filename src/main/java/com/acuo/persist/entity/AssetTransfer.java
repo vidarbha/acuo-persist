@@ -7,7 +7,7 @@ import com.acuo.persist.neo4j.converters.LocalDateTimeConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.neo4j.ogm.annotation.Index;
+import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 public class AssetTransfer extends Entity<AssetTransfer> {
 
     @Property(name = "id")
-    @Index(primary = true)
+    @Id
     private String assertTransferId;
 
     private Double quantity;

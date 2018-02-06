@@ -5,7 +5,7 @@ import com.acuo.common.ids.MarginStatementId;
 import com.acuo.common.ids.PortfolioId;
 import com.acuo.common.model.margin.Types;
 import com.acuo.common.util.GuiceJUnitRunner;
-import com.acuo.persist.core.ImportService;
+import com.acuo.persist.core.DataImporter;
 import com.acuo.persist.entity.Agreement;
 import com.acuo.persist.entity.Asset;
 import com.acuo.persist.entity.AssetTransfer;
@@ -15,7 +15,7 @@ import com.acuo.persist.entity.MarginCall;
 import com.acuo.persist.entity.MarginStatement;
 import com.acuo.persist.entity.enums.AssetTransferStatus;
 import com.acuo.persist.modules.ConfigurationTestModule;
-import com.acuo.persist.modules.ImportServiceModule;
+import com.acuo.persist.modules.ImportTestServiceModule;
 import com.acuo.persist.modules.InProcessNeo4jServerModule;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,12 +39,12 @@ import static org.mockito.Mockito.when;
 @GuiceJUnitRunner.GuiceModules({
         ConfigurationTestModule.class,
         InProcessNeo4jServerModule.class,
-        ImportServiceModule.class
+        ImportTestServiceModule.class
 })
 public class CollateralServiceImplTest {
 
     @Inject
-    private ImportService importService = null;
+    private DataImporter importService = null;
 
     @Inject
     private AgreementService agreementService = null;

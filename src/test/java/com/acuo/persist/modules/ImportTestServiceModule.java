@@ -1,18 +1,21 @@
 package com.acuo.persist.modules;
 
 import com.acuo.persist.core.DataImporter;
+import com.acuo.persist.core.DataLoader;
 import com.acuo.persist.core.Neo4jDataImporter;
+import com.acuo.persist.utils.DirectDataLoader;
 import com.google.inject.AbstractModule;
-import com.google.inject.Singleton;
 
-class DataImporterModule extends AbstractModule {
+import javax.inject.Singleton;
+
+public class ImportTestServiceModule extends AbstractModule {
 
     @Override
     protected void configure() {
 
-        install(new DataLoaderModule());
+        install(new RepositoryModule());
 
-        //bind(ImportService.class).to(Neo4jDataImporter.class).in(Singleton.class);
         bind(DataImporter.class).to(Neo4jDataImporter.class).in(Singleton.class);
+        bind(DataLoader.class).to(DirectDataLoader.class).in(Singleton.class);
     }
 }

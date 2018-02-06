@@ -15,6 +15,9 @@
     <logger name="org.neo4j.ogm.drivers.bolt.response" level="warn"/>
     <logger name="org.neo4j.ogm.context" level="warn"/>
 
+
+    <!--logger name="com.acuo.persist.utils.DirectDataLoader" level="debug"/-->
+
     <root level="warn">
         <appender-ref ref="console" />
     </root>
