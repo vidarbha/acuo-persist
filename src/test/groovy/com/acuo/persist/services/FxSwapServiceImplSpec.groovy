@@ -97,7 +97,7 @@ class FxSwapServiceImplSpec extends Specification {
         AdjustableDate paymentDate = new AdjustableDate(date: payDate, adjustment: dayAdjustment)
         AdjustableDate fixingDate = new AdjustableDate(date: payDate.minusDays(2), adjustment: dayAdjustment)
         single.setPaymentDate(paymentDate)
-        single.setFixingDate(fixingDate)
+        single.setMaturityDate(fixingDate)
         return single
     }
 }
