@@ -27,8 +27,10 @@ public class FxSingle extends Entity<FxSingle> {
 
     //@Relationship(type = "PAYMENT_DATE")
     //private AdjustableDate paymentDate;
+
     @Convert(LocalDateConverter.class)
     private LocalDate payDate;
+
     @Convert(BusinessDayConventionConverter.class)
     private BusinessDayConvention payConvention;
 
@@ -37,15 +39,22 @@ public class FxSingle extends Entity<FxSingle> {
 
     @Convert(CurrencyAmountConverter.class)
     private CurrencyAmount counterCurrencyAmount;
+
     private Set<String> payHolidays;
+
     //@Relationship(type = "FIXING_DATE")
     //private AdjustableDate fixingDate;
+
     @Convert(LocalDateConverter.class)
     private LocalDate fixingDate;
+
     @Convert(BusinessDayConventionConverter.class)
     private BusinessDayConvention fixingConvention;
+
     private Set<String> fixingHolidays;
+
     private double rate;
+
     public FxSingle(com.acuo.common.model.product.fx.FxSingle leg) {
         setBaseCurrencyAmount(leg.getBaseCurrencyAmount());
         setCounterCurrencyAmount(leg.getCounterCurrencyAmount());
@@ -58,9 +67,9 @@ public class FxSingle extends Entity<FxSingle> {
                 .map(HolidayCalendarId::toString)
                 .collect(toSet()));
         //setFixingDate(new AdjustableDate(leg.getFixingDate()));
-        setFixingDate(leg.getFixingDate().getDate());
-        setFixingConvention(leg.getFixingDate().getAdjustment().getBusinessDayConvention());
-        setFixingHolidays(leg.getFixingDate().getAdjustment()
+        setFixingDate(leg.getMaturityDate().getDate());
+        setFixingConvention(leg.getMaturityDate().getAdjustment().getBusinessDayConvention());
+        setFixingHolidays(leg.getMaturityDate().getAdjustment()
                 .getHolidays()
                 .stream()
                 .map(HolidayCalendarId::toString)
@@ -81,14 +90,14 @@ public class FxSingle extends Entity<FxSingle> {
         payAdjustment.setHolidays(payHolidays.stream().map(HolidayCalendarId::of).collect(toSet()));
         paymentDate.setAdjustment(payAdjustment);
         model.setPaymentDate(paymentDate);
-        //model.setFixingDate(fixingDate.model());
-        com.acuo.common.model.AdjustableDate fixingDate = new com.acuo.common.model.AdjustableDate();
-        fixingDate.setDate(this.fixingDate);
+        //model.setFixingDate(maturityDate.model());
+        com.acuo.common.model.AdjustableDate maturityDate = new com.acuo.common.model.AdjustableDate();
+        maturityDate.setDate(this.fixingDate);
         BusinessDayAdjustment fixingAdjustment = new BusinessDayAdjustment();
         fixingAdjustment.setBusinessDayConvention(fixingConvention);
         fixingAdjustment.setHolidays(fixingHolidays.stream().map(HolidayCalendarId::of).collect(toSet()));
-        fixingDate.setAdjustment(payAdjustment);
-        model.setFixingDate(fixingDate);
+        maturityDate.setAdjustment(payAdjustment);
+        model.setMaturityDate(maturityDate);
         model.setNonDeliverable(nonDeliverable);
         model.setRate(rate);
         return model;
