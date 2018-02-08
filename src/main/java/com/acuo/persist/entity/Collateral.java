@@ -3,6 +3,8 @@ package com.acuo.persist.entity;
 import com.acuo.common.model.margin.Types;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.neo4j.ogm.annotation.GeneratedValue;
+import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
@@ -11,8 +13,12 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class Collateral extends Entity<Collateral>{
+@EqualsAndHashCode(exclude = "id")
+public class Collateral implements Entity<Collateral>{
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     private Types.MarginType marginType;
 

@@ -5,15 +5,21 @@ import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.neo4j.ogm.annotation.GeneratedValue;
+import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"eligibleUnder"})
+@EqualsAndHashCode(exclude = {"id","eligibleUnder"})
 @ToString(exclude = {"eligibleUnder"})
-public class AssetCategory extends Entity<AssetCategory> {
+public class AssetCategory implements Entity<AssetCategory> {
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     private String ICADCode;
 

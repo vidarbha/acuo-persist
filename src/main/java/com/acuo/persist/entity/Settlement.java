@@ -3,6 +3,7 @@ package com.acuo.persist.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
@@ -12,9 +13,13 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"asset"})
+@EqualsAndHashCode(callSuper = false, exclude = {"id","asset"})
 @ToString(exclude = {"asset"})
-public class Settlement extends Entity<Settlement> {
+public class Settlement implements Entity<Settlement> {
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @Property(name = "id")
     @Id

@@ -9,6 +9,7 @@ import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
@@ -24,9 +25,9 @@ import static com.acuo.common.util.ArgChecker.notNull;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"clientSignsRelation", "counterpartSignsRelation"})
+@EqualsAndHashCode(exclude = {"id","clientSignsRelation", "counterpartSignsRelation"})
 @ToString(exclude = {"clientSignsRelation", "counterpartSignsRelation"})
-public class Agreement extends Entity<Agreement> {
+public class Agreement implements Entity<Agreement> {
 
     public Agreement() {
     }
@@ -60,6 +61,10 @@ public class Agreement extends Entity<Agreement> {
         model.setThreshold(threshold);
         return model;
     }
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @Property(name="id")
     @Id

@@ -23,7 +23,7 @@ import static com.google.common.collect.ImmutableMap.of;
 import static java.util.stream.Collectors.toList;
 
 @Slf4j
-public class TradeServiceImpl<T extends Trade> extends AbstractService<T, Long> implements TradeService<T> {
+public class TradeServiceImpl<T extends Trade> extends AbstractService<T, TradeId> implements TradeService<T> {
 
     @Inject
     public TradeServiceImpl(Provider<Session> session) {
@@ -113,7 +113,7 @@ public class TradeServiceImpl<T extends Trade> extends AbstractService<T, Long> 
         if (log.isDebugEnabled()) {
             log.debug("createOrUpdate {}",trade);
         }
-        T byId = find(trade.getId());
+        T byId = find(trade.getTradeId());
         if(byId != null) {
             delete(byId);
         }

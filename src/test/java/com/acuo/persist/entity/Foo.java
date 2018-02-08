@@ -1,17 +1,23 @@
 package com.acuo.persist.entity;
 
-import com.acuo.persist.entity.Entity;
-import com.google.common.base.Objects;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.neo4j.ogm.annotation.GeneratedValue;
+import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false)
-public class Foo extends Entity {
+@EqualsAndHashCode(exclude = "id")
+public class Foo implements Entity {
 
+  @Id
+  @GeneratedValue
+  private Long id;
+
+  @Id
   private int fooId;
+
   private String name;
 
   public Foo() {

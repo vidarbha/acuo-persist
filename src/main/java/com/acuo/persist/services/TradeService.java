@@ -7,7 +7,7 @@ import com.acuo.persist.entity.trades.Trade;
 
 import java.util.List;
 
-public interface TradeService<T extends Trade> extends Service<T, Long> {
+public interface TradeService<T extends Trade> extends Service<T, TradeId> {
 
     T findTradeBy(ClientId clientId, TradeId tradeId);
 

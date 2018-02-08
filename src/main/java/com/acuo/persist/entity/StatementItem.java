@@ -9,6 +9,7 @@ import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
@@ -22,9 +23,13 @@ import static com.acuo.common.model.margin.Types.MarginType;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"marginStatement", "matchedItem", "parentItem"})
+@EqualsAndHashCode(callSuper = false, exclude = {"id", "marginStatement", "matchedItem", "parentItem"})
 @ToString(exclude = {"marginStatement", "matchedItem", "parentItem"})
-public class StatementItem<T extends StatementItem> extends Entity<T> {
+public class StatementItem<T extends StatementItem> implements Entity<T> {
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @Property(name = "id")
     @Id

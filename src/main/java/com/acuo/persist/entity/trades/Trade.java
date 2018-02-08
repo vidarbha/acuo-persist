@@ -24,6 +24,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
@@ -43,10 +44,10 @@ import static java.time.DayOfWeek.SUNDAY;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"account", "errors"})
+@EqualsAndHashCode(callSuper = false, exclude = {"id", "account", "errors"})
 @ToString(exclude = {"account", "errors"})
 @Slf4j
-public abstract class Trade<T extends Trade> extends Entity<T> implements Comparable<T> {
+public abstract class Trade<T extends Trade> implements Entity<T>, Comparable<T> {
 
     private static CacheManager cacheManager = new CacheManager();
 
@@ -96,6 +97,10 @@ public abstract class Trade<T extends Trade> extends Entity<T> implements Compar
         }
         return (HolidayCalendarId)value.getObject();
     }
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @Property(name = "id")
     @Id

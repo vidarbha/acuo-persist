@@ -9,6 +9,7 @@ import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
@@ -22,9 +23,9 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"holds", "transfers", "settlement", "errors"})
+@EqualsAndHashCode(exclude = {"id", "holds", "transfers", "settlement", "errors"})
 @ToString(exclude = {"holds", "transfers", "settlement", "errors"})
-public class Asset extends Entity<Asset> {
+public class Asset implements Entity<Asset> {
 
     public Asset() {
     }
@@ -64,6 +65,10 @@ public class Asset extends Entity<Asset> {
         asset.setMaturityDate(maturityDate);
         return asset;
     }
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @Property(name = "id")
     @Id

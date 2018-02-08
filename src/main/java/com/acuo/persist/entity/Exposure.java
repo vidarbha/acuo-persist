@@ -5,6 +5,8 @@ import com.acuo.persist.entity.enums.ProductType;
 import com.acuo.persist.entity.enums.Status;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.neo4j.ogm.annotation.GeneratedValue;
+import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.DateString;
@@ -14,8 +16,12 @@ import java.util.Date;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class Exposure extends Entity<Exposure> {
+@EqualsAndHashCode(exclude = {"id"})
+public class Exposure implements Entity<Exposure> {
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     private String positionId;
 

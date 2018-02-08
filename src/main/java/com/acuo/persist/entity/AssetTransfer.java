@@ -7,6 +7,7 @@ import com.acuo.persist.neo4j.converters.LocalDateTimeConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
@@ -18,9 +19,13 @@ import java.time.LocalDateTime;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"of"})
+@EqualsAndHashCode(exclude = {"id", "of"})
 @ToString(exclude = {"of"})
-public class AssetTransfer extends Entity<AssetTransfer> {
+public class AssetTransfer implements Entity<AssetTransfer> {
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @Property(name = "id")
     @Id

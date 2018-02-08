@@ -16,6 +16,7 @@ import com.opengamma.strata.basics.index.FloatingRateName;
 import com.opengamma.strata.basics.schedule.Frequency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
@@ -25,8 +26,8 @@ import java.time.LocalDate;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class Leg extends Entity<Leg> {
+@EqualsAndHashCode(exclude = {"id"})
+public class Leg implements Entity<Leg> {
 
     private Double notional;
 
@@ -40,6 +41,10 @@ public class Leg extends Entity<Leg> {
 
     @Convert(LocalDateConverter.class)
     private LocalDate payStart;
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @Property(name="id")
     @Id

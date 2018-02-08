@@ -23,7 +23,7 @@ public class Neo4jConfigFactory implements Provider<Configuration> {
         log.info("Creating a Neo4j OGM Configuration using driver [{}] and url[{}]", driver, url);
         if ("".equals(url)) url = null;
         this.configuration = new Configuration.Builder()
-                .autoIndex("update")
+                .autoIndex("none")
                 .uri(url)
                 .connectionPoolSize(150)
                 .encryptionLevel("NONE")

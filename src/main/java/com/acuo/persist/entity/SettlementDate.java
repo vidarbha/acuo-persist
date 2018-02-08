@@ -5,6 +5,8 @@ import com.acuo.persist.neo4j.converters.LocalDateTimeConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.neo4j.ogm.annotation.GeneratedValue;
+import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
@@ -14,9 +16,13 @@ import java.time.LocalDateTime;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"queryDateTime", "settlement"})
+@EqualsAndHashCode(exclude = {"id", "queryDateTime", "settlement"})
 @ToString(exclude = {"settlement"})
-public class SettlementDate extends Entity<SettlementDate>{
+public class SettlementDate implements Entity<SettlementDate>{
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @Convert(LocalDateTimeConverter.class)
     private LocalDateTime queryDateTime;

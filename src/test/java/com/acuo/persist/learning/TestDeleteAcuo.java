@@ -81,7 +81,7 @@ public class TestDeleteAcuo {
         persistedPieter = Iterators.single(personGenericService.findAll().iterator());
         Car persistedMercedes = Iterators.single(persistedPieter.cars.iterator());
         persistedPieter.cars.remove( persistedMercedes );
-        carGenericService.delete(persistedMercedes.getId());
+        carGenericService.delete(persistedMercedes.id);
         endTransaciton();
 
         session.clear();

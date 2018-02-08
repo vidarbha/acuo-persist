@@ -4,6 +4,8 @@ import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import com.acuo.persist.neo4j.converters.LocalDateTimeConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.neo4j.ogm.annotation.GeneratedValue;
+import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
@@ -12,8 +14,12 @@ import java.time.LocalDateTime;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class ServiceError extends Entity<ServiceError> {
+@EqualsAndHashCode(exclude = {"id"})
+public class ServiceError implements Entity<ServiceError> {
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     private String code;
     private String type;

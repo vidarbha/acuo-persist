@@ -116,6 +116,7 @@ public class AssetPledgeServiceImplTest {
     }
 
     private Optional<AssetPledge> createPledge() {
+
         when(transfer.getGeneratedBy()).thenReturn(marginCall);
         when(marginCall.getMarginType()).thenReturn(Variation);
 

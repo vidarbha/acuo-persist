@@ -3,6 +3,8 @@ package com.acuo.persist.entity;
 import com.acuo.persist.entity.trades.Trade;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.neo4j.ogm.annotation.GeneratedValue;
+import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
@@ -12,8 +14,12 @@ import java.util.TreeSet;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false)
-public class TradingAccount extends Entity<TradingAccount> {
+@EqualsAndHashCode(exclude = {"id"})
+public class TradingAccount implements Entity<TradingAccount> {
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @Property(name="id")
     private String accountId;

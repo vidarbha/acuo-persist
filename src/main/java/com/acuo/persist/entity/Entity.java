@@ -1,13 +1,9 @@
 package com.acuo.persist.entity;
 
-import org.neo4j.ogm.annotation.GeneratedValue;
-import org.neo4j.ogm.annotation.Id;
-import org.neo4j.ogm.annotation.NodeEntity;
+public interface Entity<T extends Entity> {
 
-@NodeEntity
-public abstract class Entity<T extends Entity> {
-
-    @Id
+    Long getId();
+    /*@Id
     @GeneratedValue
     private Long id;
 
@@ -28,5 +24,5 @@ public abstract class Entity<T extends Entity> {
     @Override
     public int hashCode() {
         return (id == null) ? -1 : id.hashCode();
-    }
+    }*/
 }

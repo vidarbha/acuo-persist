@@ -10,6 +10,8 @@ import com.opengamma.strata.basics.date.BusinessDayConvention;
 import com.opengamma.strata.basics.date.HolidayCalendarId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.neo4j.ogm.annotation.GeneratedValue;
+import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
@@ -20,13 +22,17 @@ import static java.util.stream.Collectors.toSet;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false)
-public class FxSingle extends Entity<FxSingle> {
+@EqualsAndHashCode(exclude = "id")
+public class FxSingle implements Entity<FxSingle> {
 
     public FxSingle() {}
 
     //@Relationship(type = "PAYMENT_DATE")
     //private AdjustableDate paymentDate;
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @Convert(LocalDateConverter.class)
     private LocalDate payDate;

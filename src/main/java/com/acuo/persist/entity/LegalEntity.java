@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
@@ -14,9 +15,13 @@ import java.util.Set;
 @NodeEntity
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false, exclude={"firm","preferences"})
+@EqualsAndHashCode(exclude={"id","firm","preferences"})
 @ToString(exclude={"firm","preferences"})
-public class LegalEntity extends Entity<LegalEntity> {
+public class LegalEntity implements Entity<LegalEntity> {
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @Property(name="id")
     @Id

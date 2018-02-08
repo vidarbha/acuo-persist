@@ -11,6 +11,7 @@ import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
@@ -33,9 +34,13 @@ import static com.acuo.common.util.ArithmeticUtils.addition;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"collaterals"})
+@EqualsAndHashCode(exclude = {"id","collaterals"})
 @ToString(exclude = {"collaterals"})
-public class MarginStatement extends Entity<MarginStatement> {
+public class MarginStatement implements Entity<MarginStatement> {
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @Property(name = "id")
     @Id

@@ -3,6 +3,7 @@ package com.acuo.persist.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
@@ -12,9 +13,13 @@ import static org.neo4j.ogm.annotation.Relationship.INCOMING;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"custodian"})
+@EqualsAndHashCode(callSuper = false, exclude = {"id", "custodian"})
 @ToString(exclude = {"custodian"})
-public class CustodianAccount extends Entity<CustodianAccount> {
+public class CustodianAccount implements Entity<CustodianAccount> {
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @Property(name = "id")
     @Id

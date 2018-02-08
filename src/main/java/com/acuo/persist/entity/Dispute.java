@@ -2,6 +2,8 @@ package com.acuo.persist.entity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.neo4j.ogm.annotation.GeneratedValue;
+import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
@@ -11,8 +13,12 @@ import static com.acuo.common.model.margin.Types.DisputeReasonCode;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class Dispute extends Entity<Dispute> {
+@EqualsAndHashCode(exclude = {"id"})
+public class Dispute implements Entity<Dispute> {
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @Relationship(type = "ON")
     private MarginStatement marginStatement;

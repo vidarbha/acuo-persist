@@ -5,6 +5,8 @@ import com.acuo.persist.entity.Entity;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.neo4j.ogm.annotation.GeneratedValue;
+import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
@@ -12,8 +14,8 @@ import java.time.LocalDate;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false)
-public class AdjustableDate extends Entity<AdjustableDate> {
+@EqualsAndHashCode(exclude = {"id"})
+public class AdjustableDate implements Entity<AdjustableDate> {
 
     public AdjustableDate() {}
 
@@ -28,6 +30,10 @@ public class AdjustableDate extends Entity<AdjustableDate> {
         model.setAdjustment(adjustment.model());
         return model;
     }
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @Convert(LocalDateConverter.class)
     private LocalDate date;
