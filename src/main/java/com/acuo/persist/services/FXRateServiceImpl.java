@@ -50,13 +50,20 @@ public class FXRateServiceImpl extends AbstractService<FXRate, Long> implements 
         return dao.getSession().queryForObject(FXRate.class, query, parameters);
     }
 
+    /**
+     * Get the FX rate in units of given currency for one USD
+     */
     @Transactional
     @Override
     public Double getFXValue(Currency currency) {
         if (Currency.USD.equals(currency)) return 1d;
         final FXRate fxRate = get(currency, Currency.USD);
         final FXValue fxValue = fxRate.getLast();
-        return fxValue.getValue();
+        final String fromCurrency = fxRate.getFrom().getCurrencyId();
+        if (Currency.USD.toString().equals(fromCurrency))
+            return fxValue.getValue();
+        else
+            return 1 / fxValue.getValue();
     }
 
     @Transactional
