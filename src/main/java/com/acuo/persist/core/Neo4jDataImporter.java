@@ -24,7 +24,7 @@ import static com.acuo.common.util.ArgChecker.notNull;
 
 @Slf4j
 @Singleton
-public class Neo4jDataImporter implements DataImporter, ImportService {
+public class Neo4jDataImporter implements DataImporter {
 
     public static final String CONSTRAINTS_CQL = "constraints.cql";
 
