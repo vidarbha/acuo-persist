@@ -1,21 +1,19 @@
 package com.acuo.persist.entity;
 
-import com.acuo.common.ids.PortfolioId;
+import com.acuo.common.ids.PortfolioName;
+import com.acuo.persist.neo4j.converters.TypedStringConverter.PortfolioNameConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
-import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import static com.acuo.persist.neo4j.converters.TypedStringConverter.PortfolioIdConverter;
 
 @NodeEntity
 @Data
@@ -27,11 +25,8 @@ public class Portfolio implements Entity<Portfolio> {
     @GeneratedValue
     private Long id;
 
-    @Property(name = "id")
-    @Convert(PortfolioIdConverter.class)
-    private PortfolioId portfolioId;
-
-    private String name;
+    @Convert(PortfolioNameConverter.class)
+    private PortfolioName name;
 
     private String currency;
 

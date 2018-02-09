@@ -1,7 +1,7 @@
 package com.acuo.persist.services;
 
 import com.acuo.common.ids.ClientId;
-import com.acuo.common.ids.PortfolioId;
+import com.acuo.common.ids.PortfolioName;
 import com.acuo.common.util.GuiceJUnitRunner;
 import com.acuo.persist.core.DataImporter;
 import com.acuo.persist.entity.Agreement;
@@ -53,20 +53,19 @@ public class PortfolioServiceImplTest {
 
     @Test
     public void testLoadPortfolio() {
-        Portfolio p2 = portfolioService.portfolio(client999, PortfolioId.fromString("p2a"));
+        Portfolio p2 = portfolioService.portfolio(client999, PortfolioName.fromString("p2a"));
         assertThat(p2).isNull();
 
         p2 = createPortfolio("p2");
         portfolioService.save(p2);
-        p2 = portfolioService.portfolio(client999, PortfolioId.fromString("p2a"));
+        p2 = portfolioService.portfolio(client999, PortfolioName.fromString("p2a"));
         assertThat(p2).isNotNull();
     }
 
     private Portfolio createPortfolio(String name) {
-        final Agreement agreement = agreementService.agreementFor(client999, PortfolioId.fromString(name));
+        final Agreement agreement = agreementService.agreementFor(client999, PortfolioName.fromString(name));
         Portfolio portfolio = new Portfolio();
-        portfolio.setName(name+"a");
-        portfolio.setPortfolioId(PortfolioId.fromString(name+"a"));
+        portfolio.setName(PortfolioName.fromString(name+"a"));
         portfolio.setAgreement(agreement);
         return portfolio;
     }

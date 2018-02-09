@@ -1,7 +1,7 @@
 package com.acuo.persist.services;
 
 import com.acuo.common.ids.ClientId;
-import com.acuo.common.ids.PortfolioId;
+import com.acuo.common.ids.PortfolioName;
 import com.acuo.common.ids.TradeId;
 import com.acuo.persist.entity.Agreement;
 import com.google.common.collect.ImmutableMap;
@@ -34,16 +34,16 @@ public class AgreementServiceImpl extends AbstractService<Agreement, String> imp
 
     @Override
     @Transactional
-    public Agreement agreementFor(ClientId clientId, PortfolioId portfolioId) {
+    public Agreement agreementFor(ClientId clientId, PortfolioName portfolioName) {
         String query =
             "MATCH (client:Client)-[:MANAGES]->(legal:LegalEntity)-[]->(agreement:Agreement)<-[:FOLLOWS]-(portfolio:Portfolio) " +
-            "WHERE client.id = {clientId} AND portfolio.id = {portfolioId} " +
+            "WHERE client.id = {clientId} AND portfolio.name = {portfolioName} " +
             "WITH portfolio " +
             "MATCH p=(:Firm)-[:MANAGES]->(:LegalEntity)-[]->(:Agreement)<-[:FOLLOWS]-(portfolio) " +
             "RETURN p";
         final ImmutableMap<String, String> parameters = ImmutableMap.of(
                 "clientId", clientId.toString(),
-                "portfolioId", portfolioId.toString());
+                "portfolioName", portfolioName.toString());
         return dao.getSession().queryForObject(getEntityType(), query, parameters);
     }
 

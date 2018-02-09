@@ -1,7 +1,7 @@
 package com.acuo.persist.services;
 
 import com.acuo.common.ids.ClientId;
-import com.acuo.common.ids.PortfolioId;
+import com.acuo.common.ids.PortfolioName;
 import com.acuo.common.ids.TradeId;
 import com.acuo.persist.entity.Portfolio;
 import com.google.common.collect.ImmutableMap;
@@ -40,25 +40,25 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio, Long> imple
 
     @Override
     @Transactional
-    public Iterable<Portfolio> portfolios(ClientId clientId, PortfolioId... portfolioIds) {
+    public Iterable<Portfolio> portfolios(ClientId clientId, PortfolioName... portfolioNames) {
         String query =
         "MATCH (client:Client)-[:MANAGES]-(legal:LegalEntity)-[]-(a:Agreement)<-[:FOLLOWS]-(portfolio:Portfolio) " +
         "WHERE client.id = {clientId} " +
-        "AND portfolio.id IN {portfolioIds} " +
+        "AND portfolio.name IN {portfolioNames} " +
         "WITH portfolio " +
         "MATCH p=()-[*0..1]-(portfolio)-[:FOLLOWS]->(:Agreement)-[]-(:LegalEntity)-[:MANAGES]-(:Firm) " +
         "RETURN p";
         return dao.getSession().query(Portfolio.class, query, ImmutableMap.of(
                 "clientId", clientId.toString(),
-                "portfolioIds", portfolioIds));
+                "portfolioNames", portfolioNames));
     }
 
     @Override
     @Transactional
-    public Portfolio portfolio(ClientId clientId, PortfolioId portfolioId) {
-        final Iterable<Portfolio> portfolios = portfolios(clientId, portfolioId);
+    public Portfolio portfolio(ClientId clientId, PortfolioName portfolioName) {
+        final Iterable<Portfolio> portfolios = portfolios(clientId, portfolioName);
         if (Iterables.count(portfolios) == 0) {
-            log.warn("portfolio with portfolioId {} and client {} doesn't exist", portfolioId, clientId);
+            log.warn("portfolio with portfolioId {} and client {} doesn't exist", portfolioName, clientId);
             return null;
         }
         return Iterables.single(portfolios);
@@ -66,16 +66,16 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio, Long> imple
 
     @Override
     @Transactional
-    public Long tradeCount(ClientId clientId, PortfolioId portfolioId) {
+    public Long tradeCount(ClientId clientId, PortfolioName portfolioName) {
         String query =
             "MATCH (client:Client)-[:MANAGES]-(:LegalEntity)-[]-(:Agreement)<-[:FOLLOWS]-" +
             "(portfolio:Portfolio)<-[:BELONGS_TO]-(trade:Trade) " +
             "WHERE client.id = {clientId} " +
-            "AND portfolio.id = {portfolioId} " +
+            "AND portfolio.name = {portfolioName} " +
             "RETURN count(trade) as count";
         final ImmutableMap<String, String> parameters = ImmutableMap.of(
                 "clientId", clientId.toString(),
-                "portfolioId", portfolioId.toString());
+                "portfolioName", portfolioName.toString());
         Result result =  dao.getSession().query(query, parameters);
         Map<String, Object> next = result.iterator().next();
         return (Long) next.get("count");

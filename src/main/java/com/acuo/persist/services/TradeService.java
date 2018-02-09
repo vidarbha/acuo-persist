@@ -1,7 +1,7 @@
 package com.acuo.persist.services;
 
 import com.acuo.common.ids.ClientId;
-import com.acuo.common.ids.PortfolioId;
+import com.acuo.common.ids.PortfolioName;
 import com.acuo.common.ids.TradeId;
 import com.acuo.persist.entity.trades.Trade;
 
@@ -13,7 +13,7 @@ public interface TradeService<T extends Trade> extends Service<T, TradeId> {
 
     Iterable<T> findAllClientTrades(ClientId clientId);
 
-    Iterable<T> findByPortfolioId(ClientId clientId, PortfolioId... ids);
+    Iterable<T> findByPortfolioId(ClientId clientId, PortfolioName... portfolioNames);
 
     Iterable<T> findAllTradeByIds(ClientId clientId, List<TradeId> ids);
 

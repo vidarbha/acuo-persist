@@ -76,7 +76,7 @@ public abstract class Trade<T extends Trade> implements Entity<T>, Comparable<T>
         info.setTradeDate(getTradeDate());
         info.setEffectiveDate(getEffectiveDate());
         info.setBook(getAccount() != null ? getAccount().getAccountId() : null);
-        info.setPortfolio(getPortfolio() != null ? getPortfolio().getPortfolioId().toString() : null);
+        info.setPortfolio(getPortfolio() != null ? getPortfolio().getName().toString() : null);
 
         return info;
     }

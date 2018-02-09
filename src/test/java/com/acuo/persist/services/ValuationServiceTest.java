@@ -1,7 +1,7 @@
 package com.acuo.persist.services;
 
 import com.acuo.common.ids.ClientId;
-import com.acuo.common.ids.PortfolioId;
+import com.acuo.common.ids.PortfolioName;
 import com.acuo.common.ids.TradeId;
 import com.acuo.common.model.margin.Types;
 import com.acuo.common.util.GuiceJUnitRunner;
@@ -58,7 +58,7 @@ public class ValuationServiceTest {
     @Test
     public void testMarginValuationService() {
 
-        MarginValuation valuation = valuationService.getOrCreateMarginValuationFor(client999, PortfolioId.fromString("p2"), Types.CallType.Variation);
+        MarginValuation valuation = valuationService.getOrCreateMarginValuationFor(client999, PortfolioName.fromString("p2"), Types.CallType.Variation);
 
         MarginValue newValue = createMarginValue(Currency.USD, 1.0d, "Markit");
         newValue.setValuation(valuation);
@@ -67,7 +67,7 @@ public class ValuationServiceTest {
 
         assertThat(value).isNotNull();
 
-        valuation = valuationService.getMarginValuationFor(client999, PortfolioId.fromString("p2"), Types.CallType.Variation);
+        valuation = valuationService.getMarginValuationFor(client999, PortfolioName.fromString("p2"), Types.CallType.Variation);
 
         Set<MarginValue> values = valuation.getValues();
         assertThat(values).isNotEmpty();

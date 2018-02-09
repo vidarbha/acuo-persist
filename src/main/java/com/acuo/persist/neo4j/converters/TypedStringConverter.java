@@ -1,12 +1,12 @@
 package com.acuo.persist.neo4j.converters;
 
-import com.acuo.common.type.TypedString;
 import com.acuo.common.ids.AssetId;
 import com.acuo.common.ids.BookId;
 import com.acuo.common.ids.ClientId;
 import com.acuo.common.ids.MarginStatementId;
-import com.acuo.common.ids.PortfolioId;
+import com.acuo.common.ids.PortfolioName;
 import com.acuo.common.ids.TradeId;
+import com.acuo.common.type.TypedString;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.ogm.typeconversion.AttributeConverter;
 
@@ -17,7 +17,7 @@ import java.lang.reflect.Type;
 @Slf4j
 public abstract class TypedStringConverter<T extends TypedString> implements AttributeConverter<T, String> {
 
-    public static class PortfolioIdConverter extends TypedStringConverter<PortfolioId> {}
+    public static class PortfolioNameConverter extends TypedStringConverter<PortfolioName> {}
     public static class ClientIdConverter extends TypedStringConverter<ClientId> {}
     public static class TradeIdConverter extends TypedStringConverter<TradeId> {}
     public static class MarginStatementIdConverter extends TypedStringConverter<MarginStatementId> {}

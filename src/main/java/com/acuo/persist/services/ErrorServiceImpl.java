@@ -3,7 +3,7 @@ package com.acuo.persist.services;
 import com.acuo.common.ids.AssetId;
 import com.acuo.common.ids.ClientId;
 import com.acuo.common.ids.MarginStatementId;
-import com.acuo.common.ids.PortfolioId;
+import com.acuo.common.ids.PortfolioName;
 import com.acuo.common.ids.TradeId;
 import com.acuo.persist.entity.AlgoError;
 import com.acuo.persist.entity.Asset;
@@ -63,10 +63,10 @@ public class ErrorServiceImpl extends AbstractService<ServiceError, String> impl
     }
 
     @Override
-    public void persist(ClientId clientId, PortfolioId portfolioId, ServiceError error) {
-        if (portfolioId == null || error == null) return;
+    public void persist(ClientId clientId, PortfolioName portfolioName, ServiceError error) {
+        if (portfolioName == null || error == null) return;
 
-        Portfolio portfolio = portfolioService.portfolio(clientId, portfolioId);
+        Portfolio portfolio = portfolioService.portfolio(clientId, portfolioName);
         if (portfolio == null) return;
         portfolio.addErrors(error);
         portfolioService.save(portfolio);

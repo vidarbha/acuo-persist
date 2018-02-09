@@ -2,7 +2,7 @@ package com.acuo.persist.services;
 
 import com.acuo.common.ids.ClientId;
 import com.acuo.common.ids.MarginStatementId;
-import com.acuo.common.ids.PortfolioId;
+import com.acuo.common.ids.PortfolioName;
 import com.acuo.common.util.GuiceJUnitRunner;
 import com.acuo.persist.core.DataImporter;
 import com.acuo.persist.entity.Agreement;
@@ -145,7 +145,7 @@ public class MarginStatementServiceImplTest {
 
     @Test
     public void testGetMarginStatement(){
-        Agreement agreement = agreementService.agreementFor(client999, PortfolioId.fromString("p2"));
+        Agreement agreement = agreementService.agreementFor(client999, PortfolioName.fromString("p2"));
         LocalDate callDate = LocalDate.of(2017, 1, 13);
         MarginStatement marginStatement = marginStatementService.getMarginStatement(agreement, callDate);
         assertSatisfies(callDate, marginStatement);
@@ -163,7 +163,7 @@ public class MarginStatementServiceImplTest {
 
     @Test
     public void testGetOrCreateMarginStatement(){
-        Agreement agreement = agreementService.agreementFor(client999, PortfolioId.fromString("p2"));
+        Agreement agreement = agreementService.agreementFor(client999, PortfolioName.fromString("p2"));
         LocalDate callDate = LocalDate.of(2017, 1, 13);
         MarginStatement marginStatement = marginStatementService.getOrCreateMarginStatement(agreement, callDate);
         assertSatisfies(callDate, marginStatement);

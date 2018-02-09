@@ -1,7 +1,7 @@
 package com.acuo.persist.services;
 
 import com.acuo.common.ids.ClientId;
-import com.acuo.common.ids.PortfolioId;
+import com.acuo.common.ids.PortfolioName;
 import com.acuo.common.ids.TradeId;
 import com.acuo.common.typeref.TypeReference;
 import com.acuo.persist.entity.trades.Trade;
@@ -74,18 +74,18 @@ public class TradeServiceImpl<T extends Trade> extends AbstractService<T, TradeI
 
     @Override
     @Transactional
-    public Iterable<T> findByPortfolioId(ClientId clientId, PortfolioId... ids) {
+    public Iterable<T> findByPortfolioId(ClientId clientId, PortfolioName... portfolioNames) {
         if (log.isDebugEnabled()) {
-            log.debug("findByPortfolioId clientId {} for {}", clientId, Arrays.asList(ids));
+            log.debug("findByPortfolioId clientId {} for {}", clientId, Arrays.asList(portfolioNames));
         }
         String query =
                 "MATCH p=()-[*0..1]-(t:Trade)-[r:BELONGS_TO]->(portfolio:Portfolio)-[:FOLLOWS]->(a:Agreement) " +
                 "<-[]-(:LegalEntity)-[:MANAGES]-(client:Client) " +
-                "WHERE client.id = {clientId} AND portfolio.id IN {ids} " +
+                "WHERE client.id = {clientId} AND portfolio.id IN {names} " +
                 "RETURN p";
         return dao.getSession().query(getEntityType(), query, of(
                 "clientId",clientId.toString(),
-                "ids", ids)
+                "names", portfolioNames)
                 );
     }
 
