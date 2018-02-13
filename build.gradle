@@ -82,6 +82,11 @@ dependencies {
         exclude group: 'com.cyrusinnovation', module: 'mockito-groovy-support'
     }
 
+    testImplementation (
+            "org.jboss.resteasy:resteasy-jackson2-provider:${versions.resteasy}",
+            "org.jboss.resteasy:resteasy-multipart-provider:${versions.resteasy}"
+    )
+
     /*implementation (
         "org.springframework.data:spring-data-neo4j:4.2.0.RC1",
         "org.springframework.guice:spring-guice:1.0.0.BUILD-SNAPSHOT",
