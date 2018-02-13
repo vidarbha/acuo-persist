@@ -81,7 +81,7 @@ public class TradeServiceImpl<T extends Trade> extends AbstractService<T, TradeI
         String query =
                 "MATCH p=()-[*0..1]-(t:Trade)-[r:BELONGS_TO]->(portfolio:Portfolio)-[:FOLLOWS]->(a:Agreement) " +
                 "<-[]-(:LegalEntity)-[:MANAGES]-(client:Client) " +
-                "WHERE client.id = {clientId} AND portfolio.id IN {names} " +
+                        "WHERE client.id = {clientId} AND portfolio.name IN {names} " +
                 "RETURN p";
         return dao.getSession().query(getEntityType(), query, of(
                 "clientId",clientId.toString(),
