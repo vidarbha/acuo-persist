@@ -18,8 +18,8 @@ apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/ja
 group = 'com.acuo.collateral'
 
 ext.versions += [
-        common  : '0.14.0-SNAPSHOT',
-        model   : '0.1.0-SNAPSHOT'
+        common  : '0.14.1',
+        model   : '0.1.0'
 ]
 
 dependencies {
