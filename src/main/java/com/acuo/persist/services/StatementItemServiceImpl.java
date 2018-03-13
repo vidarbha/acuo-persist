@@ -6,14 +6,20 @@ import com.acuo.persist.entity.Step;
 import com.acuo.persist.entity.enums.StatementStatus;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
+import org.neo4j.ogm.session.Session;
 
-public class StatementItemServiceImpl extends GenericService<StatementItem, String> implements StatementItemService {
+import javax.inject.Provider;
+
+public class StatementItemServiceImpl extends AbstractService<StatementItem, String> implements StatementItemService {
 
     private final NextService nextService;
     private final StepService stepService;
 
     @Inject
-    public StatementItemServiceImpl(NextService nextService, StepService stepService) {
+    public StatementItemServiceImpl(Provider<Session> session,
+                                    NextService nextService,
+                                    StepService stepService) {
+        super(session);
         this.nextService = nextService;
         this.stepService = stepService;
     }

@@ -3,9 +3,18 @@ package com.acuo.persist.services;
 import com.acuo.persist.entity.Trade;
 import com.acuo.persist.entity.TradingAccount;
 import com.google.inject.persist.Transactional;
+import org.neo4j.ogm.session.Session;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 
-public class TradingAccountServiceImpl extends GenericService<TradingAccount, String> implements TradingAccountService {
+public class TradingAccountServiceImpl extends AbstractService<TradingAccount, String> implements TradingAccountService {
+
+    @Inject
+    public TradingAccountServiceImpl(Provider<Session> session) {
+        super(session);
+    }
 
     @Override
     public Class<TradingAccount> getEntityType() {

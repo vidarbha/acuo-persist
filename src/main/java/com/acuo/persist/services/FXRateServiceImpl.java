@@ -5,12 +5,14 @@ import com.acuo.persist.entity.FXRate;
 import com.acuo.persist.entity.FXValue;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 import com.opengamma.strata.basics.currency.Currency;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.ogm.model.Result;
+import org.neo4j.ogm.session.Session;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
@@ -18,13 +20,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-public class FXRateServiceImpl extends GenericService<FXRate, Long> implements FXRateService {
+public class FXRateServiceImpl extends AbstractService<FXRate, Long> implements FXRateService {
 
     private final CurrencyService currencyService;
     private final FXValueService fxValueService;
 
     @Inject
-    public FXRateServiceImpl(CurrencyService currencyService, FXValueService fxValueService) {
+    public FXRateServiceImpl(Provider<Session> session,
+                             CurrencyService currencyService,
+                             FXValueService fxValueService) {
+        super(session);
         this.currencyService = currencyService;
         this.fxValueService = fxValueService;
     }
@@ -42,7 +47,7 @@ public class FXRateServiceImpl extends GenericService<FXRate, Long> implements F
                 "MATCH p=(fxRate)-[*0..1]-()" +
                 "RETURN p, nodes(p), relationships(p)";
         final ImmutableMap<String, String> parameters = ImmutableMap.of("ccy1", base.getCode(), "ccy2", counter.getCode());
-        return sessionProvider.get().queryForObject(FXRate.class, query, parameters);
+        return dao.getSession().queryForObject(FXRate.class, query, parameters);
     }
 
     @Transactional
@@ -65,7 +70,7 @@ public class FXRateServiceImpl extends GenericService<FXRate, Long> implements F
                 "MATCH (from:Currency)<-[:FROM]-(fxRate:FXRate)-[:TO]->(to:Currency) " +
                         "MATCH (fxRate)-[:LAST]->(fxValue:FXValue) " +
                         "RETURN fxValue.value as rate, from.id as from, to.id as to";
-        Result result = sessionProvider.get().query(query, Collections.emptyMap());
+        Result result = dao.getSession().query(query, Collections.emptyMap());
         result.forEach(map -> {
             final Double rate = (Double) map.get("rate");
             final Currency from = Currency.of((String) map.get("from"));
@@ -116,7 +121,7 @@ public class FXRateServiceImpl extends GenericService<FXRate, Long> implements F
                 "WHERE ID(fxRate)={id} AND value.from < {time} " +
                 "RETURN value";
         final ImmutableMap<String, Long> parameters = ImmutableMap.of("id", fxRate.getId(), "time", twentyFourHours);
-        final Iterable<FXValue> fxValues = sessionProvider.get().query(FXValue.class, query, parameters);
+        final Iterable<FXValue> fxValues = dao.getSession().query(FXValue.class, query, parameters);
         if (!Iterables.isEmpty(fxValues))
             fxValueService.delete(fxValues);
     }

@@ -4,8 +4,17 @@ import com.acuo.persist.entity.CustodianAccount;
 import com.acuo.persist.entity.LegalEntity;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
+import org.neo4j.ogm.session.Session;
 
-public class CustodianAccountServiceImpl extends GenericService<CustodianAccount, String> implements CustodianAccountService {
+import javax.inject.Inject;
+import javax.inject.Provider;
+
+public class CustodianAccountServiceImpl extends AbstractService<CustodianAccount, String> implements CustodianAccountService {
+
+    @Inject
+    public CustodianAccountServiceImpl(Provider<Session> session) {
+        super(session);
+    }
 
     @Override
     public Class<CustodianAccount> getEntityType() {
@@ -19,7 +28,7 @@ public class CustodianAccountServiceImpl extends GenericService<CustodianAccount
                 "MATCH (entity:LegalEntity {id:{id}})-[:HAS]->(trading:TradingAccount)-[r:ACCESSES]->(account:CustodianAccount) " +
                 "RETURN account";
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", legalEntity.getLegalEntityId());
-        return  sessionProvider.get().query(CustodianAccount.class, query, parameters);
+        return  dao.getSession().query(CustodianAccount.class, query, parameters);
     }
 
     @Override
@@ -27,7 +36,7 @@ public class CustodianAccountServiceImpl extends GenericService<CustodianAccount
     public Iterable<CustodianAccount> counterPartyCustodianAccountsFor(LegalEntity legalEntity) {
         String query = "MATCH (entity:LegalEntity {id:{id}})-[r:ACCESSES]->(account:CustodianAccount) RETURN account";
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", legalEntity.getLegalEntityId());
-        return  sessionProvider.get().query(CustodianAccount.class, query, parameters);
+        return  dao.getSession().query(CustodianAccount.class, query, parameters);
     }
 
 }

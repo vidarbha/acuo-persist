@@ -1,6 +1,5 @@
 package com.acuo.persist.modules;
 
-import com.acuo.persist.entity.CollateralValue;
 import com.acuo.persist.entity.FRA;
 import com.acuo.persist.entity.IRS;
 import com.acuo.persist.entity.Trade;
@@ -36,9 +35,13 @@ public class RepositoryModule extends AbstractModule {
         bind(NextService.class).to(NextServiceImpl.class);
         bind(FXRateService.class).to(FXRateServiceImpl.class);
         bind(FXValueService.class).to(FXValueServiceImpl.class);
+        bind(SettlementService.class).to(SettlementServiceImpl.class);
         bind(SettlementDateService.class).to(SettlementDateServiceImpl.class);
         bind(CollateralService.class).to(CollateralServiceImpl.class);
         bind(CollateralValueService.class).to(CollateralValueServiceImpl.class);
+        bind(ErrorService.class).to(ErrorServiceImpl.class);
+        bind(AssetPledgeService.class).to(AssetPledgeServiceImpl.class);
+        bind(AssetPledgeValueService.class).to(AssetPledgeValueServiceImpl.class);
     }
 
 }

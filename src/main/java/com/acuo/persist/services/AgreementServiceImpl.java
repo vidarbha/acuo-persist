@@ -1,12 +1,21 @@
 package com.acuo.persist.services;
 
-import com.acuo.persist.entity.Agreement;
 import com.acuo.common.model.ids.PortfolioId;
 import com.acuo.common.model.ids.TradeId;
+import com.acuo.persist.entity.Agreement;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
+import org.neo4j.ogm.session.Session;
 
-public class AgreementServiceImpl extends GenericService<Agreement, String> implements AgreementService {
+import javax.inject.Inject;
+import javax.inject.Provider;
+
+public class AgreementServiceImpl extends AbstractService<Agreement, String> implements AgreementService {
+
+    @Inject
+    public AgreementServiceImpl(Provider<Session> session) {
+        super(session);
+    }
 
     @Override
     public Class<Agreement> getEntityType() {
@@ -21,7 +30,7 @@ public class AgreementServiceImpl extends GenericService<Agreement, String> impl
                 "RETURN p, nodes(p), relationships(p)";
         final String pId = portfolioId.toString();
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", pId);
-        return sessionProvider.get().queryForObject(getEntityType(), query, parameters);
+        return dao.getSession().queryForObject(getEntityType(), query, parameters);
     }
 
     @Override
@@ -33,6 +42,6 @@ public class AgreementServiceImpl extends GenericService<Agreement, String> impl
                 "RETURN p, nodes(p), relationships(p)";
         final String id = tradeId.toString();
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", id);
-        return sessionProvider.get().queryForObject(getEntityType(), query, parameters);
+        return dao.getSession().queryForObject(getEntityType(), query, parameters);
     }
 }

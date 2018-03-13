@@ -32,7 +32,7 @@ public class VariationMargin extends MarginCall<VariationMargin> {
                            Long tradeCount) {
         super(side, amount, valuationDate, callDate, currency, agreement, marginStatement, rates, tradeCount);
         this.marginType = Variation;
-        this.itemId = marginCallId(side, agreement, callDate, Variation);
+        this.itemId = marginCallId(side, agreement, callDate, Variation, direction);
     }
 
     public static Converter<com.acuo.common.model.margin.MarginCall, VariationMargin> converter = Converter.ofNullable(

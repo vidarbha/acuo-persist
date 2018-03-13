@@ -18,4 +18,6 @@ public interface CollateralService extends Service<Collateral, Long> {
                                         Types.BalanceStatus status);
 
     Collateral handle(AssetTransfer transfer);
+
+    Double amount(Types.AssetType assetType, Types.MarginType marginType, Types.BalanceStatus status);
 }

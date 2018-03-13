@@ -15,12 +15,14 @@ import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"holds", "transfers", "settlementDate"})
-@ToString(exclude = {"holds", "transfers", "settlementDate"})
+@EqualsAndHashCode(callSuper = false, exclude = {"holds", "transfers", "settlement", "errors"})
+@ToString(exclude = {"holds", "transfers", "settlement", "errors"})
 public class Asset extends Entity<Asset> {
 
     @Property(name = "id")
@@ -30,7 +32,6 @@ public class Asset extends Entity<Asset> {
 
     private String idType;
     private String name;
-    private String isin;
     @Convert(CurrencyConverter.class)
     private Currency currency;
     private Double yield;
@@ -65,6 +66,18 @@ public class Asset extends Entity<Asset> {
     @Relationship(type = "PRICING_SOURCE")
     private PricingSource pricingSource;
 
-    @Relationship(type = "SETTLE_DATE")
-    private SettlementDate settlementDate;
+    @Relationship(type = "SETTLEMENT")
+    private Settlement settlement;
+
+    @Relationship(type = "ENCOUNTERS")
+    private List<ServiceError> errors = new ArrayList<>();
+
+    public void addErrors(ServiceError error) {
+        errors.add(error);
+    }
+
+    public void addAllErrors(List<ServiceError> error) {
+        errors.addAll(error);
+    }
+
 }

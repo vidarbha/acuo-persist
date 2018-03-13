@@ -1,5 +1,6 @@
 package com.acuo.persist.entity;
 
+import com.acuo.common.model.margin.Types;
 import com.acuo.persist.entity.enums.AssetTransferStatus;
 import com.acuo.persist.neo4j.converters.LocalDateTimeConverter;
 import lombok.Data;
@@ -35,7 +36,9 @@ public class AssetTransfer extends Entity<AssetTransfer> {
     private Double transferValue;
     private Double unitValue;
     private Double totalHaircut;
-    private Double fxRate;
+
+    private Double assetFxRate;
+    private Double callFxRate;
 
     @Relationship(type = "OF")
     private Asset of;
@@ -48,5 +51,25 @@ public class AssetTransfer extends Entity<AssetTransfer> {
 
     @Relationship(type = "GENERATED_BY")
     private MarginCall generatedBy;
+
+    public static Types.BalanceStatus status(AssetTransferStatus status) {
+        switch (status) {
+            case Departed:
+                return Types.BalanceStatus.Pending;
+            case InFlight:
+                return Types.BalanceStatus.Pending;
+            case Delayed:
+                return Types.BalanceStatus.Pending;
+            case Cancelled:
+                return Types.BalanceStatus.Settled;
+            case Deployed:
+                return Types.BalanceStatus.Settled;
+            case Available:
+                return Types.BalanceStatus.Settled;
+            case Arriving:
+                return Types.BalanceStatus.Pending;
+        }
+        return null;
+    }
 
 }

@@ -8,20 +8,25 @@ import com.acuo.persist.entity.Collateral;
 import com.acuo.persist.entity.CollateralValue;
 import com.acuo.persist.entity.MarginCall;
 import com.acuo.persist.entity.MarginStatement;
-import com.acuo.persist.entity.enums.AssetTransferStatus;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
+import org.neo4j.ogm.session.Session;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
-public class CollateralServiceImpl extends GenericService<Collateral, Long> implements CollateralService {
+import static com.google.common.collect.ImmutableMap.of;
+
+public class CollateralServiceImpl extends AbstractService<Collateral, Long> implements CollateralService {
 
     private final MarginStatementService marginStatementService;
     private final CollateralValueService collateralValueService;
 
     @Inject
-    public CollateralServiceImpl(MarginStatementService marginStatementService,
+    public CollateralServiceImpl(Provider<Session> session,
+                                 MarginStatementService marginStatementService,
                                  CollateralValueService collateralValueService) {
+        super(session);
         this.marginStatementService = marginStatementService;
         this.collateralValueService = collateralValueService;
     }
@@ -45,7 +50,7 @@ public class CollateralServiceImpl extends GenericService<Collateral, Long> impl
                 "marginType", marginType.name(),
                 "assetType", assetType.name(),
                 "status", status.name());
-        return sessionProvider.get().queryForObject(Collateral.class, query, parameters);
+        return dao.getSession().queryForObject(Collateral.class, query, parameters);
     }
 
     @Override
@@ -80,35 +85,30 @@ public class CollateralServiceImpl extends GenericService<Collateral, Long> impl
         String type = asset.getType();
         Types.AssetType assetType = "CASH".equals(type) ? Types.AssetType.Cash : Types.AssetType.NonCash;
 
-        Types.BalanceStatus status = status(transfer.getStatus());
+        Types.BalanceStatus status = AssetTransfer.status(transfer.getStatus());
 
         double amount = transfer.getQuantities() * transfer.getTransferValue();//transfer.getUnitValue();
         Collateral collateral = getOrCreateCollateralFor(MarginStatementId.fromString(statementId), marginType, assetType, status);
-        CollateralValue value = collateralValueService.createCollateralValue(amount);
+        CollateralValue value = collateralValueService.createValue(amount);
         value.setCollateral(collateral);
         collateral.setLatestValue(value);
         save(collateral, 2);
         return find(collateral.getId());
     }
 
-    private Types.BalanceStatus status(AssetTransferStatus status) {
-        switch (status) {
-            case Departed:
-                return Types.BalanceStatus.Pending;
-            case InFlight:
-                return Types.BalanceStatus.Pending;
-            case Delayed:
-                return Types.BalanceStatus.Pending;
-            case Cancelled:
-                return Types.BalanceStatus.Settled;
-            case Deployed:
-                return Types.BalanceStatus.Settled;
-            case Available:
-                return Types.BalanceStatus.Settled;
-            case Arriving:
-                return Types.BalanceStatus.Pending;
-        }
-        return null;
+    @Override
+    public Double amount(Types.AssetType assetType, Types.MarginType marginType, Types.BalanceStatus status) {
+        String query =
+                "MATCH (c:Collateral)-[:LATEST]->(d:CollateralValue) " +
+                "WHERE c.marginType = {marginType} " +
+                "AND c.assetType = {assetType} " +
+                "AND c.status= {status} " +
+                "RETURN sum(d.amount)";
+        final ImmutableMap<String, String> parameters =
+                of("assetType", assetType.name(),
+                   "marginType", marginType.name(),
+                   "status", status.name());
+        return dao.getSession().queryForObject(Double.class, query, parameters);
     }
 
 }

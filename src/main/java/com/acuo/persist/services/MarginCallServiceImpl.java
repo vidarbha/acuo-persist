@@ -1,31 +1,44 @@
 package com.acuo.persist.services;
 
+import com.acuo.common.model.ids.MarginStatementId;
 import com.acuo.common.model.margin.Dispute;
 import com.acuo.common.model.margin.Types;
 import com.acuo.persist.entity.ChildOf;
 import com.acuo.persist.entity.MarginCall;
 import com.acuo.persist.entity.StatementItem;
 import com.acuo.persist.entity.enums.StatementStatus;
-import com.acuo.common.model.ids.MarginStatementId;
 import com.acuo.persist.spring.Call;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
+import com.opengamma.strata.basics.currency.Currency;
 import org.neo4j.ogm.model.Result;
+import org.neo4j.ogm.session.Session;
 
+import javax.inject.Provider;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.stream.StreamSupport;
 
 
-public class MarginCallServiceImpl extends GenericService<MarginCall, String> implements MarginCallService {
+public class MarginCallServiceImpl extends AbstractService<MarginCall, String> implements MarginCallService {
 
     @Inject
-    private StatementItemService statementItemService = null;
+    private final StatementItemService statementItemService;
 
-    @Inject
-    private DisputeService disputeService = null;
+    @javax.inject.Inject
+    public MarginCallServiceImpl(Provider<Session> session,
+                                 StatementItemService statementItemService) {
+        super(session);
+        this.statementItemService = statementItemService;
+    }
 
     @Override
     public Class<MarginCall> getEntityType() {
@@ -40,7 +53,7 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
                 "(m:MarginStatement)<-[*1..2]-(mc:MarginCall)-[:LAST]->(step:Step) " +
                 "WHERE step.status IN {statuses} " +
                 "RETURN mc, nodes(p), relationships(p)";
-        return sessionProvider.get().query(MarginCall.class, query, ImmutableMap.of("clientId", clientId, "statuses", statuses));
+        return dao.getSession().query(MarginCall.class, query, ImmutableMap.of("clientId", clientId, "statuses", statuses));
     }
 
     @Override
@@ -50,7 +63,7 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
                 "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement {id:{msId}})<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
                 "WHERE step.status IN {statuses} " +
                 "RETURN mc, nodes(p), relationships(p)";
-        return sessionProvider.get().query(MarginCall.class, query, ImmutableMap.of("msId", marginStatementId, "statuses", statuses));
+        return dao.getSession().query(MarginCall.class, query, ImmutableMap.of("msId", marginStatementId, "statuses", statuses));
     }
 
     @Override
@@ -58,8 +71,21 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
     public MarginCall callByAmpId(String ampId) {
         String query =
                 "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement)<-[]-(mc:MarginCall {ampId:{id}})-[:LAST]->(step:Step) " +
-                "RETURN mc, nodes(p), relationships(p)";
-        return sessionProvider.get().queryForObject(MarginCall.class, query, ImmutableMap.of("id", ampId));
+                "WITH mc, m, p " +
+                "MATCH a=(m)-[:SENT_FROM|DIRECTED_TO]->()-[:ACCESSES]->() " +
+                "RETURN mc, nodes(p), relationships(p), nodes(a), relationships(a)";
+        return dao.getSession().queryForObject(MarginCall.class, query, ImmutableMap.of("id", ampId));
+    }
+
+    @Override
+    @Transactional
+    public MarginCall callById(String callId) {
+        String query =
+                "MATCH p=(:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement)<-[]-(mc:MarginCall {id:{id}})-[:LAST]->(step:Step) " +
+                "WITH mc, m, p " +
+                "MATCH a=(m)-[:SENT_FROM|DIRECTED_TO]->()-[:ACCESSES]->() " +
+                "RETURN mc, nodes(p), relationships(p), nodes(a), relationships(a)";
+        return dao.getSession().queryForObject(MarginCall.class, query, ImmutableMap.of("id", callId));
     }
 
     @Override
@@ -70,7 +96,7 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
                 "(a:Agreement)<-[]-(m:MarginStatement)<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
                 "WHERE mc.id IN {ids} " +
                 "RETURN mc, nodes(p), relationships(p)";
-        return sessionProvider.get().query(MarginCall.class, query, ImmutableMap.of("ids", callIds));
+        return dao.getSession().query(MarginCall.class, query, ImmutableMap.of("ids", callIds));
     }
 
     @Override
@@ -81,7 +107,7 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
                 "MATCH (:Firm)-[:MANAGES]->(l:LegalEntity)-[]->(a:Agreement)<-[]-(m:MarginStatement {id:{msId}})<-[]-(mc1:MarginCall)-[:LAST]->(step:Step {status:'Unrecon'}) " +
                 "MATCH (mc2:MarginCall)<-[:MATCHED_TO]-(mc1) " +
                 "return mc2";
-        return sessionProvider.get().query(MarginCall.class, query, ImmutableMap.of("msId", marginStatementId));
+        return dao.getSession().query(MarginCall.class, query, ImmutableMap.of("msId", marginStatementId));
     }
 
     @Override
@@ -89,7 +115,7 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
     public Iterable<MarginCall> allExpectedCallsFor(MarginStatementId marginStatementId) {
         String query = "MATCH (m:MarginStatement {id:{msId}})<-[]-(mc:MarginCall)-[:LAST]->(step:Step {status:'Expected'}) " +
                 "return mc";
-        return sessionProvider.get().query(MarginCall.class, query, ImmutableMap.of("msId", marginStatementId.toString()));
+        return dao.getSession().query(MarginCall.class, query, ImmutableMap.of("msId", marginStatementId.toString()));
     }
 
     @Override
@@ -101,7 +127,7 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
                         "MATCH (m)<-[]-(mc:MarginCall)-[:LAST]->(step:Step) " +
                         "WITH {category:a.type, type:mc.callType, status:step.status, balance: mc.balanceAmount, excess: mc.excessAmount} AS Call " +
                         "RETURN Call";
-        return sessionProvider.get().query(Call.class, query, ImmutableMap.of("clientId", clientId, "dateTime", dateTime));
+        return dao.getSession().query(Call.class, query, ImmutableMap.of("clientId", clientId, "dateTime", dateTime));
     }
 
     private static final BiPredicate<MarginCall, MarginCall> MATCHING_CALLS =
@@ -124,10 +150,33 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
                     .findFirst();
             if (expected.isPresent()) {
                 cptyCall.setMatchedItem(expected.get());
-                cptyCall = statementItemService.setStatus(cptyCall.getItemId(), StatementStatus.Unrecon);
-                statementItemService.setStatus(expected.get().getItemId(), StatementStatus.MatchedToReceived);
                 cptyCall = save(cptyCall);
+                statementItemService.setStatus(expected.get().getItemId(), StatementStatus.MatchedToReceived);
             }
+            cptyCall = statementItemService.setStatus(cptyCall.getItemId(), StatementStatus.Unrecon);
+        }
+        return cptyCall;
+    }
+
+    @Override
+    @Transactional
+    public MarginCall matchToSent(String callId) {
+        MarginCall cptyCall = find(callId, 1);
+        StatementItem matchedItem = cptyCall.getMatchedItem();
+        if (matchedItem == null) {
+            final MarginStatementId marginStatementId = MarginStatementId.fromString(cptyCall.getMarginStatement().getStatementId());
+            final Iterable<MarginCall> marginCalls = allExpectedCallsFor(marginStatementId);
+
+            MarginCall finalCptyCall = cptyCall;
+            final Optional<MarginCall> expected = StreamSupport.stream(marginCalls.spliterator(), false)
+                    .filter(clientCall -> MATCHING_CALLS.test(clientCall, finalCptyCall))
+                    .findFirst();
+            if (expected.isPresent()) {
+                cptyCall.setMatchedItem(expected.get());
+                cptyCall = save(cptyCall);
+                statementItemService.setStatus(expected.get().getItemId(), StatementStatus.Reconciled);
+            }
+            cptyCall = statementItemService.setStatus(cptyCall.getItemId(), StatementStatus.MatchedToSent);
         }
         return cptyCall;
     }
@@ -140,7 +189,7 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
                 "MATCH (mc:MarginCall {side:'Cpty'})-[:PART_OF]->(ms) " +
                 "RETURN mc.ampId, d.agreedAmount, d.disputeReasonCodes, d.comments, d.mtm, d.balance ";
 
-        Result result = sessionProvider.get().query(query, ImmutableMap.of("id", marginStatementId));
+        Result result = dao.getSession().query(query, ImmutableMap.of("id", marginStatementId));
         result.forEach(map -> marginCalls.add(buildDisputeMarginCall(map)));
         return marginCalls;
     }
@@ -159,7 +208,7 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
         Arrays.stream(codes).forEach(s -> disputeReasonCodeSet.add(Types.DisputeReasonCode.valueOf(s)));
         //disputeReasonCodeSet.add(Types.DisputeReasonCode.valueOf((map.get("d.disputeReasonCodes").toString())));
         dispute.setComments((String) map.get("d.comments"));
-        dispute.setMtm(((Double) map.get("d.mtm")).doubleValue());
+        dispute.setMtm((Double) map.get("d.mtm"));
         dispute.setAgreedAmount((Double) map.get("d.agreedAmount"));
         dispute.setBalance((Double) map.get("d.balance"));
 
@@ -170,19 +219,21 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
     @Transactional
     public com.acuo.common.model.margin.MarginCall getPledgeMarginCall(String marginCallId) {
         com.acuo.common.model.margin.MarginCall marginCall = new com.acuo.common.model.margin.MarginCall();
-        String query = String.format(
+        String query =
                 "MATCH (mc:MarginCall {id:{id}})<-[:GENERATED_BY]-(at:AssetTransfer)-[:OF]->(a:Asset) " +
-                        "MATCH (mc)-[PART_OF]->(:MarginStatement)-[:STEMS_FROM]->(:Agreement)-[IS_COMPOSED_OF]->(r:Rule)-[:APPLIES_TO]->(a) " +
-                        "MATCH (ca:CustodianAccount)<-[:FROM]-(at) " +
-                        "RETURN mc.ampId, a.id, a.idType, a.currency, at.quantities, at.value, r.haircut + r.FXHaircut as haircut");
+                "MATCH (mc)-[PART_OF]->(:MarginStatement)-[:STEMS_FROM]->(:Agreement)-[IS_COMPOSED_OF]->(r:Rule)-[:APPLIES_TO]->(a) " +
+                "MATCH (ca:CustodianAccount)<-[:FROM]-(at) " +
+                "RETURN mc.ampId, a.id, a.idType, a.currency, at.quantities, at.value, r.haircut + r.FXHaircut as haircut";
 
-        Result result = sessionProvider.get().query(query, ImmutableMap.of("id", marginCallId));
+        ImmutableMap<String, String> parameters = ImmutableMap.of("id", marginCallId);
+        Result result = dao.getSession().query(query, parameters);
         Map<String, Object> map = result.iterator().next();
-        //// TODO: 2017/5/15 0015   check if Custodian account ca is owned by the client or the counterpart. If it's owned by the client, then deliveryType is 'deliver', otherwise it's 'return'
+        //TODO: 2017/5/15 0015   check if Custodian account ca is owned by the client or the counterpart.
+        //If it's owned by the client, then deliveryType is 'deliver', otherwise it's 'return'
 
         if (map != null) {
             marginCall.setAmpId((String) map.get("mc.ampId"));
-            marginCall.setCurrency(com.opengamma.strata.basics.currency.Currency.of((String) map.get("a.currency")));
+            marginCall.setCurrency(Currency.of((String) map.get("a.currency")));
 
         }
         return marginCall;
@@ -190,33 +241,18 @@ public class MarginCallServiceImpl extends GenericService<MarginCall, String> im
 
     @Override
     @Transactional
-    public MarginCall createPartialDisputeCall(MarginCall parent, MarginCall child, Dispute dispute, StatementStatus status) {
-
-        child = this.createOrUpdate(child);
-        child = statementItemService.setStatus(child.getItemId(), status);
-
+    public MarginCall link(MarginCall parent, MarginCall child) {
         ChildOf childOf = new ChildOf();
         childOf.setTime(LocalDateTime.now());
         childOf.setChild(child);
         childOf.setParent(parent);
-
-        Set<ChildOf> children = new HashSet<ChildOf>();
-        children.add(childOf);
-        parent.setChildren(children);
-        parent = this.createOrUpdate(parent);
-        statementItemService.setStatus(parent.getItemId(), StatementStatus.PartialDispute);
-
-        if (StatementStatus.ActionDispute.equals(status)) {
-            com.acuo.persist.entity.Dispute disputeInDB = disputeService.add(parent.getMarginStatement(), dispute);
-        }
-
-        return child;
+        child.setParent(childOf);
+        return this.save(child);
     }
 
     @Override
     @Transactional
-    public void sentMS(MarginCall marginCall)
-    {
+    public void sentMS(MarginCall marginCall) {
         marginCall.setSentMS(1);
         save(marginCall);
     }

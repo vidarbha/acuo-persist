@@ -1,14 +1,22 @@
 package com.acuo.persist.services;
 
 import com.acuo.common.model.results.MSError;
-import com.acuo.persist.entity.Error;
 import com.acuo.persist.entity.Step;
+import com.acuo.persist.entity.StepError;
 import com.acuo.persist.entity.enums.StatementStatus;
 import com.google.inject.persist.Transactional;
+import org.neo4j.ogm.session.Session;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
 import java.time.LocalDateTime;
 
-public class StepServiceImpl extends GenericService<Step, String> implements StepService {
+public class StepServiceImpl extends AbstractService<Step, String> implements StepService {
+
+    @Inject
+    public StepServiceImpl(Provider<Session> session) {
+        super(session);
+    }
 
     @Override
     public Class<Step> getEntityType() {
@@ -29,15 +37,15 @@ public class StepServiceImpl extends GenericService<Step, String> implements Ste
         if (msError == null) {
             return create(status);
         }
-        Error error = new Error();
-        error.setErrorCode(msError.getErrorCode());
-        error.setErrorDesc(msError.getErrorDescription());
-        error.setErrorMsg(msError.getErrorMessage());
-        error.setStatusCode(msError.getStatusCode());
-        error.setStatusDesc(msError.getHttpStatusDescription());
-        error.setDateTime(LocalDateTime.now());
-        error.setStatus(StatementStatus.Error);
-        error.setStatusAimed(status);
-        return save(error);
+        StepError stepError = new StepError();
+        stepError.setErrorCode(msError.getErrorCode());
+        stepError.setErrorDesc(msError.getErrorDescription());
+        stepError.setErrorMsg(msError.getErrorMessage());
+        stepError.setStatusCode(msError.getStatusCode());
+        stepError.setStatusDesc(msError.getHttpStatusDescription());
+        stepError.setDateTime(LocalDateTime.now());
+        stepError.setStatus(StatementStatus.Error);
+        stepError.setStatusAimed(status);
+        return save(stepError);
     }
 }

@@ -7,10 +7,18 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
 import org.neo4j.driver.internal.util.Iterables;
 import org.neo4j.ogm.model.Result;
+import org.neo4j.ogm.session.Session;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
 import java.util.Map;
 
-public class PortfolioServiceImpl extends GenericService<Portfolio, PortfolioId> implements PortfolioService {
+public class PortfolioServiceImpl extends AbstractService<Portfolio, PortfolioId> implements PortfolioService {
+
+    @Inject
+    public PortfolioServiceImpl(Provider<Session> session) {
+        super(session);
+    }
 
     @Override
     public Class<Portfolio> getEntityType() {
@@ -24,7 +32,7 @@ public class PortfolioServiceImpl extends GenericService<Portfolio, PortfolioId>
                 "MATCH p=(portfolio:Portfolio)<-[:BELONGS_TO]-(trade:Trade {id:{id}}) " +
                 "RETURN p, nodes(p), relationships(p)";
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", tradeId.toString());
-        return sessionProvider.get().queryForObject(Portfolio.class, query, parameters);
+        return dao.getSession().queryForObject(Portfolio.class, query, parameters);
     }
 
     @Override
@@ -35,7 +43,7 @@ public class PortfolioServiceImpl extends GenericService<Portfolio, PortfolioId>
                 "(a:Agreement)<-[:FOLLOWS]-(portfolio:Portfolio) " +
                 "WHERE portfolio.id IN {ids} " +
                 "RETURN portfolio, nodes(p), relationships(p)";
-        return sessionProvider.get().query(Portfolio.class, query, ImmutableMap.of("ids", ids));
+        return dao.getSession().query(Portfolio.class, query, ImmutableMap.of("ids", ids));
     }
 
     @Override
@@ -51,7 +59,7 @@ public class PortfolioServiceImpl extends GenericService<Portfolio, PortfolioId>
                 "MATCH (portfolio:Portfolio {id:{id}})<-[:BELONGS_TO]-(trade:Trade) " +
                 "RETURN count(trade) as count";
         final ImmutableMap<String, String> parameters = ImmutableMap.of("id", portfolioId.toString());
-        Result result =  sessionProvider.get().query(query, parameters);
+        Result result =  dao.getSession().query(query, parameters);
         Map<String, Object> next = result.iterator().next();
         return (Long) next.get("count");
     }
