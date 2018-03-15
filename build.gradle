@@ -18,19 +18,12 @@ apply from: "https://raw.githubusercontent.com/anaxo-io/gradle-plugins/master/ja
 group = 'com.acuo.collateral'
 
 ext.versions += [
-        common  : '0.14.3',
-        model   : '0.1.1'
+        common  : '0.14.4'
 ]
 
 dependencies {
 
-    implementation (
-            "com.acuo.collateral:acuo-common:${versions.common}"
-    ) { changing = true }
-
-    implementation (
-            "com.acuo.collateral:acuo-model:${versions.model}"
-    ) { changing = true }
+    implementation ("com.acuo.collateral:acuo-common:${versions.common}") { changing = true }
 
     implementation ("org.neo4j:neo4j-enterprise:${versions.neo4j}") {
         exclude group: 'org.slf4j'
@@ -52,13 +45,8 @@ dependencies {
             "commons-lang:commons-lang:${versions.commons_lang}",
     )
 
-    testImplementation (
-            "com.acuo.collateral:acuo-common:${versions.common}:tests"
-    )  { changing = true }
-
-    testImplementation (
-            "com.acuo.collateral:acuo-model:${versions.model}:tests"
-    )  { changing = true }
+    testImplementation ("com.acuo.collateral:acuo-common:${versions.common}:tests") { changing = true }
+    testImplementation ("com.acuo.collateral:acuo-model:+:tests") { changing = true }
 
     testImplementation ("org.neo4j.test:neo4j-harness-enterprise:${versions.neo4j}"){
         exclude group: 'org.slf4j'
