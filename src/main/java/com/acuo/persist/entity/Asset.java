@@ -39,16 +39,12 @@ public class Asset implements Entity<Asset> {
         setType(model.getType());
         setICADCode(model.getICADCode());
         //setACUOCategory();
-        //setPrice();
         setParValue(model.getParValue());
         setMinUnit(model.getMinUnit());
-        //setMinUnitValue();
         setIssueDate(model.getIssueDate());
         setMaturityDate(model.getMaturityDate());
         //setTimeToMaturityDays();
         //setTimeToMaturityYears();
-        //setRating();
-        //setSettlementTime();
     }
 
     public Assets model() {
@@ -83,18 +79,14 @@ public class Asset implements Entity<Asset> {
     private String type;
     private String ICADCode;
     private String ACUOCategory;
-    private Double price;
     private Double parValue;
     private Double minUnit;
-    private Double minUnitValue;
     @Convert(LocalDateConverter.class)
     private LocalDate issueDate;
     @Convert(LocalDateConverter.class)
     private LocalDate maturityDate;
     private Double timeToMaturityDays;
     private Double timeToMaturityYears;
-    private String rating;
-    private String settlementTime;
 
     @Relationship(type = "IS_IN")
     private AssetCategory assetCategory;

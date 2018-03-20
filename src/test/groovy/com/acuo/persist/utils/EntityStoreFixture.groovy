@@ -65,7 +65,6 @@ class EntityStoreFixture {
                 rules: clearedRules,
                 parValue: 1.0d,
                 minUnit: 1.0d,
-                minUnitValue: 0.01,
                 yield: 0,
                 issueDate: now,
                 maturityDate: now) {
@@ -90,7 +89,6 @@ class EntityStoreFixture {
                 rules: bilateralRules,
                 parValue: 1.0d,
                 minUnit: 1.0d,
-                minUnitValue: 0.01,
                 yield: 0,
                 issueDate: now,
                 maturityDate: now) {
@@ -217,7 +215,7 @@ class EntityStoreFixture {
     }
 
     def rule() {
-        return builder.rule(marginTypes: [Types.MarginType.Variation],
+        return builder.rule(marginTypes: [MarginType.Variation],
                 haircut: 0,
                 fxHaircut: 0,
                 externalCost: 0,
