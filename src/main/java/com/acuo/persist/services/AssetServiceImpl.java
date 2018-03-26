@@ -3,6 +3,7 @@ package com.acuo.persist.services;
 import com.acuo.common.ids.AssetId;
 import com.acuo.common.ids.ClientId;
 import com.acuo.persist.entity.Asset;
+import com.acuo.persist.entity.Holds;
 import com.acuo.persist.entity.SettlementDate;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.persist.Transactional;
@@ -14,8 +15,17 @@ import javax.inject.Provider;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BinaryOperator;
 
 public class AssetServiceImpl extends AbstractService<Asset, AssetId> implements AssetService {
+
+    private final HoldsService holdsService;
+
+    @Inject
+    public AssetServiceImpl(Provider<Session> session, HoldsService holdsService) {
+        super(session);
+        this.holdsService = holdsService;
+    }
 
     private final static String AVAILABLE_ASSET =
             "MATCH (client:Client)-[:MANAGES]->(entity)-[:CLIENT_SIGNS]->(agreement)-[:IS_COMPOSED_OF]->(rule)-[:APPLIES_TO]->(asset) " +
@@ -53,11 +63,6 @@ public class AssetServiceImpl extends AbstractService<Asset, AssetId> implements
                     "WITH DISTINCT asset " +
                     "MATCH p=()-[:MANAGES]->()-[:HOLDS]->(asset)-[*0..1]-()" +
                     "RETURN p";
-
-    @Inject
-    public AssetServiceImpl(Provider<Session> session) {
-        super(session);
-    }
 
     @Override
     @Transactional
@@ -103,6 +108,26 @@ public class AssetServiceImpl extends AbstractService<Asset, AssetId> implements
         final ImmutableMap<String, String> parameters = ImmutableMap.of("assetId", assetId.toString());
         final SettlementDate settlementDate = dao.getSession().queryForObject(SettlementDate.class, query, parameters);
         return Optional.ofNullable(settlementDate);
+    }
+
+    @Override
+    public void addQuantity(AssetId assetId, Double quantity) {
+        quantity(assetId, quantity, (a, b) -> a + b);
+    }
+
+    @Override
+    public void removeQuantity(AssetId assetId, Double quantity) {
+        quantity(assetId, quantity, (a, b) -> a - b);
+    }
+
+    private void quantity(AssetId assetId, Double quantity, BinaryOperator<Double> op) {
+        Asset asset = find(assetId, 1);
+        Holds holds = asset.getHolds();
+        if (holds != null) {
+            final Double result = op.apply(holds.getAvailableQuantity(), quantity);
+            holds.setAvailableQuantity(result);
+            holdsService.save(holds, 1);
+        }
     }
 
     @Override

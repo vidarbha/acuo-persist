@@ -1,0 +1,7 @@
+MERGE (custac:DummyCustodianAccount {id:"account"})
+
+MERGE (a:DummyAsset {id:"USD"})
+
+MERGE (custac)-[:HOLDS {availableQuantity: 100}]->(a)
+
+FOREACH (i IN range(1, 100) | CREATE (r:DummyRule {haircut: 1})-[:APPLIES_TO]->(a))

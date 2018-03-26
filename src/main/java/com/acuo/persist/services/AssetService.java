@@ -19,4 +19,8 @@ public interface AssetService extends Service<Asset, AssetId>  {
 
     Optional<SettlementDate> settlementDate(AssetId assetId);
 
+    void addQuantity(AssetId assetId, Double quantity);
+
+    void removeQuantity(AssetId assetId, Double quantity);
+
 }

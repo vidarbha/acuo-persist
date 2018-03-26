@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(exclude = {"id", "of"})
+@EqualsAndHashCode(exclude = {"of"})
 @ToString(exclude = {"of"})
 public class AssetTransfer implements Entity<AssetTransfer> {
 

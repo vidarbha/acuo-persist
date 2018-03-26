@@ -17,7 +17,7 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(exclude = {"id","errors"})
+@EqualsAndHashCode(exclude = {"errors"})
 @ToString(exclude = {"errors"})
 public class Portfolio implements Entity<Portfolio> {
 

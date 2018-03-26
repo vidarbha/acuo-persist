@@ -15,7 +15,6 @@ import com.opengamma.strata.basics.date.Tenor;
 import com.opengamma.strata.basics.index.FloatingRateName;
 import com.opengamma.strata.basics.schedule.Frequency;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -26,7 +25,6 @@ import java.time.LocalDate;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(exclude = {"id"})
 public class Leg implements Entity<Leg> {
 
     private Double notional;

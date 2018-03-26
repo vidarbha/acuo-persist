@@ -4,7 +4,6 @@ package com.acuo.persist.entity.trades;
 import com.acuo.persist.entity.Entity;
 import com.acuo.persist.neo4j.converters.LocalDateConverter;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -14,7 +13,6 @@ import java.time.LocalDate;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(exclude = {"id"})
 public class AdjustableDate implements Entity<AdjustableDate> {
 
     public AdjustableDate() {}

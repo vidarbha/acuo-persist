@@ -12,7 +12,7 @@ import org.neo4j.ogm.annotation.Relationship;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(exclude = {"id","owner"})
+@EqualsAndHashCode(exclude = {"owner"})
 @ToString(exclude = "owner")
 class Car implements Entity {
     Car() {

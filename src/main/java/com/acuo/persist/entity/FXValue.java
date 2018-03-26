@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(exclude = {"id","previous"})
+@EqualsAndHashCode(exclude = {"previous"})
 @ToString(exclude = "previous")
 public class FXValue implements Entity<FXValue> {
 

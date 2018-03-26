@@ -11,7 +11,7 @@ import org.neo4j.ogm.annotation.StartNode;
 
 @RelationshipEntity(type="COUNTERPARTY_SIGNS")
 @Data
-@EqualsAndHashCode(exclude = {"id","legalEntity", "agreement"})
+@EqualsAndHashCode(exclude = {"legalEntity", "agreement"})
 @ToString(exclude = {"legalEntity", "agreement"})
 public class CounterpartSignsRelation implements Entity<CounterpartSignsRelation> {
 

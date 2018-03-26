@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(exclude = {"id", "queryDateTime", "settlement"})
+@EqualsAndHashCode(exclude = {"queryDateTime", "settlement"})
 @ToString(exclude = {"settlement"})
 public class SettlementDate implements Entity<SettlementDate>{
 

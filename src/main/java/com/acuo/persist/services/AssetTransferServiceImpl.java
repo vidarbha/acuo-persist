@@ -6,7 +6,6 @@ import com.acuo.common.util.LocalDateUtils;
 import com.acuo.persist.entity.Asset;
 import com.acuo.persist.entity.AssetTransfer;
 import com.acuo.persist.entity.CustodianAccount;
-import com.acuo.persist.entity.Holds;
 import com.acuo.persist.entity.LegalEntity;
 import com.acuo.persist.entity.MarginCall;
 import com.acuo.persist.entity.SettlementDate;
@@ -91,8 +90,7 @@ public class AssetTransferServiceImpl extends AbstractService<AssetTransfer, Str
         assetTransfer.setTo(directedTo.getCustodianAccounts().iterator().next());
         save(assetTransfer, 1);
 
-        removeQuantity(assetId, quantity);
-
+        assetService.removeQuantity(assetId, quantity);
         collateralService.handle(assetTransfer);
         assetPledgeService.handle(assetTransfer);
     }
@@ -110,7 +108,7 @@ public class AssetTransferServiceImpl extends AbstractService<AssetTransfer, Str
         assetTransfer.setFrom(accounts.iterator().next());
         save(assetTransfer, 1);
 
-        //addQuantity(assetId, quantity);
+        assetService.addQuantity(assetId, quantity);
         collateralService.handle(assetTransfer);
     }
 
@@ -151,15 +149,6 @@ public class AssetTransferServiceImpl extends AbstractService<AssetTransfer, Str
         assetTransfer.setTotalHaircut(totalHaircut);
 
         return save(assetTransfer, 1);
-    }
-
-    private void removeQuantity(AssetId assetId, Double quantity) {
-        Asset asset = assetService.find(assetId, 2);
-        Holds holds = asset.getHolds();
-        if (holds != null) {
-            holds.setAvailableQuantity(holds.getAvailableQuantity() - quantity);
-        }
-        assetService.save(asset, 1);
     }
 
     public Result getPledgedAssets(ClientId clientId) {

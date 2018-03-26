@@ -15,7 +15,7 @@ import java.time.LocalTime;
 
 @RelationshipEntity(type = "HOLDS")
 @Data
-@EqualsAndHashCode(exclude = {"id", "custodianAccount","asset"})
+@EqualsAndHashCode(exclude = {"custodianAccount","asset"})
 @ToString(exclude = {"custodianAccount","asset"})
 public class Holds implements Entity<Holds>{
 

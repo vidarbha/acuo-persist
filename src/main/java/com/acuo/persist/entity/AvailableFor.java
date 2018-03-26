@@ -15,7 +15,7 @@ import java.util.Set;
 
 @RelationshipEntity(type = "IS_AVAILABLE_FOR")
 @Data
-@EqualsAndHashCode(exclude = {"id","asset","agreement"})
+@EqualsAndHashCode(exclude = {"asset","agreement"})
 @ToString(exclude = {"asset","agreement"})
 public class AvailableFor implements Entity<AvailableFor> {
 

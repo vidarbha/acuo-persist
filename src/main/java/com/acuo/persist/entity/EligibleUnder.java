@@ -2,7 +2,6 @@ package com.acuo.persist.entity;
 
 import com.acuo.common.model.margin.Types;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.EndNode;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
@@ -14,7 +13,6 @@ import java.util.Set;
 
 @RelationshipEntity(type="IS_ELIGIBLE_UNDER")
 @Data
-@EqualsAndHashCode(exclude = "id")
 public class EligibleUnder implements Entity<EligibleUnder> {
 
     @Id

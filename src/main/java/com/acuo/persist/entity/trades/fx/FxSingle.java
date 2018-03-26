@@ -9,7 +9,6 @@ import com.opengamma.strata.basics.currency.CurrencyAmount;
 import com.opengamma.strata.basics.date.BusinessDayConvention;
 import com.opengamma.strata.basics.date.HolidayCalendarId;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -22,7 +21,6 @@ import static java.util.stream.Collectors.toSet;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(exclude = "id")
 public class FxSingle implements Entity<FxSingle> {
 
     public FxSingle() {}

@@ -10,7 +10,7 @@ import org.neo4j.ogm.annotation.Relationship;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(exclude = {"id", "last"})
+@EqualsAndHashCode(exclude = {"last"})
 @ToString(exclude = {"last"})
 public class FXRate implements Entity<FXRate>{
 

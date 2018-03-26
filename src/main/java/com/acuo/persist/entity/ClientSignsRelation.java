@@ -11,7 +11,7 @@ import org.neo4j.ogm.annotation.StartNode;
 
 @RelationshipEntity(type="CLIENT_SIGNS")
 @Data
-@EqualsAndHashCode(callSuper = false, exclude = {"id", "legalEntity", "agreement"})
+@EqualsAndHashCode(callSuper = false, exclude = {"legalEntity", "agreement"})
 @ToString(exclude = {"legalEntity", "agreement"})
 public class ClientSignsRelation implements Entity<ClientSignsRelation> {
 

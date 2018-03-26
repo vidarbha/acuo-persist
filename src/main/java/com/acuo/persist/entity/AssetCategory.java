@@ -13,7 +13,7 @@ import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(exclude = {"id","eligibleUnder"})
+@EqualsAndHashCode(exclude = {"eligibleUnder"})
 @ToString(exclude = {"eligibleUnder"})
 public class AssetCategory implements Entity<AssetCategory> {
 

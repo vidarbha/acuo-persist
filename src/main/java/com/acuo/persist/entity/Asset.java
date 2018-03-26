@@ -23,7 +23,7 @@ import java.util.Set;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(exclude = {"id", "holds", "transfers", "settlement", "errors"})
+@EqualsAndHashCode(exclude = {"holds", "transfers", "settlement", "errors"})
 @ToString(exclude = {"holds", "transfers", "settlement", "errors"})
 public class Asset implements Entity<Asset> {
 

@@ -1,7 +1,6 @@
 package com.acuo.persist.entity;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -13,7 +12,6 @@ import static com.acuo.common.model.margin.Types.DisputeReasonCode;
 
 @NodeEntity
 @Data
-@EqualsAndHashCode(exclude = {"id"})
 public class Dispute implements Entity<Dispute> {
 
     @Id
