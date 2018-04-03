@@ -5,6 +5,7 @@ import com.opengamma.strata.basics.currency.Currency;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
@@ -13,6 +14,7 @@ import org.neo4j.ogm.annotation.typeconversion.Convert;
 @EqualsAndHashCode(callSuper = true)
 public class AssetValue extends Value<AssetValue> {
 
+    @Property(name = "yieldToMaturity")
     private Double yield;
 
     private Double unitValue;
