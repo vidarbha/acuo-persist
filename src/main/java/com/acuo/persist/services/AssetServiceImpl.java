@@ -28,6 +28,12 @@ public class AssetServiceImpl extends AbstractService<Asset, AssetId> implements
     }
 
     private final static String AVAILABLE_ASSET =
+            "MATCH h=(client:Client)-[:HAS]->(ca)-[holds:HOLDS]->(asset:Asset) " +
+            "WHERE client.id = {clientId} " +
+            "MATCH s=(asset)-[:SETTLEMENT*0..1]->(settlement)-[:LATEST*0..1]->(settlementDate) " +
+            "RETURN h, s";
+
+    private final static String AVAILABLE_ASSET_OLD =
             "MATCH (client:Client)-[:MANAGES]->(entity)-[:CLIENT_SIGNS]->(agreement)-[:IS_COMPOSED_OF]->(rule)-[:APPLIES_TO]->(asset) " +
             "WHERE client.id = {clientId} " +
             "WITH asset, client " +
