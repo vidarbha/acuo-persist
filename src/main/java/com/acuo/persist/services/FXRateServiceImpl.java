@@ -8,7 +8,6 @@ import com.google.common.collect.Iterables;
 import com.google.inject.persist.Transactional;
 import com.opengamma.strata.basics.currency.Currency;
 import lombok.extern.slf4j.Slf4j;
-import org.neo4j.ogm.model.Result;
 import org.neo4j.ogm.session.Session;
 
 import javax.inject.Inject;
@@ -68,20 +67,19 @@ public class FXRateServiceImpl extends AbstractService<FXRate, Long> implements 
 
     @Transactional
     @Override
-    public Map<Currency, Double> getAllFX() {
-        Map<Currency, Double> values = new HashMap<>();
-        values.put(Currency.USD, 1d);
+    public Map<Currency, FXRate> getAllFX() {
+        Map<Currency, FXRate> values = new HashMap<>();
+        values.put(Currency.USD, FXRate.USD_RATE);
         String query =
-                "MATCH (from:Currency)<-[:FROM]-(fxRate:FXRate)-[:TO]->(to:Currency) " +
-                        "MATCH (fxRate)-[:LAST]->(fxValue:FXValue) " +
-                        "RETURN fxValue.value as rate, from.id as from, to.id as to";
-        Result result = dao.getSession().query(query, Collections.emptyMap());
-        result.forEach(map -> {
-            final Double rate = (Double) map.get("rate");
-            final Currency from = Currency.of((String) map.get("from"));
-            final Currency to = Currency.of((String) map.get("to"));
+                "MATCH p=(from:Currency)<-[:FROM]-(fxRate:FXRate)-[:TO]->(to:Currency) " +
+                "MATCH v=(fxRate)-[:LAST]->(fxValue:FXValue) " +
+                "RETURN p, v";
+        final Iterable<FXRate> results = dao.getSession().query(FXRate.class, query, Collections.emptyMap());
+        results.forEach(rate -> {
+            final Currency from = Currency.of(rate.getFrom().getCurrencyId());
+            final Currency to = Currency.of(rate.getTo().getCurrencyId());
             if (Currency.USD.equals(from))
-                values.put(to, 1/rate);
+                values.put(to, rate);
             else if (Currency.USD.equals(to))
                 values.put(from, rate);
         });

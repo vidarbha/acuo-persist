@@ -12,7 +12,7 @@ public interface FXRateService extends Service<FXRate, Long> {
 
     Double getFXValue(Currency currency);
 
-    Map<Currency, Double> getAllFX();
+    Map<Currency, FXRate> getAllFX();
 
     FXRate getOrCreate(Currency base, Currency counter);
 

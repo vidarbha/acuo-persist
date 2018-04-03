@@ -14,6 +14,18 @@ import org.neo4j.ogm.annotation.Relationship;
 @ToString(exclude = {"last"})
 public class FXRate implements Entity<FXRate>{
 
+    public static FXRate USD_RATE = new FXRate();
+    static {
+        CurrencyEntity USD = new CurrencyEntity();
+        USD.setCurrencyId("USD");
+        USD.setName("USD");
+        USD_RATE.setFrom(USD);
+        USD_RATE.setTo(USD);
+        FXValue value = new FXValue();
+        value.setValue(1d);
+        USD_RATE.setLast(value);
+    }
+
     @Id
     @GeneratedValue
     private Long id;
@@ -26,5 +38,6 @@ public class FXRate implements Entity<FXRate>{
 
     @Relationship(type = "LAST")
     private FXValue last;
+
 
 }
