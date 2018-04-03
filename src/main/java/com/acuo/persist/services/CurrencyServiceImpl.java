@@ -1,6 +1,7 @@
 package com.acuo.persist.services;
 
 import com.acuo.persist.entity.CurrencyEntity;
+import com.acuo.persist.entity.FXRate;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 import com.opengamma.strata.basics.currency.Currency;
@@ -40,7 +41,7 @@ public class CurrencyServiceImpl extends AbstractService<CurrencyEntity, String>
     @Transactional
     @Override
     @Deprecated
-    public Map<Currency, Double> getAllFX() {
+    public Map<Currency, FXRate> getAllFX() {
         return fxRateService.getAllFX();
     }
 

@@ -53,7 +53,7 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
                       Currency currency,
                       Agreement agreement,
                       MarginStatement marginStatement,
-                      Map<Currency, Double> rates,
+                      Map<Currency, FXRate> rates,
                       Long tradeCount,
                       Long tradeValued) {
         this(side, convert(amount, currency, agreement.getCurrency(), rates), valuationDate, callDate, agreement, marginStatement);
@@ -125,16 +125,16 @@ public abstract class MarginCall<T extends MarginCall> extends StatementItem<T> 
         return IDGen.encode(value) ;
     }
 
-    private static Double convert(Double value, Currency from, Currency to, Map<Currency, Double> rates) {
+    private static Double convert(Double value, Currency from, Currency to, Map<Currency, FXRate> rates) {
         if (from.equals(to)) return value;
         double rate = getRate(from, to, rates);
         return value * rate;
     }
 
-    private static double getRate(Currency from, Currency to, Map<Currency, Double> rates) {
-        double fromRate = (!from.equals(USD)) ? rates.get(from) : 1;
-        double toRate = (!to.equals(USD)) ? rates.get(to) : 1;
-        return toRate / fromRate;
+    private static double getRate(Currency from, Currency to, Map<Currency, FXRate> rates) {
+        return (from.equals(USD)) ?
+                rates.get(to).getLast().getValue() :
+                1 / rates.get(to).getLast().getValue();
     }
 
     private int sign(double d) {

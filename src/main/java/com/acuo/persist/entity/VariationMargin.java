@@ -28,7 +28,7 @@ public class VariationMargin extends MarginCall<VariationMargin> {
                            Currency currency,
                            Agreement agreement,
                            MarginStatement marginStatement,
-                           Map<Currency, Double> rates,
+                           Map<Currency, FXRate> rates,
                            Long tradeCount,
                            Long tradeValued) {
         super(side, amount, valuationDate, callDate, currency, agreement, marginStatement, rates, tradeCount, tradeValued);

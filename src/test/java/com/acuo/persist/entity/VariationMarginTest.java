@@ -86,7 +86,7 @@ public class VariationMarginTest {
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
     }
 
@@ -98,7 +98,7 @@ public class VariationMarginTest {
         when(statement.variationBalance()).thenReturn(balance);
         when(statement.variationPending()).thenReturn(pending);
 
-        final ImmutableMap<Currency, Double> rates = ImmutableMap.of(currency, 1d);
+        final ImmutableMap<Currency, FXRate> rates = ImmutableMap.of(currency, FXRate.USD_RATE);
 
         final VariationMargin variation = new VariationMargin(Side.Client,
                 amount,
