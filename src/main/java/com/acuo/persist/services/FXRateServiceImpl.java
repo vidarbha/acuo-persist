@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.inject.persist.Transactional;
 import com.opengamma.strata.basics.currency.Currency;
+import com.opengamma.strata.basics.currency.FxRate;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.ogm.session.Session;
 
@@ -88,7 +89,16 @@ public class FXRateServiceImpl extends AbstractService<FXRate, Long> implements 
 
     @Override
     @Transactional
-    public FXRate getOrCreate(Currency base, Currency counter){
+    public FXRate save(FxRate fxRate, LocalDateTime lastUpdate) {
+        final Currency base = fxRate.getPair().getBase();
+        final Currency counter = fxRate.getPair().getCounter();
+        FXRate fx = getOrCreate(base, counter);
+        double value = fxRate.fxRate(fxRate.getPair());
+        LocalDateTime refreshed = LocalDateTime.now();
+        return addValue(fx, value, refreshed, lastUpdate);
+    }
+
+    private FXRate getOrCreate(Currency base, Currency counter){
         FXRate fxRate = get(base, counter);
         if (fxRate == null) {
             CurrencyEntity baseEntity = currencyService.getOrCreate(base);
@@ -101,9 +111,7 @@ public class FXRateServiceImpl extends AbstractService<FXRate, Long> implements 
         return fxRate;
     }
 
-    @Override
-    @Transactional
-    public void addValue(FXRate fxRate, Double value, LocalDateTime refreshed, LocalDateTime updated){
+    private FXRate addValue(FXRate fxRate, Double value, LocalDateTime refreshed, LocalDateTime updated){
         cleanup(fxRate);
         FXValue fxValue = new FXValue();
         fxValue.setFrom(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
@@ -115,7 +123,7 @@ public class FXRateServiceImpl extends AbstractService<FXRate, Long> implements 
         fxValue.setPrevious(previous);
         fxValue = fxValueService.save(fxValue, 2);
         fxRate.setLast(fxValue);
-        save(fxRate);
+        return save(fxRate);
     }
 
     private void cleanup(FXRate fxRate) {

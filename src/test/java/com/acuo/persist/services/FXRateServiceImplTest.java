@@ -6,13 +6,15 @@ import com.acuo.persist.entity.FXRate;
 import com.acuo.persist.modules.ConfigurationTestModule;
 import com.acuo.persist.modules.InProcessNeo4jServerModule;
 import com.acuo.persist.modules.RepositoryModule;
-import com.opengamma.strata.basics.currency.Currency;
+import com.opengamma.strata.basics.currency.FxRate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 import java.time.LocalDateTime;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(GuiceJUnitRunner.class)
 @GuiceJUnitRunner.GuiceModules({
@@ -46,10 +48,11 @@ public class FXRateServiceImplTest {
     @Test
     public void testSaveFxRate() {
 
-        FXRate fxRate = fxRateService.getOrCreate(Currency.USD, Currency.EUR);
+        FxRate fx = FxRate.parse("EUR/USD 0.9");
+        FXRate rate = fxRateService.save(fx, LocalDateTime.now());
 
-        fxRateService.addValue(fxRate, 1d, LocalDateTime.now(), LocalDateTime.now());
-        fxRateService.addValue(fxRate, 2d, LocalDateTime.now(), LocalDateTime.now());
+        assertThat(rate).isNotNull();
+        assertThat(rate.getLast().getValue()).isEqualTo(0.9);
     }
 
 }

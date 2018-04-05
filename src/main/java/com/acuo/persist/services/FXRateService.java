@@ -2,6 +2,7 @@ package com.acuo.persist.services;
 
 import com.acuo.persist.entity.FXRate;
 import com.opengamma.strata.basics.currency.Currency;
+import com.opengamma.strata.basics.currency.FxRate;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -14,7 +15,5 @@ public interface FXRateService extends Service<FXRate, Long> {
 
     Map<Currency, FXRate> getAllFX();
 
-    FXRate getOrCreate(Currency base, Currency counter);
-
-    void addValue(FXRate fxRate, Double value, LocalDateTime refreshed, LocalDateTime updated);
+    FXRate save(FxRate fxRate, LocalDateTime lastUpdate);
 }
